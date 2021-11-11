@@ -4,16 +4,20 @@ import com.hyblerm.homecontroller.repository.OpenHabReadOnlyRepository
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.DataNotifier
+import com.hyblerm.homecontroller.service.util.Time
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.temporal.ChronoField
 import java.time.temporal.TemporalField
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Service
-class FishTankJob(val repository: DataAccess) {
+class FishTankJob(val repository: DataAccess, val time:Time) {
 
     val logger = LoggerFactory.getLogger(FishTankJob::class.java)
 
@@ -28,7 +32,7 @@ class FishTankJob(val repository: DataAccess) {
         logger.debug("data loaded")
         if (fishTimerStatus.isOn()) {
             logger.debug("timer is on")
-            val hour:Int = Calendar.getInstance().get(Calendar.HOUR)
+            val hour:Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
             if(hour >= fishTimerStartHour.getDouble() && hour < fishTimerEndHour.getDouble()) {
                 if(!fishTankSwitch.isOn()) {
                     logger.debug("switching on light")
