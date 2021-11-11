@@ -3,9 +3,9 @@ package com.hyblerm.homecontroller.repository.entity
 class OpenHabModel {
 
     data class Item(
-            val link:String,
-            val name:String,
-            val state:String
+        val link: String,
+        val name: String,
+        val state: String
     ) {
         fun isOn(): Boolean {
             return state == "ON"

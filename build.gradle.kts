@@ -35,7 +35,7 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    //testImplementation("org.mockito:mockito-core:2.21.0")
+    // testImplementation("org.mockito:mockito-core:2.21.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 

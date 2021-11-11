@@ -5,7 +5,7 @@ import java.time.Clock
 
 @Component
 class Time {
-    fun clock():Clock {
+    fun clock(): Clock {
         return Clock.systemDefaultZone()
     }
 }

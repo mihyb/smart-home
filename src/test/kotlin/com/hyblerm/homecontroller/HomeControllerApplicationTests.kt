@@ -9,5 +9,4 @@ class HomeControllerApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

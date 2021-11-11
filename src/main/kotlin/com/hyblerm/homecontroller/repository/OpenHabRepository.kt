@@ -9,47 +9,47 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 
 @Repository
-class OpenHabRepository(val properties: ConfigurationProperties): DataAccess {
+class OpenHabRepository(val properties: ConfigurationProperties) : DataAccess {
 
     override fun getItems(): List<OpenHabModel.Item> {
         val response = WebClient.builder().build()
-                .get()
-                .uri(
-                        UriComponentsBuilder.fromHttpUrl(properties.openhab.baseUrl)
-                                .path(properties.openhab.itemsRelativePath)
-                                .build().toUri()
-                )
-                .retrieve()
-                .toEntityList(OpenHabModel.Item::class.java)
-                .block();
-        return response!!.body!!;
+            .get()
+            .uri(
+                UriComponentsBuilder.fromHttpUrl(properties.openhab.baseUrl)
+                    .path(properties.openhab.itemsRelativePath)
+                    .build().toUri()
+            )
+            .retrieve()
+            .toEntityList(OpenHabModel.Item::class.java)
+            .block()
+        return response!!.body!!
     }
 
     override fun getItem(name: String): OpenHabModel.Item {
         val response = WebClient.builder().build()
-                .get()
-                .uri(
-                        UriComponentsBuilder.fromHttpUrl(properties.openhab.baseUrl)
-                                .path(properties.openhab.itemRelativePath)
-                                .buildAndExpand(name).toUri()
-                )
-                .retrieve()
-                .toEntity(OpenHabModel.Item::class.java)
-                .block()
+            .get()
+            .uri(
+                UriComponentsBuilder.fromHttpUrl(properties.openhab.baseUrl)
+                    .path(properties.openhab.itemRelativePath)
+                    .buildAndExpand(name).toUri()
+            )
+            .retrieve()
+            .toEntity(OpenHabModel.Item::class.java)
+            .block()
         return response!!.body!!
     }
 
     override fun commandItem(name: String, value: String) {
         WebClient.builder().build()
-                .post()
-                .uri(
-                        UriComponentsBuilder.fromHttpUrl(properties.openhab.baseUrl)
-                                .path(properties.openhab.itemRelativePath)
-                                .buildAndExpand(name).toUri()
-                )
-                .body(BodyInserters.fromValue(value))
-                .retrieve()
-                .toEntity(OpenHabModel.Item::class.java)
-                .block()
+            .post()
+            .uri(
+                UriComponentsBuilder.fromHttpUrl(properties.openhab.baseUrl)
+                    .path(properties.openhab.itemRelativePath)
+                    .buildAndExpand(name).toUri()
+            )
+            .body(BodyInserters.fromValue(value))
+            .retrieve()
+            .toEntity(OpenHabModel.Item::class.java)
+            .block()
     }
 }
