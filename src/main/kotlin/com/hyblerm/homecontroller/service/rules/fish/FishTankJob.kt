@@ -1,6 +1,7 @@
-package com.hyblerm.homecontroller.service.rules
+package com.hyblerm.homecontroller.service.rules.fish
 
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.rules.JobBase
 import com.hyblerm.homecontroller.service.util.Time
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -27,11 +28,11 @@ class FishTankJob(repository: DataAccess, val time: Time) : JobBase(repository) 
             val hour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
             if (hour >= item(fishTimerStartHour).getDouble() && hour < item(fishTimerEndHour).getDouble()) {
                 if (!item(fishTankSwitch).isOn()) {
-                    logger.debug("switching on light")
+                    logger.info("switching on light")
                     repository.commandItem(fishTankSwitch, "ON")
                 }
             } else if (item(fishTankSwitch).isOn()) {
-                logger.debug("switching off light")
+                logger.info("switching off light")
                 repository.commandItem(fishTankSwitch, "OFF")
             } else {
                 logger.debug("light is ok")

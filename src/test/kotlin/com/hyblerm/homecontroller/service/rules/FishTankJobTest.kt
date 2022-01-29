@@ -2,6 +2,7 @@ package com.hyblerm.homecontroller.service.rules
 
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.rules.fish.FishTankJob
 import com.hyblerm.homecontroller.service.util.Time
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -24,7 +25,7 @@ internal class FishTankJobTest {
 
     @ParameterizedTest
     @MethodSource("timeProvider")
-    fun test(from: Int, to: Int, currentHour: Int, currentMinute: Int, currentStatus: String, expectedCommand: String?) {
+    fun turnOnFishTankLight_shouldTurnOnLight_ifRequested(from: Int, to: Int, currentHour: Int, currentMinute: Int, currentStatus: String, expectedCommand: String?) {
         mockItem("Fish_timer_start", "$from.0")
         mockItem("Fish_timer_end", "$to.0")
         mockItem("Fish_timer_status", "ON")

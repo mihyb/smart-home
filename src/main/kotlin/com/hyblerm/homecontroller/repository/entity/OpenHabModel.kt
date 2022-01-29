@@ -12,7 +12,7 @@ class OpenHabModel {
         }
 
         fun getInt(): Int {
-            return state.toInt()
+            return state.toDouble().toInt()
         }
 
         fun getDouble(): Double {
