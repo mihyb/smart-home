@@ -1,1 +1,2 @@
-./gradlew clean ktlintFormat build bootJar
+./gradlew ktlintFormat
+./gradlew clean build bootJar

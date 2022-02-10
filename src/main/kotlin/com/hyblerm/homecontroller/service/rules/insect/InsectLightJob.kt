@@ -1,4 +1,4 @@
-package com.hyblerm.homecontroller.service.rules.fish
+package com.hyblerm.homecontroller.service.rules.insect
 
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.rules.TimerJob
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 
 @Service
-class FishTankJob(repository: DataAccess, time: Time) : TimerJob(repository, time, "Fish_timer_start", "Fish_timer_end", "Fish_timer_status", "mqtt_topic_dd50690b_TASMOTA_2") {
+class InsectLightJob(repository: DataAccess, time: Time) : TimerJob(repository, time, "Insect_timer_start", "Insect_timer_end", "Insect_timer_status", "Light_Bedroom") {
 
     @Scheduled(fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     fun turnOnFishTankLight() {
