@@ -38,6 +38,7 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
     val kidsRoomFloorTemp: String = "broadlink_floureonthermostat_192_168_0_7_setpoint"
     val acMode: String = "g2_ac_mode"
     val heatingMainSwitch: String = "heating_main_switch"
+    val jablotronStatus: String = "JablotronJA100_Dum"
 
     @Scheduled(fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     fun keepTemperature() {
@@ -51,24 +52,25 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
         val nightTemperature = item(requestedNightTemp).getDouble()
 
         val heatingDelay = item(heatingDelayMinutes).getInt()
+        val houseLocked = item(jablotronStatus).state == "ARMED"
 
         val livingRoom = Room(
             "Living room",
             item(livingRoomTemp).getDouble(),
             item(livingRoomDev).getInt(),
-            if (isDay(heatingDelay, livingRoomDay)) dayTemperature else nightTemperature
+            if (isDay(heatingDelay, livingRoomDay, houseLocked)) dayTemperature else nightTemperature
         )
         val kidsRoom = Room(
             "Kids room",
             item(kidsRoomTemp).getDouble(),
             item(kidsRoomDev).getInt(),
-            if (isDay(heatingDelay, kidsRoomDay)) dayTemperature else nightTemperature
+            if (isDay(heatingDelay, kidsRoomDay, houseLocked)) dayTemperature else nightTemperature
         )
         val workRoom = Room(
             "Work room",
             item(workRoomTemp).getDouble(),
             item(workRoomDev).getInt(),
-            if (isDay(heatingDelay, livingRoomDay)) dayTemperature else nightTemperature
+            if (isDay(heatingDelay, livingRoomDay, houseLocked)) dayTemperature else nightTemperature
         )
 
         val airConditioner = Appliance(
@@ -99,8 +101,8 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
         HeatingSystem(listOf(airConditioner, livingRoomFloor, kidsRoomFloor)).keepTemperature(heatingMode())
     }
 
-    fun isDay(delay: Int, dayItem: String): Boolean {
-        return delay > 0 || item(dayItem).isOn()
+    fun isDay(delay: Int, dayItem: String, houseLocked: Boolean): Boolean {
+        return !houseLocked && (delay > 0 || item(dayItem).isOn())
     }
 
     fun heatingMode(): Appliance.WorkingMode {
