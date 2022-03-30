@@ -30,7 +30,7 @@ class Appliance(
             .filter { room -> room.getRequestedAction() == Room.Mode.HEAT }
             .maxByOrNull { room -> room.getRequestedTemp() }
         if (hasTemperatureConflict(coldRoom, hotRoom)) {
-            // there is both hot and cold room so do nothing and wait until temp changes
+            logger.debug("$name: Both cold ${coldRoom!!.name} and hot room ${hotRoom!!.name} are present, Heating is not being changed.")
             return
         }
         if (mode == WorkingMode.HEAT) {
@@ -47,6 +47,7 @@ class Appliance(
 
     private fun cool(hotRoom: Room?, coldRoom: Room?) {
         if (!supportsCooling) {
+            logger.debug("$name: Appliance doesn't support cooling.")
             return
         }
         if (hotRoom != null && !switchItem.isOn()) {
@@ -55,12 +56,16 @@ class Appliance(
                 tempItem.command(hotRoom.getRequestedTemp().toString())
                 switchItem.turnOn()
                 logger.info("$name: Turned on because of ${hotRoom.name} is too hot. Requested temp ${hotRoom.getRequestedTemp()} and actual temp ${hotRoom.temperature}")
+            } else {
+                logger.debug("$name: Appliance already on.")
             }
         } else if (coldRoom != null && switchItem.isOn()) {
             val tempDeviance = abs(coldRoom.getRequestedTemp() - coldRoom.temperature)
             if (tempDeviance > limits.upperLimit) {
                 switchItem.turnOff()
                 logger.info("$name: Turned off because of ${coldRoom.name} is too cold. Requested temp ${coldRoom.getRequestedTemp()} and actual temp ${coldRoom.temperature}")
+            } else {
+                logger.debug("$name: Appliance already off.")
             }
         }
     }
@@ -72,12 +77,16 @@ class Appliance(
                 tempItem.command(coldRoom.getRequestedTemp().toString())
                 switchItem.turnOn()
                 logger.info("$name: Turned on because of ${coldRoom.name} is too cold. Requested temp ${coldRoom.getRequestedTemp()} and actual temp ${coldRoom.temperature}")
+            } else {
+                logger.debug("$name: Appliance already on.")
             }
         } else if (hotRoom != null && switchItem.isOn()) {
             val tempDeviance = abs(hotRoom.getRequestedTemp() - hotRoom.temperature)
             if (tempDeviance > limits.upperLimit) {
                 switchItem.turnOff()
                 logger.info("$name: Turned off because of ${hotRoom.name} is too hot. Requested temp ${hotRoom.getRequestedTemp()} and actual temp ${hotRoom.temperature}")
+            } else {
+                logger.debug("$name: Appliance already on.")
             }
         }
     }
