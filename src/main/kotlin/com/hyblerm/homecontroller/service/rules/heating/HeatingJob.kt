@@ -102,7 +102,7 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
     }
 
     fun isDay(delay: Int, dayItem: String, houseLocked: Boolean): Boolean {
-        return !houseLocked && (delay > 0 || item(dayItem).isOn())
+        return !houseLocked && delay <= 0 && item(dayItem).isOn()
     }
 
     fun heatingMode(): Appliance.WorkingMode {
