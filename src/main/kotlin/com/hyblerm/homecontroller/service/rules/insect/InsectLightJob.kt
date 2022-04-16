@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 
 @Service
-class InsectLightJob(repository: DataAccess, time: Time) : TimerJob(repository, time, "Insect_timer_start", "Insect_timer_end", "Insect_timer_status", "Light_Bedroom") {
+class InsectLightJob(repository: DataAccess, time: Time) : TimerJob(repository, time, "Insect_timer_start", "Insect_timer_end", "Insect_timer_status", "OnOffplug1_Power") {
 
     @Scheduled(fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     fun turnOnFishTankLight() {
