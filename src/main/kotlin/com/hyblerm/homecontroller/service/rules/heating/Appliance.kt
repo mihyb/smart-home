@@ -78,7 +78,7 @@ class Appliance(
                 switchItem.turnOn()
                 logger.info("$name: Turned on because of ${coldRoom.name} is too cold. Requested temp ${coldRoom.getRequestedTemp()} and actual temp ${coldRoom.temperature}")
             } else {
-                logger.debug("$name: Appliance already on.")
+                logger.debug("$name: Appliance already on. Cold room ${coldRoom.name} is too cold. Requested temp ${coldRoom.getRequestedTemp()} and actual temp ${coldRoom.temperature}")
             }
         } else if (hotRoom != null && switchItem.isOn()) {
             val tempDeviance = abs(hotRoom.getRequestedTemp() - hotRoom.temperature)
@@ -86,8 +86,10 @@ class Appliance(
                 switchItem.turnOff()
                 logger.info("$name: Turned off because of ${hotRoom.name} is too hot. Requested temp ${hotRoom.getRequestedTemp()} and actual temp ${hotRoom.temperature}")
             } else {
-                logger.debug("$name: Appliance already on.")
+                logger.debug("$name: Appliance already off. Hot room: ${hotRoom.name} is too hot. Requested temp ${hotRoom.getRequestedTemp()} and actual temp ${hotRoom.temperature}")
             }
+        } else {
+            logger.debug("$name: Neither cold or hot room present.")
         }
     }
 

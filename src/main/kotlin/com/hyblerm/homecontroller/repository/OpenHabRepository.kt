@@ -33,7 +33,7 @@ class OpenHabRepository(val properties: ConfigurationProperties) : DataAccess {
 
     @Cacheable("item")
     override fun getItem(name: String): OpenHabModel.Item {
-        logger.debug("Getting state of item $name")
+        logger.trace("Getting state of item $name")
         val response = WebClient.builder().build()
             .get()
             .uri(
