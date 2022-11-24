@@ -71,10 +71,11 @@ class Appliance(
     }
 
     private fun heat(hotRoom: Room?, coldRoom: Room?) {
+        logger.debug("$name: Evaluating heating. Current switch state is: ${switchItem.isOn()}")
         if (coldRoom != null && !switchItem.isOn()) {
             val tempDeviance = abs(coldRoom.getRequestedTemp() - coldRoom.temperature)
             if (tempDeviance > limits.lowerLimit) {
-                tempItem.command(coldRoom.getRequestedTemp().toString())
+                tempItem.command((coldRoom.getRequestedTemp() + 1).toString())
                 switchItem.turnOn()
                 logger.info("$name: Turned on because of ${coldRoom.name} is too cold. Requested temp ${coldRoom.getRequestedTemp()} and actual temp ${coldRoom.temperature}")
             } else {

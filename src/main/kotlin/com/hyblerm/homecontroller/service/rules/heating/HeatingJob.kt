@@ -39,6 +39,8 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
     val acMode: String = "g2_ac_mode"
     val heatingMainSwitch: String = "heating_main_switch"
     val jablotronStatus: String = "JablotronJA100_Dum"
+    val solarBatterySoc: String = "pp_battery_soc"
+    val solarPanelProduction: String = "pp_ppv"
 
     @Scheduled(fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     fun keepTemperature() {
@@ -48,7 +50,7 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
             return
         }
 
-        val dayTemperature = item(requestedDayTemp).getDouble()
+        val dayTemperature = getDayTemperature()
         val nightTemperature = item(requestedNightTemp).getDouble()
 
         val heatingDelay = item(heatingDelayMinutes).getInt()
@@ -101,11 +103,28 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
         HeatingSystem(listOf(airConditioner, livingRoomFloor, kidsRoomFloor)).keepTemperature(heatingMode())
     }
 
+    fun getDayTemperature(): Double {
+        val dayTemp = item(requestedDayTemp).getDouble()
+        return if (isSolarActiveAndCharged()) {
+            val fullSolarTemperatureBoost = 2
+            logger.debug("Battery is charged. Increasing day temperature by $fullSolarTemperatureBoost")
+            dayTemp + fullSolarTemperatureBoost
+        } else {
+            dayTemp
+        }
+    }
+
     fun isDay(delay: Int, dayItem: String, houseLocked: Boolean): Boolean {
         return !houseLocked && delay <= 0 && item(dayItem).isOn()
     }
 
     fun heatingMode(): Appliance.WorkingMode {
         return if (item(acMode).isOn()) Appliance.WorkingMode.HEAT else Appliance.WorkingMode.COOL
+    }
+
+    fun isSolarActiveAndCharged(): Boolean {
+        val batterySoc = item(solarBatterySoc).getInt()
+        val solarProduction = item(solarPanelProduction).getInt()
+        return batterySoc > 95 && solarProduction > 3000
     }
 }
