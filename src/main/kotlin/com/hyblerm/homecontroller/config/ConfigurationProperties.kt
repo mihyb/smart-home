@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component
 class ConfigurationProperties {
 
     var openhab: OpenHab = OpenHab()
+    var electricity: Electricity = Electricity()
+
+    class Electricity {
+        var oteUrl = ""
+    }
 
     class OpenHab {
         var baseUrl: String = ""

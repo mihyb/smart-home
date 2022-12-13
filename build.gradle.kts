@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm") version "1.6.0-RC"
     kotlin("plugin.spring") version "1.6.0-RC"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.6.10"
 }
 
 group = "com.hyblerm"
@@ -27,12 +28,16 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jsoup:jsoup:1.14.3")
 
     implementation("de.codecentric:spring-boot-admin-starter-server:2.6.1")
     implementation("de.codecentric:spring-boot-admin-starter-client:2.6.1")
+
+    runtimeOnly("com.h2database:h2:2.1.210")
 
     compileOnly("org.projectlombok:lombok")
 

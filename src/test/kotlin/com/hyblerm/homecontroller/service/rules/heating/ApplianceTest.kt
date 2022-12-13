@@ -117,6 +117,7 @@ internal class ApplianceTest {
 
         appliance.keepTemperature(Appliance.WorkingMode.HEAT)
 
+        verify(dataAccess).getItem(commId)
         expectedTemp?.let { temp -> verify(dataAccess).commandItem(tempId, temp.toString()) }
         expectedState?.let { status -> verify(dataAccess).commandItem(commId, status) }
         if (roomTemp != requestedTemp + deviance) {

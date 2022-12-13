@@ -12,7 +12,7 @@ class Appliance(
     private val rooms: List<Room>,
     private val limits: Limits,
     switchId: SwitchId,
-    val dataAccess: DataAccess,
+    dataAccess: DataAccess,
     val supportsCooling: Boolean
 ) {
 
@@ -75,7 +75,7 @@ class Appliance(
         if (coldRoom != null && !switchItem.isOn()) {
             val tempDeviance = abs(coldRoom.getRequestedTemp() - coldRoom.temperature)
             if (tempDeviance > limits.lowerLimit) {
-                tempItem.command((coldRoom.getRequestedTemp() + 1).toString())
+                tempItem.command((coldRoom.getRequestedTemp()).toString())
                 switchItem.turnOn()
                 logger.info("$name: Turned on because of ${coldRoom.name} is too cold. Requested temp ${coldRoom.getRequestedTemp()} and actual temp ${coldRoom.temperature}")
             } else {
