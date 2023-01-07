@@ -28,6 +28,7 @@ class CatHouseHeatingJob(
     val maxHoursItemId = "Cat_Heating_Max_Hours"
     val heatingModeId = "Cat_heating_mode"
     val minTempId = "Cat_MinTemp"
+    val freezeTempId = "Cat_FreezeTemp"
 
     @Scheduled(cron = "0 0 * ? * *")
     fun run() {
@@ -50,6 +51,18 @@ class CatHouseHeatingJob(
             }
             return
         }
+
+        if (item(temperatureItemId).getDouble() < item(freezeTempId).getDouble()) {
+            logger.debug("Cathouse is freezing. Turning heating on")
+            if (heaterSwitch.isOn()) {
+                logger.debug("Cats are freezing heating is kept on")
+            } else {
+                heaterSwitch.turnOn()
+                logger.debug("Cats are freezing heating turned on.")
+            }
+            return
+        }
+
         val from = item(heatingFromItemId).getInt()
         val to = item(heatingToItemId).getInt()
         val hours = item(maxHoursItemId).getInt()
