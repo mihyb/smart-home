@@ -18,7 +18,7 @@ class L3PlusIncomeLoader(val configuration: ConfigurationProperties) : L3IncomeP
         val document = Jsoup.connect(configuration.nicehash.l3PlusIncomeUrl).get()
         val priceText = document.select(".webanswers-webanswers_table__webanswers-table > table > tbody > tr")
             .filter { r -> r.select("td").any { td -> td.text().contains("Income") } }
-            .flatMap { r -> r.select("td") }[2]
+            .flatMap { r -> r.select("td") }[1]
             .text()
         val groups = pattern.matchEntire(priceText)?.groups
         val usdPrice = groups?.get(2)
@@ -26,6 +26,6 @@ class L3PlusIncomeLoader(val configuration: ConfigurationProperties) : L3IncomeP
         if (usdPrice == null) {
             logger.error("Unable to load BTC income rate for l3+")
         }
-        return usdPrice?.toString()?.toDouble() ?: 0.0
+        return usdPrice?.value?.toDouble() ?: 0.0
     }
 }

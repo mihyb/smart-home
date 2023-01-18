@@ -28,13 +28,18 @@ class CatHouseHeatingJob(
         val heaterSwitch = Switch("TASMOTASWITCH8_Status", dataAccess)
         if (item(heatingModeId).state == "OFF" && heaterSwitch.isOn()) {
             heaterSwitch.turnOff()
+            logger.debug("Turning off cats heating. Heating is disabled.")
             return
         }
 
-        if (item(temperatureItemId).getDouble() < item(freezeTempId).getDouble() && !heaterSwitch.isOn()) {
+        val currentTemp = item(temperatureItemId).getDouble()
+        val requestedTemp = item(freezeTempId).getDouble()
+        if (currentTemp < requestedTemp && !heaterSwitch.isOn()) {
             heaterSwitch.turnOn()
+            logger.debug("Turning on cats heating. Temp: $currentTemp requested: $requestedTemp")
         } else {
             heaterSwitch.turnOff()
+            logger.debug("Turning off cats heating. Temp: $currentTemp requested: $requestedTemp")
         }
     }
 }

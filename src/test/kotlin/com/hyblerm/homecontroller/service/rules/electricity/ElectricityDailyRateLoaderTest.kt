@@ -26,7 +26,7 @@ internal class ElectricityDailyRateLoaderTest {
     }
 
     @Test
-    fun test() {
+    fun getHourlyRates_shouldPass() {
         val loadRates = rateLoader.getHourlyRates(OffsetDateTime.now())
         loadRates.getCheapestRates(24).forEach { println("hour ${it.key} price ${it.value}") }
     }

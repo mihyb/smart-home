@@ -42,21 +42,27 @@ class CatHouseMiningJob(
 
         val currentHour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
 
-        if (item(temperatureItemId).getDouble() < item(freezeTempId).getDouble() && !miningSwitch.isOn()) {
+        val currentTemp = item(temperatureItemId).getDouble()
+        val freezeTemp = item(freezeTempId).getDouble()
+        if (currentTemp < freezeTemp && !miningSwitch.isOn()) {
             miningSwitch.turnOn()
+            logger.debug("Turning on cats mining. Cats are freezing. Temp: $currentTemp freeze: $freezeTemp")
             return
         }
 
-        if (!miningSwitch.isOn() && isCheapHour(currentHour) && item(temperatureItemId).getDouble() < item(minTempId).getDouble()) {
+        val requestedTemp = item(minTempId).getDouble()
+        if (!miningSwitch.isOn() && isCheapHour(currentHour) && currentTemp < requestedTemp) {
             miningSwitch.turnOn()
+            logger.debug("Turning on cats mining. It is cheap hour. Temp: $currentTemp requestedTemp: $requestedTemp")
             return
         }
 
         if (!miningSwitch.isOn() && isMiningProfitable(currentHour)) {
-            logger.debug("Turning heating on as mining is profitable")
             miningSwitch.turnOn()
+            logger.debug("Turning on cats mining. Mining is profitable $$$.")
         } else {
             miningSwitch.turnOff()
+            logger.debug("Turning mining off. Temp: $currentTemp requested: $requestedTemp freeze: $freezeTemp")
         }
     }
 
@@ -67,16 +73,18 @@ class CatHouseMiningJob(
         val cheapHours = electricityRateProvider.getHourlyRates(OffsetDateTime.now(time.clock()))
             .getCheapestRates(hours, from, to)
             .keys
-        logger.debug("Evaluating cathouse heating, cheap hours are: $cheapHours")
+        logger.debug("Evaluating cathouse mining, cheap hours are: $cheapHours")
         return cheapHours.contains(currenHour)
     }
 
     fun isMiningProfitable(currentHour: Int): Boolean {
-        val l3DailyIncomeUsdKwh = l3IncomeProvider.getDailyIncomeUsd() * 22.0 /*TODO USD exchange rate*/ / 24 / 0.8
+        val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * 22.0 /*TODO USD exchange rate*/ / 24 / 0.8
 
         val currentElectricityRateKwh = electricityRateProvider.getHourlyRates(OffsetDateTime.now(time.clock()))
             .getRate(currentHour, 24.0) // TODO EUR exchange rate
             ?.div(1000)
-        return currentElectricityRateKwh?.let { it < l3DailyIncomeUsdKwh } ?: false
+        val isProfitable = currentElectricityRateKwh?.let { it < l3IncomeCzkKwh } ?: false
+        logger.debug("Mining is profitable: $isProfitable income CZK/KWH: $l3IncomeCzkKwh electricity price: $currentElectricityRateKwh")
+        return isProfitable
     }
 }

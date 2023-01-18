@@ -28,7 +28,11 @@ class ElectricityDailyRateLoader(val repository: ElectricityRepository, val conf
     }
 
     private fun saveRates(day: OffsetDateTime, rates: Map<Int, Double>) {
-        rates.forEach { entry -> repository.save(ElectricityRate(hourTime = day.withHour(entry.key - 1), rate = entry.value)) }
+        try {
+            repository.saveAll(rates.map { ElectricityRate(hourTime = day.withHour(it.key - 1), rate = it.value) })
+        } catch (e: Exception) {
+            logger.error("Unabled to save daily rates to database. Cache is not working.", e)
+        }
     }
 
     private fun getEndHour(day: OffsetDateTime) = day.withHour(23).withMinute(59).withSecond(59)
