@@ -44,22 +44,28 @@ class CatHouseMiningJob(
 
         val currentTemp = item(temperatureItemId).getDouble()
         val freezeTemp = item(freezeTempId).getDouble()
-        if (currentTemp < freezeTemp && !miningSwitch.isOn()) {
-            miningSwitch.turnOn()
-            logger.debug("Turning on cats mining. Cats are freezing. Temp: $currentTemp freeze: $freezeTemp")
+        if (currentTemp < freezeTemp) {
+            if (!miningSwitch.isOn()) {
+                miningSwitch.turnOn()
+                logger.debug("Turning on cats mining. Cats are freezing. Temp: $currentTemp freeze: $freezeTemp")
+            }
             return
         }
 
         val requestedTemp = item(minTempId).getDouble()
-        if (!miningSwitch.isOn() && isCheapHour(currentHour) && currentTemp < requestedTemp) {
-            miningSwitch.turnOn()
-            logger.debug("Turning on cats mining. It is cheap hour. Temp: $currentTemp requestedTemp: $requestedTemp")
+        if (isCheapHour(currentHour) && currentTemp < requestedTemp) {
+            if (!miningSwitch.isOn()) {
+                miningSwitch.turnOn()
+                logger.debug("Turning on cats mining. It is cheap hour. Temp: $currentTemp requestedTemp: $requestedTemp")
+            }
             return
         }
 
-        if (!miningSwitch.isOn() && isMiningProfitable(currentHour)) {
-            miningSwitch.turnOn()
-            logger.debug("Turning on cats mining. Mining is profitable $$$.")
+        if (isMiningProfitable(currentHour)) {
+            if (!miningSwitch.isOn()) {
+                miningSwitch.turnOn()
+                logger.debug("Turning on cats mining. Mining is profitable $$$.")
+            }
         } else {
             miningSwitch.turnOff()
             logger.debug("Turning mining off. Temp: $currentTemp requested: $requestedTemp freeze: $freezeTemp")

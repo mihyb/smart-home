@@ -9,6 +9,7 @@ import com.hyblerm.homecontroller.service.util.Time
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -119,6 +120,19 @@ internal class CatHouseMiningJobTest {
         catHouseMiningJob.run()
 
         verify(dataAccess).commandItem("minersocketzigbee_Power", "OFF")
+    }
+
+    @Test
+    fun `mining kept if cats are freezing heating is switched on`() {
+        mockItem("TASMOTASWITCH8_TEMP", "-5")
+        mockItem("Cat_FreezeTemp", "0")
+        mockItem("minersocketzigbee_Power", "ON")
+        mockCheapHours(5, 0, 4, 0, listOf(2.0, 0.0, 0.0, 0.0, 1.0, 1.0))
+        whenever(l3IncomeProvider.getDailyIncomeUsd()).thenReturn(0.0)
+
+        catHouseMiningJob.run()
+
+        verify(dataAccess, times(0)).commandItem(any(), any())
     }
 
     fun mockItem(name: String, value: String) {

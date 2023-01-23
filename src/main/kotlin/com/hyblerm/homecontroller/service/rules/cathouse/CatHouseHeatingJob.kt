@@ -34,9 +34,11 @@ class CatHouseHeatingJob(
 
         val currentTemp = item(temperatureItemId).getDouble()
         val requestedTemp = item(freezeTempId).getDouble()
-        if (currentTemp < requestedTemp && !heaterSwitch.isOn()) {
-            heaterSwitch.turnOn()
-            logger.debug("Turning on cats heating. Temp: $currentTemp requested: $requestedTemp")
+        if (currentTemp < requestedTemp) {
+            if (!heaterSwitch.isOn()) {
+                heaterSwitch.turnOn()
+                logger.debug("Turning on cats heating. Temp: $currentTemp requested: $requestedTemp")
+            }
         } else {
             heaterSwitch.turnOff()
             logger.debug("Turning off cats heating. Temp: $currentTemp requested: $requestedTemp")

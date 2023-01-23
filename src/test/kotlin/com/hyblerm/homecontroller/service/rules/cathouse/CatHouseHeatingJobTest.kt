@@ -3,6 +3,8 @@ package com.hyblerm.homecontroller.service.rules.cathouse
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,6 +56,18 @@ internal class CatHouseHeatingJobTest {
         catHouseHeatingJob.run()
 
         verify(dataAccess).commandItem("TASMOTASWITCH8_Status", "OFF")
+    }
+
+    @Test
+    fun `heating kept if cats are freezing and heating is enabled and heating is switched on`() {
+        mockItem("TASMOTASWITCH8_TEMP", "-5")
+        mockItem("Cat_FreezeTemp", "0")
+        mockItem("Cat_heating_mode", "ON")
+        mockItem("TASMOTASWITCH8_Status", "ON")
+
+        catHouseHeatingJob.run()
+
+        verify(dataAccess, times(0)).commandItem(any(), any())
     }
 
     fun mockItem(name: String, value: String) {
