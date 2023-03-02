@@ -17,7 +17,7 @@ internal class L3PlusIncomeLoaderTest {
     @BeforeEach
     fun setup() {
         val nicehash = ConfigurationProperties.Nicehash()
-        nicehash.l3PlusIncomeUrl = "https://www.google.com/search?q=nicehash+l3%2B+income"
+        nicehash.l3PlusIncomeUrl = "https://www.asicminervalue.com/miners/bitmain/antminer-l3-504mh"
         whenever(configurationProperties.nicehash).thenReturn(nicehash)
     }
 

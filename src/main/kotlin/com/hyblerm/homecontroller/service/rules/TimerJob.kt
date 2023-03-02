@@ -8,6 +8,17 @@ import org.slf4j.LoggerFactory
 import java.time.LocalTime
 import java.time.ZoneId
 
+/**
+ *
+ *  TimerJob is a class that is used to switch an item on or off based on a start and end hour.
+ *
+ *  @param repository The repository used to access the items.
+ *  @param time The time used to get the current hour.
+ *  @param startHourItem The item that contains the start hour.
+ *  @param endHourItem The item that contains the end hour.
+ *  @param statusItem The item that contains the status of the timer.
+ *  @param switchItem The item that will be switched on or off.
+ */
 open class TimerJob(repository: DataAccess, private val time: Time, private val startHourItem: String, private val endHourItem: String, private val statusItem: String, private val switchItem: String) : JobBase(repository) {
 
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)

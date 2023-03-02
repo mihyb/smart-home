@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import java.lang.RuntimeException
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -105,6 +106,21 @@ internal class CatHouseMiningJobTest {
         catHouseMiningJob.run()
 
         verify(dataAccess).commandItem("minersocketzigbee_Power", "ON")
+    }
+
+    @Test
+    fun `mining off if l3+ profitability detection fails`() {
+
+        mockItem("TASMOTASWITCH8_TEMP", "15")
+        mockItem("Cat_FreezeTemp", "0")
+        mockItem("Cat_MinTemp", "5")
+        mockItem("minersocketzigbee_Power", "ON")
+        mockCheapHours(5, 0, 4, 0, listOf(2.0, 0.0, 0.0, 0.0, 1.0, 1.0))
+        whenever(l3IncomeProvider.getDailyIncomeUsd()).thenThrow(RuntimeException("failed"))
+
+        catHouseMiningJob.run()
+
+        verify(dataAccess).commandItem("minersocketzigbee_Power", "OFF")
     }
 
     @Test

@@ -10,19 +10,18 @@ import org.springframework.stereotype.Service
 @Service
 class L3PlusIncomeLoader(val configuration: ConfigurationProperties) : L3IncomeProvider {
 
-    val pattern = "(.*)BTC(.*)USD".toRegex()
+    val pattern = "\\$(.*)".toRegex()
 
     val logger: Logger = LoggerFactory.getLogger(L3PlusIncomeLoader::class.java)
 
     override fun getDailyIncomeUsd(): Double {
         val document = Jsoup.connect(configuration.nicehash.l3PlusIncomeUrl).get()
-        val priceText = document.select(".webanswers-webanswers_table__webanswers-table > table > tbody > tr")
+        val priceText = document.select("table.rentability > tbody > tr")
             .filter { r -> r.select("td").any { td -> td.text().contains("Income") } }
             .flatMap { r -> r.select("td") }[1]
             .text()
         val groups = pattern.matchEntire(priceText)?.groups
-        val usdPrice = groups?.get(2)
-        // var btcPrice = groups?.get(1)
+        val usdPrice = groups?.get(1)
         if (usdPrice == null) {
             logger.error("Unable to load BTC income rate for l3+")
         }

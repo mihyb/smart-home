@@ -84,13 +84,18 @@ class CatHouseMiningJob(
     }
 
     fun isMiningProfitable(currentHour: Int): Boolean {
-        val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * 22.0 /*TODO USD exchange rate*/ / 24 / 0.8
+        try {
+            val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * 22.0 /*TODO USD exchange rate*/ / 24 / 0.8
 
-        val currentElectricityRateKwh = electricityRateProvider.getHourlyRates(OffsetDateTime.now(time.clock()))
-            .getRate(currentHour, 24.0) // TODO EUR exchange rate
-            ?.div(1000)
-        val isProfitable = currentElectricityRateKwh?.let { it < l3IncomeCzkKwh } ?: false
-        logger.debug("Mining is profitable: $isProfitable income CZK/KWH: $l3IncomeCzkKwh electricity price: $currentElectricityRateKwh")
-        return isProfitable
+            val currentElectricityRateKwh = electricityRateProvider.getHourlyRates(OffsetDateTime.now(time.clock()))
+                .getRate(currentHour, 23.5) // TODO EUR exchange rate
+                ?.div(1000)
+            val isProfitable = currentElectricityRateKwh?.let { it < l3IncomeCzkKwh } ?: false
+            logger.debug("Mining is profitable: $isProfitable income CZK/KWH: $l3IncomeCzkKwh electricity price: $currentElectricityRateKwh")
+            return isProfitable
+        } catch (e: Exception) {
+            logger.error("Unable to resolve mining profitability.", e)
+            return false
+        }
     }
 }
