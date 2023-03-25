@@ -1,5 +1,6 @@
 package com.hyblerm.homecontroller.service.rules.cathouse
 
+import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.repository.mining.L3IncomeProvider
@@ -14,12 +15,16 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
+private const val HOURS_PER_DAY = 24
+private const val MINER_CONSUMPTION_KWH = 0.8
+
 @Service
 class CatHouseMiningJob(
     val dataAccess: DataAccess,
     val electricityRateProvider: ElectricityRateProvider,
     val l3IncomeProvider: L3IncomeProvider,
-    val time: Time
+    val time: Time,
+    val configuration: ConfigurationProperties
 ) : JobBase(dataAccess) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -85,10 +90,10 @@ class CatHouseMiningJob(
 
     fun isMiningProfitable(currentHour: Int): Boolean {
         try {
-            val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * 22.0 /*TODO USD exchange rate*/ / 24 / 0.8
+            val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * configuration.currency.usdRate / HOURS_PER_DAY / MINER_CONSUMPTION_KWH
 
             val currentElectricityRateKwh = electricityRateProvider.getHourlyRates(OffsetDateTime.now(time.clock()))
-                .getRate(currentHour, 23.5) // TODO EUR exchange rate
+                .getRate(currentHour, configuration.currency.eurRate)
                 ?.div(1000)
             val isProfitable = currentElectricityRateKwh?.let { it < l3IncomeCzkKwh } ?: false
             logger.debug("Mining is profitable: $isProfitable income CZK/KWH: $l3IncomeCzkKwh electricity price: $currentElectricityRateKwh")

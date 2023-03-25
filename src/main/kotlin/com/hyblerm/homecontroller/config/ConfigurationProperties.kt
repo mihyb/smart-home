@@ -1,15 +1,19 @@
 package com.hyblerm.homecontroller.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.stereotype.Component
 
-@Component
 @ConfigurationProperties(prefix = "app")
 class ConfigurationProperties {
 
     var openhab = OpenHab()
     var electricity = Electricity()
     var nicehash = Nicehash()
+    var currency = Currency()
+
+    class Currency {
+        var usdRate = 0.0
+        var eurRate = 0.0
+    }
 
     class Electricity {
         var oteUrl = ""
