@@ -19,7 +19,14 @@ import java.time.ZoneId
  *  @param statusItem The item that contains the status of the timer.
  *  @param switchItem The item that will be switched on or off.
  */
-open class TimerJob(repository: DataAccess, private val time: Time, private val startHourItem: String, private val endHourItem: String, private val statusItem: String, private val switchItem: String) : JobBase(repository) {
+open class TimerJob(
+    repository: DataAccess,
+    private val time: Time,
+    private val startHourItem: String,
+    private val endHourItem: String,
+    private val statusItem: String,
+    private val switchItem: String
+) : JobBase(repository) {
 
     private val logger: Logger = LoggerFactory.getLogger(this.javaClass)
 
@@ -29,17 +36,39 @@ open class TimerJob(repository: DataAccess, private val time: Time, private val 
             logger.debug("timer is on")
             val hour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
             val switch = Switch(switchItem, repository)
-            if (hour >= item(startHourItem).getDouble() && hour < item(endHourItem).getDouble()) {
-                if (!switch.isOn()) {
-                    logger.info("switching on switch")
-                    switch.turnOn()
-                }
-            } else if (switch.isOn()) {
-                logger.info("switching off switch")
-                switch.turnOff()
+            if (item(startHourItem).getDouble() > item(endHourItem).getDouble()) {
+                checkHourCrossDay(hour, switch)
             } else {
-                logger.debug("switch is ok")
+                checkHourWithinDay(hour, switch)
             }
+        }
+    }
+
+    private fun checkHourCrossDay(hour: Int, switch: Switch) {
+        if (hour >= item(startHourItem).getDouble() || hour < item(endHourItem).getDouble()) {
+            if (!switch.isOn()) {
+                logger.info("switching on switch")
+                switch.turnOn()
+            }
+        } else if (switch.isOn()) {
+            logger.info("switching off switch")
+            switch.turnOff()
+        } else {
+            logger.debug("switch is ok")
+        }
+    }
+
+    private fun checkHourWithinDay(hour: Int, switch: Switch) {
+        if (hour >= item(startHourItem).getDouble() && hour < item(endHourItem).getDouble()) {
+            if (!switch.isOn()) {
+                logger.info("switching on switch")
+                switch.turnOn()
+            }
+        } else if (switch.isOn()) {
+            logger.info("switching off switch")
+            switch.turnOff()
+        } else {
+            logger.debug("switch is ok")
         }
     }
 }

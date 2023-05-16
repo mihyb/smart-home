@@ -2,6 +2,10 @@ package com.hyblerm.homecontroller.service.rules.cathouse
 
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
+import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRates
+import com.hyblerm.homecontroller.service.util.Time
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -13,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.ActiveProfiles
+import java.time.Clock
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.util.stream.Stream
 
 private const val SWITCH = "chargingcathouse_chargingcathouseswitch"
@@ -23,6 +30,10 @@ class CathouseChargingJobTest {
 
     @MockBean
     lateinit var dataAccess: DataAccess
+    @MockBean
+    lateinit var time: Time
+    @MockBean
+    lateinit var electricityRateProvider: ElectricityRateProvider
 
     @Autowired
     lateinit var cathouseChargingJob: CathouseChargingJob
@@ -33,6 +44,8 @@ class CathouseChargingJobTest {
         mockItem("pp_battery_soc", batteryDoc.toString())
         mockItem("pp_ppv", ppv.toString())
         mockItem(SWITCH, switchStatus)
+        whenever(electricityRateProvider.getHourlyRates(any())).thenReturn(ElectricityRates(mapOf(4 to 4.0)))
+        whenever(time.clock()).thenReturn(Clock.fixed(OffsetDateTime.parse("2011-12-03T04:00:30+01:00").toInstant(), ZoneId.systemDefault()))
 
         cathouseChargingJob.controlCharging()
 
@@ -42,6 +55,19 @@ class CathouseChargingJobTest {
                 command
             )
         } ?: verify(dataAccess, times(0)).commandItem(any(), any())
+    }
+
+    @Test
+    fun `charging should turn on if electricity price is negative`() {
+        mockItem("pp_battery_soc", "0")
+        mockItem("pp_ppv", "0")
+        whenever(electricityRateProvider.getHourlyRates(any())).thenReturn(ElectricityRates(mapOf(4 to -4.0)))
+        whenever(time.clock()).thenReturn(Clock.fixed(OffsetDateTime.parse("2011-12-03T04:00:30+01:00").toInstant(), ZoneId.systemDefault()))
+        mockItem(SWITCH, "OFF")
+
+        cathouseChargingJob.controlCharging()
+
+        verify(dataAccess).commandItem(SWITCH, "ON")
     }
 
     fun mockItem(name: String, value: String) {
