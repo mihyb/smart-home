@@ -17,6 +17,12 @@ class ConfigurationProperties {
 
     class Electricity {
         var oteUrl = ""
+        var buy = ElectricityPrice()
+        var sell = ElectricityPrice()
+    }
+
+    class ElectricityPrice {
+        var fixedPriceKwh = 0.0
     }
 
     class OpenHab {

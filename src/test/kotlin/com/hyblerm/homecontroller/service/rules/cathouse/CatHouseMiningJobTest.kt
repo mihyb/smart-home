@@ -43,6 +43,7 @@ internal class CatHouseMiningJobTest {
     @BeforeEach
     fun setup() {
         whenever(time.clock()).thenReturn(Clock.systemDefaultZone())
+        catHouseMiningJob.restartWaitPeriod = 0
     }
 
     @Test
@@ -150,6 +151,23 @@ internal class CatHouseMiningJobTest {
 
         verify(dataAccess, times(0)).commandItem(any(), any())
     }
+
+    /*@Test
+    fun `mining stopped if mining is on profitable but has wrong status`() {
+        mockItem("TASMOTASWITCH8_TEMP", "25")
+        mockItem("Cat_FreezeTemp", "0")
+        mockItem("Cat_MinTemp", "5")
+        mockItem("minersocketzigbee_Power", "ON")
+        mockItem("nicehashantminerstatus_Output", "OFFLINE")
+        mockItem("nicehashantminerprofitability_Output", "5.0")
+        whenever(l3IncomeProvider.getDailyIncomeUsd()).thenReturn(20.0)
+        mockCheapHours(1, 0, 0, 0, listOf(0.0, 0.0, 0.0, 0.0, 0.0))
+
+        catHouseMiningJob.runCheck()
+
+        verify(dataAccess).commandItem("minersocketzigbee_Power", "OFF")
+        verify(dataAccess).commandItem("minersocketzigbee_Power", "ON")
+    }*/
 
     fun mockItem(name: String, value: String) {
         whenever(dataAccess.getItem(name)).thenReturn(OpenHabModel.Item("link", name, value))

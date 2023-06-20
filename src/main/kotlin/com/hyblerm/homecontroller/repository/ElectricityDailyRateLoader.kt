@@ -4,6 +4,7 @@ import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.repository.entity.ElectricityRate
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRates
+import com.hyblerm.homecontroller.service.util.Time
 import org.jsoup.Jsoup
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,7 +13,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class ElectricityDailyRateLoader(val repository: ElectricityRepository, val configuration: ConfigurationProperties) : ElectricityRateProvider {
+class ElectricityDailyRateLoader(val repository: ElectricityRepository, val configuration: ConfigurationProperties, val time: Time) : ElectricityRateProvider {
 
     val logger: Logger = LoggerFactory.getLogger(ElectricityDailyRateLoader::class.java)
 
@@ -29,7 +30,7 @@ class ElectricityDailyRateLoader(val repository: ElectricityRepository, val conf
 
     private fun saveRates(day: OffsetDateTime, rates: Map<Int, Double>) {
         try {
-            repository.saveAll(rates.map { ElectricityRate(hourTime = day.withHour(it.key - 1), rate = it.value) })
+            repository.saveAll(rates.map { ElectricityRate(hourTime = day.withHour(it.key), rate = it.value) })
         } catch (e: Exception) {
             logger.error("Unabled to save daily rates to database. Cache is not working.", e)
         }
@@ -46,11 +47,25 @@ class ElectricityDailyRateLoader(val repository: ElectricityRepository, val conf
             .filter { r -> r.select("th").isNotEmpty() }
             .associate {
                 Pair(
-                    it.select("th").first()?.text()?.toInt() ?: 0,
+                    it.select("th").first()?.text()?.toInt()?.minus(1) ?: 0,
                     it.select("td").first()?.text()?.replace(",", ".")?.toDouble() ?: 0.0
                 )
             }
         saveRates(day, rates)
         return rates
+    }
+
+    override fun getBuyPriceCZK(hour: Int): Double? {
+        return getHourlyRates(OffsetDateTime.now(time.clock()))
+            .getRate(hour, configuration.currency.eurRate)
+            ?.div(1000)
+            ?.plus(configuration.electricity.buy.fixedPriceKwh)
+    }
+
+    override fun getSellPriceCZK(hour: Int): Double? {
+        return getHourlyRates(OffsetDateTime.now(time.clock()))
+            .getRate(hour, configuration.currency.eurRate)
+            ?.div(1000)
+            ?.minus(configuration.electricity.sell.fixedPriceKwh)
     }
 }

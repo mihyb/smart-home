@@ -4,6 +4,7 @@ import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.repository.ElectricityDailyRateLoader
 import com.hyblerm.homecontroller.repository.ElectricityRepository
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
+import com.hyblerm.homecontroller.service.util.Time
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -15,7 +16,7 @@ internal class ElectricityDailyRateLoaderTest {
 
     private val electricityRepository: ElectricityRepository = Mockito.mock(ElectricityRepository::class.java)
     private val configurationProperties: ConfigurationProperties = Mockito.mock(ConfigurationProperties::class.java)
-    private val rateLoader: ElectricityRateProvider = ElectricityDailyRateLoader(electricityRepository, configurationProperties)
+    private val rateLoader: ElectricityRateProvider = ElectricityDailyRateLoader(electricityRepository, configurationProperties, Time())
 
     @BeforeEach
     fun setup() {

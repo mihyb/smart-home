@@ -5,6 +5,7 @@ import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.repository.mining.L3IncomeProvider
 import com.hyblerm.homecontroller.service.rules.JobBase
+import com.hyblerm.homecontroller.service.rules.items.MessageItem
 import com.hyblerm.homecontroller.service.rules.items.Switch
 import com.hyblerm.homecontroller.service.util.Time
 import org.slf4j.Logger
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 private const val HOURS_PER_DAY = 24
 private const val MINER_CONSUMPTION_KWH = 0.8
@@ -27,6 +29,8 @@ class CatHouseMiningJob(
     val configuration: ConfigurationProperties
 ) : JobBase(dataAccess) {
 
+    var restartWaitPeriod = 30L
+
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     val temperatureItemId = "TASMOTASWITCH8_TEMP"
@@ -35,16 +39,26 @@ class CatHouseMiningJob(
     val maxHoursItemId = "Cat_Heating_Max_Hours"
     val freezeTempId = "Cat_FreezeTemp"
     val minTempId = "Cat_MinTemp"
+    val antminerStatus = "nicehashantminerstatus_Output"
+    val antminerProfitability = "nicehashantminerprofitability_Output"
+
+    val messageItem = MessageItem(dataAccess)
 
     @Scheduled(cron = "0 0 * ? * *")
     fun run() {
         processMining()
     }
 
-    private fun processMining() {
-
+    @Scheduled(initialDelay = 5, timeUnit = TimeUnit.MINUTES, fixedRate = 5)
+    fun runCheck() {
         val miningSwitch = Switch("minersocketzigbee_Power", dataAccess)
+        if (miningSwitch.isOn()) {
+            checkStatus(miningSwitch)
+        }
+    }
 
+    private fun processMining() {
+        val miningSwitch = Switch("minersocketzigbee_Power", dataAccess)
         val currentHour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
 
         val currentTemp = item(temperatureItemId).getDouble()
@@ -58,7 +72,7 @@ class CatHouseMiningJob(
         }
 
         val requestedTemp = item(minTempId).getDouble()
-        if (isCheapHour(currentHour) && currentTemp < requestedTemp) {
+        if (currentTemp < requestedTemp && isCheapHour(currentHour)) {
             if (!miningSwitch.isOn()) {
                 miningSwitch.turnOn()
                 logger.debug("Turning on cats mining. It is cheap hour. Temp: $currentTemp requestedTemp: $requestedTemp")
@@ -77,6 +91,19 @@ class CatHouseMiningJob(
         }
     }
 
+    private fun checkStatus(miningSwitch: Switch) {
+        val status = item(antminerStatus).state
+        val profitability = item(antminerProfitability).getDouble()
+        if (status == "OFFLINE" || profitability <= 0.0) {
+            val message = "Rig is not working properly. Restarting. Status: $status profitability: $profitability"
+            logger.debug(message)
+            messageItem.command(message)
+            miningSwitch.turnOff()
+            TimeUnit.SECONDS.sleep(restartWaitPeriod)
+            miningSwitch.turnOn()
+        }
+    }
+
     private fun isCheapHour(currenHour: Int): Boolean {
         val from = item(heatingFromItemId).getInt()
         val to = item(heatingToItemId).getInt()
@@ -92,9 +119,7 @@ class CatHouseMiningJob(
         try {
             val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * configuration.currency.usdRate / HOURS_PER_DAY / MINER_CONSUMPTION_KWH
 
-            val currentElectricityRateKwh = electricityRateProvider.getHourlyRates(OffsetDateTime.now(time.clock()))
-                .getRate(currentHour, configuration.currency.eurRate)
-                ?.div(1000)
+            val currentElectricityRateKwh = electricityRateProvider.getBuyPriceCZK(currentHour)
             val isProfitable = currentElectricityRateKwh?.let { it < l3IncomeCzkKwh } ?: false
             logger.debug("Mining is profitable: $isProfitable income CZK/KWH: $l3IncomeCzkKwh electricity price: $currentElectricityRateKwh")
             return isProfitable
