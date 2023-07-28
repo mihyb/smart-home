@@ -22,9 +22,11 @@ class PoolFiltrationJob(repository: DataAccess, val electricityPriceEvaluator: E
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES)
     fun turnOnPoolFiltration() {
         val switch = Switch(SWITCH_ITEM_NAME, repository)
-        if (electricityPriceEvaluator.isElectricityFree() && !switch.isOn()) {
-            switch.turnOn()
-            logger.debug("Electricity price is negative. Turning on pool filtration.")
+        if (electricityPriceEvaluator.isElectricityFree()) {
+            if (!switch.isOn()) {
+                switch.turnOn()
+                logger.debug("Electricity price is negative. Turning on pool filtration.")
+            }
         } else {
             logger.debug("Electricity price is positive. Falling back to calendar setup.")
             super.checkSwitch()
