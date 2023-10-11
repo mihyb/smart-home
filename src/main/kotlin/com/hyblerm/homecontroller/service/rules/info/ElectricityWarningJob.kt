@@ -14,8 +14,10 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 
+private const val CLOUDINESS_TOMORROW_ITEM = "LocalOnecall_CloudinessTommorow"
+
 @Service
-class ElectricityPriceWarningJob(
+class ElectricityWarningJob(
     val dataAccess: DataAccess,
     val electricityRateProvider: ElectricityRateProvider,
     val time: Time
@@ -44,5 +46,26 @@ class ElectricityPriceWarningJob(
         val rates = electricityRateProvider.getHourlyRates(OffsetDateTime.now(clock))
         val hour: Int = LocalTime.ofInstant(clock.instant(), ZoneId.systemDefault()).hour
         return rates.getRate(hour) ?: 0.0
+    }
+
+    @Scheduled(cron = "0 00 17 ? * *")
+    fun checkWeatherForSolarStation() {
+
+        val cloudinessItem = dataAccess.getItem(CLOUDINESS_TOMORROW_ITEM)
+
+        logger.debug("Evaluating tomorrows cloudiness: ${cloudinessItem.state} for grind charging")
+
+        if (cloudinessItem.getPercent() > 80) {
+            val hourlyRates = electricityRateProvider.getHourlyRates(OffsetDateTime.now())
+            val cheapMorningHours = hourlyRates.getCheapestRates(2, 0, 7)
+            val cheapAfternoonHours = hourlyRates.getCheapestRates(2, 12, 6)
+            messageItem.command(
+                "Turn on grid charging. " +
+                    "It will be ${cloudinessItem.state} cloudy tomorrow. " +
+                    "Morning cheap hours are: $cheapMorningHours and afternoon: $cheapAfternoonHours"
+            )
+        } else {
+            messageItem.command("Turn off grid charging. It will be ${cloudinessItem.state} cloudy tomorrow.")
+        }
     }
 }

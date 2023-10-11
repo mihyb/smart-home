@@ -18,5 +18,9 @@ class OpenHabModel {
         fun getDouble(): Double {
             return state.toDouble()
         }
+
+        fun getPercent(): Int {
+            return state.replace("%", "").replace(" ", "").toInt()
+        }
     }
 }
