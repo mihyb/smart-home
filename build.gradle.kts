@@ -40,6 +40,7 @@ dependencies {
     implementation("de.codecentric:spring-boot-admin-starter-client:2.6.1")
 
     runtimeOnly("com.h2database:h2:2.1.210")
+    // runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64")
 
     compileOnly("org.projectlombok:lombok")
 

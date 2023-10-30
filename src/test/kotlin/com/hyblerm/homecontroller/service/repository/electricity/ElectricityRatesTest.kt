@@ -38,6 +38,11 @@ internal class ElectricityRatesTest {
         Assertions.assertThat(eRates.getRate(7)).isEqualTo(2.0)
     }
 
+    @Test
+    fun getAverageRate_shouldReturnAverageRate_forHourSpecified() {
+        Assertions.assertThat(eRates.getAverageRate(3, 7)).isEqualTo(3.8)
+    }
+
     companion object {
 
         @JvmStatic

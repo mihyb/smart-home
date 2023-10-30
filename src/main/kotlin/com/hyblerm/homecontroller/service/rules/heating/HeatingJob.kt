@@ -106,12 +106,16 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
     fun getDayTemperature(): Double {
         val dayTemp = item(requestedDayTemp).getDouble()
         return if (isSolarActiveAndCharged()) {
-            val fullSolarTemperatureBoost = 0 // TODO reflect heating/cooling to value
+            val fullSolarTemperatureBoost = getFullSolarTemperatureBoost()
             logger.debug("Battery is charged. Increasing day temperature by $fullSolarTemperatureBoost")
             dayTemp + fullSolarTemperatureBoost
         } else {
             dayTemp
         }
+    }
+
+    private fun getFullSolarTemperatureBoost(): Int {
+        return if (heatingMode() == Appliance.WorkingMode.HEAT) 2 else 0
     }
 
     fun isDay(delay: Int, dayItem: String, houseLocked: Boolean): Boolean {

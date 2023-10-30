@@ -47,7 +47,7 @@ class ElectricityDailyRateLoader(val repository: ElectricityRepository, val conf
             .filter { r -> r.select("th").isNotEmpty() }
             .associate {
                 Pair(
-                    it.select("th").first()?.text()?.toInt()?.minus(1) ?: 0,
+                    it.select("th").first()?.text()?.toInt()?.minus(1) ?: 0, // OTE is shifted by one hour
                     it.select("td").first()?.text()?.replace(",", ".")?.toDouble() ?: 0.0
                 )
             }

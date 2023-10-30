@@ -116,6 +116,9 @@ class CatHouseMiningJob(
     }
 
     fun isMiningProfitable(currentHour: Int): Boolean {
+        if (!configuration.nicehash.miningEnabled) {
+            return false
+        }
         try {
             val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * configuration.currency.usdRate / HOURS_PER_DAY / MINER_CONSUMPTION_KWH
 

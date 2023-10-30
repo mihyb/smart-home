@@ -33,5 +33,6 @@ class ConfigurationProperties {
     // app.nicehash.l3PlusIncomeUrl
     class Nicehash {
         var l3PlusIncomeUrl = ""
+        var miningEnabled = false
     }
 }
