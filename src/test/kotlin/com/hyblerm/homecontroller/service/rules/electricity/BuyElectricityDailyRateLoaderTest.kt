@@ -1,7 +1,7 @@
 package com.hyblerm.homecontroller.service.rules.electricity
 
 import com.hyblerm.homecontroller.config.ConfigurationProperties
-import com.hyblerm.homecontroller.repository.ElectricityDailyRateLoader
+import com.hyblerm.homecontroller.repository.BuyElectricityDailyRateLoader
 import com.hyblerm.homecontroller.repository.ElectricityRepository
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.util.Time
@@ -12,11 +12,11 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.whenever
 import java.time.OffsetDateTime
 
-internal class ElectricityDailyRateLoaderTest {
+internal class BuyElectricityDailyRateLoaderTest {
 
     private val electricityRepository: ElectricityRepository = Mockito.mock(ElectricityRepository::class.java)
     private val configurationProperties: ConfigurationProperties = Mockito.mock(ConfigurationProperties::class.java)
-    private val rateLoader: ElectricityRateProvider = ElectricityDailyRateLoader(electricityRepository, configurationProperties, Time())
+    private val rateLoader: ElectricityRateProvider = BuyElectricityDailyRateLoader(electricityRepository, configurationProperties, Time())
 
     @BeforeEach
     fun setup() {

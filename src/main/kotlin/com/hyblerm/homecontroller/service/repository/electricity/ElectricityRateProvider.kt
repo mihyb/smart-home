@@ -7,6 +7,4 @@ interface ElectricityRateProvider {
     fun getHourlyRates(day: OffsetDateTime): ElectricityRates
 
     fun getBuyPriceCZK(hour: Int): Double?
-
-    fun getSellPriceCZK(hour: Int): Double?
 }

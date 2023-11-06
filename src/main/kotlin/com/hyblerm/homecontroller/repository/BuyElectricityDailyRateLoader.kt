@@ -13,9 +13,9 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class ElectricityDailyRateLoader(val repository: ElectricityRepository, val configuration: ConfigurationProperties, val time: Time) : ElectricityRateProvider {
+class BuyElectricityDailyRateLoader(val repository: ElectricityRepository, val configuration: ConfigurationProperties, val time: Time) : ElectricityRateProvider {
 
-    val logger: Logger = LoggerFactory.getLogger(ElectricityDailyRateLoader::class.java)
+    val logger: Logger = LoggerFactory.getLogger(BuyElectricityDailyRateLoader::class.java)
 
     override fun getHourlyRates(day: OffsetDateTime): ElectricityRates {
         return ElectricityRates(loadRatesFromCache(day) ?: loadRates(day))
@@ -60,12 +60,5 @@ class ElectricityDailyRateLoader(val repository: ElectricityRepository, val conf
             .getRate(hour, configuration.currency.eurRate)
             ?.div(1000)
             ?.plus(configuration.electricity.buy.fixedPriceKwh)
-    }
-
-    override fun getSellPriceCZK(hour: Int): Double? {
-        return getHourlyRates(OffsetDateTime.now(time.clock()))
-            .getRate(hour, configuration.currency.eurRate)
-            ?.div(1000)
-            ?.minus(configuration.electricity.sell.fixedPriceKwh)
     }
 }
