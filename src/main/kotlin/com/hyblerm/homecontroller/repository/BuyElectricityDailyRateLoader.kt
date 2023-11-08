@@ -2,6 +2,7 @@ package com.hyblerm.homecontroller.repository
 
 import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.repository.entity.ElectricityRate
+import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRates
 import com.hyblerm.homecontroller.service.util.Time
@@ -12,13 +13,16 @@ import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+private const val EUR_CZK_EX_RATE_ITEM = "eurCzkExRate"
+
 @Service
-class BuyElectricityDailyRateLoader(val repository: ElectricityRepository, val configuration: ConfigurationProperties, val time: Time) : ElectricityRateProvider {
+class BuyElectricityDailyRateLoader(val repository: ElectricityRepository, val configuration: ConfigurationProperties, val time: Time, val dataAccess: DataAccess) : ElectricityRateProvider {
 
     val logger: Logger = LoggerFactory.getLogger(BuyElectricityDailyRateLoader::class.java)
 
-    override fun getHourlyRates(day: OffsetDateTime): ElectricityRates {
+    override fun getHourlyRates(day: OffsetDateTime, exchangeRate: Double): ElectricityRates {
         return ElectricityRates(loadRatesFromCache(day) ?: loadRates(day))
+            .applyExcahengeRate(exchangeRate)
     }
 
     private fun loadRatesFromCache(day: OffsetDateTime): Map<Int, Double>? {
@@ -56,8 +60,9 @@ class BuyElectricityDailyRateLoader(val repository: ElectricityRepository, val c
     }
 
     override fun getBuyPriceCZK(hour: Int): Double? {
+        val exchangeRate = dataAccess.getItem(EUR_CZK_EX_RATE_ITEM).getDouble()
         return getHourlyRates(OffsetDateTime.now(time.clock()))
-            .getRate(hour, configuration.currency.eurRate)
+            .getRate(hour, exchangeRate)
             ?.div(1000)
             ?.plus(configuration.electricity.buy.fixedPriceKwh)
     }

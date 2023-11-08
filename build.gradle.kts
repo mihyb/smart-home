@@ -7,6 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.6.0-RC"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.6.10"
+    id("com.github.bjornvester.wsdl2java") version "2.0.2"
 }
 
 group = "com.hyblerm"

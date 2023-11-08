@@ -1,9 +1,7 @@
 package com.hyblerm.homecontroller.service.rules.cathouse
 
-import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
-import com.hyblerm.homecontroller.service.repository.mining.L3IncomeProvider
 import com.hyblerm.homecontroller.service.rules.JobBase
 import com.hyblerm.homecontroller.service.rules.items.MessageItem
 import com.hyblerm.homecontroller.service.rules.items.Switch
@@ -17,16 +15,11 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
-private const val HOURS_PER_DAY = 24
-private const val MINER_CONSUMPTION_KWH = 0.8
-
 @Service
 class CatHouseMiningJob(
     val dataAccess: DataAccess,
     val electricityRateProvider: ElectricityRateProvider,
-    val l3IncomeProvider: L3IncomeProvider,
     val time: Time,
-    val configuration: ConfigurationProperties
 ) : JobBase(dataAccess) {
 
     var restartWaitPeriod = 30L
@@ -80,15 +73,10 @@ class CatHouseMiningJob(
             return
         }
 
-        if (isMiningProfitable(currentHour)) {
-            if (!miningSwitch.isOn()) {
-                miningSwitch.turnOn()
-                logger.debug("Turning on cats mining. Mining is profitable $$$.")
-            }
-        } else {
-            miningSwitch.turnOff()
-            logger.debug("Turning mining off. Temp: $currentTemp requested: $requestedTemp freeze: $freezeTemp")
-        }
+        // TOD could be turned on in case that electricity is negative and we are not selling
+
+        miningSwitch.turnOff()
+        logger.debug("Turning mining off. Temp: $currentTemp requested: $requestedTemp freeze: $freezeTemp")
     }
 
     private fun checkStatus(miningSwitch: Switch) {
@@ -113,22 +101,5 @@ class CatHouseMiningJob(
             .keys
         logger.debug("Evaluating cathouse mining, cheap hours are: $cheapHours")
         return cheapHours.contains(currenHour)
-    }
-
-    fun isMiningProfitable(currentHour: Int): Boolean {
-        if (!configuration.nicehash.miningEnabled) {
-            return false
-        }
-        try {
-            val l3IncomeCzkKwh = l3IncomeProvider.getDailyIncomeUsd() * configuration.currency.usdRate / HOURS_PER_DAY / MINER_CONSUMPTION_KWH
-
-            val currentElectricityRateKwh = electricityRateProvider.getBuyPriceCZK(currentHour)
-            val isProfitable = currentElectricityRateKwh?.let { it < l3IncomeCzkKwh } ?: false
-            logger.debug("Mining is profitable: $isProfitable income CZK/KWH: $l3IncomeCzkKwh electricity price: $currentElectricityRateKwh")
-            return isProfitable
-        } catch (e: Exception) {
-            logger.error("Unable to resolve mining profitability.", e)
-            return false
-        }
     }
 }

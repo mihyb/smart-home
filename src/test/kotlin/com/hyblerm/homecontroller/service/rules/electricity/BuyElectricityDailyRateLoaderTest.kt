@@ -3,6 +3,7 @@ package com.hyblerm.homecontroller.service.rules.electricity
 import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.repository.BuyElectricityDailyRateLoader
 import com.hyblerm.homecontroller.repository.ElectricityRepository
+import com.hyblerm.homecontroller.repository.OpenHabRepository
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.util.Time
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +17,8 @@ internal class BuyElectricityDailyRateLoaderTest {
 
     private val electricityRepository: ElectricityRepository = Mockito.mock(ElectricityRepository::class.java)
     private val configurationProperties: ConfigurationProperties = Mockito.mock(ConfigurationProperties::class.java)
-    private val rateLoader: ElectricityRateProvider = BuyElectricityDailyRateLoader(electricityRepository, configurationProperties, Time())
+    private val openHabRepository: OpenHabRepository = Mockito.mock(OpenHabRepository::class.java)
+    private val rateLoader: ElectricityRateProvider = BuyElectricityDailyRateLoader(electricityRepository, configurationProperties, Time(), openHabRepository)
 
     @BeforeEach
     fun setup() {

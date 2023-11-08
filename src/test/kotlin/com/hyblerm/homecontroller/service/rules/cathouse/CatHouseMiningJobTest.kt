@@ -60,7 +60,7 @@ internal class CatHouseMiningJobTest {
     private fun mockCheapHours(currentHour: Int, from: Int, to: Int, maxHours: Int, prices: List<Double>) {
         whenever(time.clock()).thenReturn(Clock.fixed(OffsetDateTime.now().withHour(currentHour).toInstant(), ZoneId.systemDefault()))
         val priceMap = prices.mapIndexed { index, d -> index to d }.toMap()
-        whenever(electricityRateProvider.getHourlyRates(any())).thenReturn(ElectricityRates(priceMap))
+        whenever(electricityRateProvider.getHourlyRates(any(), any())).thenReturn(ElectricityRates(priceMap))
         mockItem("Cat_Heating_From", from.toString())
         mockItem("Cat_Heating_To", to.toString())
         mockItem("Cat_Heating_Max_Hours", maxHours.toString())
@@ -92,21 +92,6 @@ internal class CatHouseMiningJobTest {
         catHouseMiningJob.run()
 
         verify(dataAccess).commandItem("minersocketzigbee_Power", "OFF")
-    }
-
-    @Test
-    fun `mining on if l3+ is profitable and mining is switched off`() {
-
-        mockItem("TASMOTASWITCH8_TEMP", "15")
-        mockItem("Cat_FreezeTemp", "0")
-        mockItem("Cat_MinTemp", "5")
-        mockItem("minersocketzigbee_Power", "OFF")
-        mockCheapHours(5, 0, 4, 0, listOf(2.0, 0.0, 0.0, 0.0, 1.0, 1.0))
-        whenever(l3IncomeProvider.getDailyIncomeUsd()).thenReturn(100.0)
-
-        catHouseMiningJob.run()
-
-        verify(dataAccess).commandItem("minersocketzigbee_Power", "ON")
     }
 
     @Test

@@ -22,4 +22,10 @@ class ElectricityRates(private val rates: Map<Int, Double>) {
         val values = rates.toList().filter { (key, _) -> key in from..to }
         return values.sumOf { entry -> entry.second } / values.size
     }
+
+    fun applyExcahengeRate(exchangeRate: Double): ElectricityRates {
+        var updatedRates = HashMap(rates)
+        updatedRates.keys.forEach { updatedRates[it] = (updatedRates[it]!!.times(exchangeRate)) }
+        return ElectricityRates(updatedRates)
+    }
 }

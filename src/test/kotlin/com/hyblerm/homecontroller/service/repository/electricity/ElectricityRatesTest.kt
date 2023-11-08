@@ -39,6 +39,12 @@ internal class ElectricityRatesTest {
     }
 
     @Test
+    fun applyExcahengeRate_shouldApplyExRateToAllValues() {
+
+        Assertions.assertThat(eRates.applyExcahengeRate(2.0).getRate(7)).isEqualTo(4.0)
+    }
+
+    @Test
     fun getAverageRate_shouldReturnAverageRate_forHourSpecified() {
         Assertions.assertThat(eRates.getAverageRate(3, 7)).isEqualTo(3.8)
     }

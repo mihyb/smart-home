@@ -16,6 +16,8 @@ import java.time.ZoneId
 import kotlin.math.roundToInt
 
 private const val CLOUDINESS_TOMORROW_ITEM = "LocalOnecall_CloudinessTommorow"
+private const val EL_SELL_PRICE_ITEM = "priceKwhSell"
+private const val EXCHANGE_RATE_ITEM = "eurCzkExRate"
 
 @Service
 class ElectricityWarningJob(
@@ -53,15 +55,13 @@ class ElectricityWarningJob(
     fun checkWeatherForSolarStation() {
 
         val cloudinessItem = dataAccess.getItem(CLOUDINESS_TOMORROW_ITEM)
+        val exchangeRate = dataAccess.getItem(EXCHANGE_RATE_ITEM).getDouble()
+
+        val hourlyRates = electricityRateProvider.getHourlyRates(OffsetDateTime.now().plusDays(1), exchangeRate)
+        val cheapMorningHours = hourlyRates.getCheapestRates(3, 0, 7)
 
         if (cloudinessItem.getPercent() > 80) {
-            val hourlyRates = electricityRateProvider.getHourlyRates(OffsetDateTime.now().plusDays(1))
-            val cheapMorningHours = hourlyRates.getCheapestRates(3, 0, 7)
-            val averagePriceMorning = hourlyRates.getAverageRate(6, 12)
-            val percentDifferenceMorning = 100 - (
-                cheapMorningHours.toList()[0].second
-                    .div(averagePriceMorning) * 100
-                )
+
             val cheapAfternoonHours = hourlyRates.getCheapestRates(2, 12, 18)
             val averagePriceAfternoon = hourlyRates.getAverageRate(16, 22)
             val percentDifferenceAfternoon = 100 - (
@@ -71,11 +71,15 @@ class ElectricityWarningJob(
             messageItem.command(
                 "Turn on grid charging. " +
                     "It will be ${cloudinessItem.state} cloudy tomorrow. " +
-                    "Morning cheap hours are: $cheapMorningHours with difference: ${percentDifferenceMorning.roundToInt()}" +
+                    "Morning cheap hours are: $cheapMorningHours" +
                     " and afternoon: $cheapAfternoonHours with difference: ${percentDifferenceAfternoon.roundToInt()}"
             )
         } else {
-            messageItem.command("Turn off grid charging. It will be ${cloudinessItem.state} cloudy tomorrow.")
+            messageItem.command(
+                "Turn on grid charging. " +
+                    "It will be ${cloudinessItem.state} cloudy tomorrow. " +
+                    "Morning cheap hours are: $cheapMorningHours"
+            )
         }
     }
 }
