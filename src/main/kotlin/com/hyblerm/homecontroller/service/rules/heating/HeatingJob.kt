@@ -21,7 +21,7 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
     val livingRoomDev: String = "g2_living_room_temp_dev"
     val livingRoomTemp: String = "mqtt_topic_db0eec51_TASMOTA_4_TEMP"
     val workRoomDev: String = "g2_work_room_temp_dev"
-    val workRoomTemp: String = "Workroomtemp_TemperatureNum"
+    val workRoomTemp: String = "tempworkroomzb_tempworkroomzbtemp"
     val kidsRoomDev: String = "g2_kids_room_temp_dev"
     val kidsRoomTemp: String = "broadlink_floureonthermostat_192_168_0_7_roomtemperature"
     val acLower: String = "acLower"
