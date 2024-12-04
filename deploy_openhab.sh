@@ -1,0 +1,1 @@
+ssh dev@192.168.1.109 'cd /etc/openhab && git pull'
