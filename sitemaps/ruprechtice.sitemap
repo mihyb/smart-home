@@ -1,3 +1,9 @@
 sitemap ruprechtice label="Ruprechtice" {
     Switch item=Kotelna_zasuvka
+    Switch item=akvarium_svetlo_switch
+    Switch item=vysousec_switch
+    Switch item=Kotelna_zasuvka
+    Number item=pracovna_teplota_battery
+    Number item=pracovna_teplota_humidity
+    Number item=pracovna_teplota_temp
 }
