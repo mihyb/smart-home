@@ -4,6 +4,6 @@ sitemap ruprechtice label="Ruprechtice" {
     Switch item=vysousec_switch
     Switch item=Kotelna_zasuvka
     Text item=pracovna_teplota_battery
-    Text item=pracovna_teplota_humidity label="Teplota %s %unit%"
+    Text item=pracovna_teplota_humidity label="Teplota [%s %unit%]"
     Text item=pracovna_teplota_temp
 }
