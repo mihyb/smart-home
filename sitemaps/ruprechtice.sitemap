@@ -6,9 +6,9 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]"
     }
     Frame label="Pokojíček" {
-            Text item=pokojicek_teplota_battery label="Teploměr baterie [%.0f %%]"
-            Text item=pokojicek_teplota_humidity label="Vlhkost [%.0f %%]"
-            Text item=pokojicek_teplota_temp label="Teplota [%.1f °C]"
+            Text item=pokojicek_temp_battery label="Teploměr baterie [%.0f %%]"
+            Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]"
+            Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]"
         }
     Frame label="Ostatní" {
         Switch item=Kotelna_zasuvka label="Kotelna zásuvka"
