@@ -1,17 +1,25 @@
 sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pracovna" {
         Switch item=akvarium_svetlo_switch label="Akvarium světlo"
-        Text item=pracovna_teplota_battery label="Teploměr baterie [%.0f %%]"
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]"
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]"
     }
     Frame label="Pokojíček" {
-            Text item=pokojicek_temp_battery label="Teploměr baterie [%.0f %%]"
             Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]"
             Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]"
-        }
+    }
+    Frame label="Chodba" {
+        Text item=chodba_teplota_humidity label="Vlhkost [%.0f %%]"
+        Text item=chodba_teplota_temp label="Teplota [%.1f °C]"
+    }
     Frame label="Ostatní" {
         Switch item=Kotelna_zasuvka label="Kotelna zásuvka"
         Switch item=vysousec_switch label="Odvlhčovač"
+    }
+
+    Frame label="Servis" {
+        Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]"
+        Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]"
+        Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]"
     }
 }
