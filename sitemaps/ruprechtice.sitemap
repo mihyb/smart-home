@@ -9,8 +9,8 @@ sitemap ruprechtice label="Ruprechtice" {
             Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]"
     }
     Frame label="Chodba" {
-        Text item=chodba_teplota_humidity label="Vlhkost [%.0f %%]"
-        Text item=chodba_teplota_temp label="Teplota [%.1f °C]"
+        Text item=chodba_temp_humidity label="Vlhkost [%.0f %%]"
+        Text item=chodba_temp_temperature label="Teplota [%.1f °C]"
     }
     Frame label="Ostatní" {
         Switch item=Kotelna_zasuvka label="Kotelna zásuvka"
