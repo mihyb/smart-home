@@ -5,8 +5,12 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]"
     }
     Frame label="Pokojíček" {
-            Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]"
-            Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]"
+        Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]"
+        Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]"
+    }
+    Frame label="Obývák" {
+        Switch item=obyvak_switch label="Stromeček"
+
     }
     Frame label="Chodba" {
         Text item=chodba_temp_humidity label="Vlhkost [%.0f %%]"
