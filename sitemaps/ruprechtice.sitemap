@@ -1,6 +1,7 @@
 sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pracovna" {
         Switch item=akvarium_svetlo_switch label="Akvarium světlo"
+        Switch item=vysousec_switch label="Zásuvka okno"
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]"
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]"
     }
@@ -24,9 +25,8 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=zadveri_temp_humidity label="Vlhkost [%.0f %%]"
         Text item=zadveri_temp_temperature label="Teplota [%.1f °C]"
     }
-    Frame label="Ostatní" {
-        Switch item=Kotelna_zasuvka label="Kotelna zásuvka"
-        Switch item=vysousec_switch label="Odvlhčovač"
+    Frame label="Kotelna" {
+        Switch item=Kotelna_zasuvka label="Zásuvka"
     }
 
     Frame label="Servis" {
