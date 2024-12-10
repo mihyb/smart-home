@@ -19,7 +19,7 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=chodba_temp_temperature label="Teplota [%.1f °C]"
     }
     Frame label="Koupelna" {
-        Text item=koupelna_temp_humididty label="Vlhkost [%.0f %%]"
+        Text item=koupelna_temp_humidity label="Vlhkost [%.0f %%]"
         Text item=koupelna_temp_temperature label="Teplota [%.1f °C]"
     }
     Frame label="Zadveri" {
