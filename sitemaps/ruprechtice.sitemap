@@ -2,6 +2,7 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pracovna" {
         Switch item=akvarium_svetlo_switch label="Akvarium světlo"
         Switch item=vysousec_switch label="Zásuvka okno"
+        Switch item=Infrared_heating_panel_switch label="Topení"
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]"
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]"
     }
