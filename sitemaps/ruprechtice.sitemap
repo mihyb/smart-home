@@ -33,6 +33,7 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame label="Sklep" {
         Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Text item=sklep_water_tamper label=Voda
     }
     Frame label="Servis" {
         Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
@@ -41,6 +42,6 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
         Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
         Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=sklep_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+        Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
     }
 }
