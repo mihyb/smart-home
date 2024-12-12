@@ -43,5 +43,6 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
         Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
         Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+        Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<20="red"]
     }
 }
