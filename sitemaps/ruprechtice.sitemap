@@ -11,14 +11,13 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
     }
     Frame label="Obyvák" {
-        Switch item=obyvak_switch label="Stromeček"
         Text item=obyvak_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=obyvak_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
         Frame label="Stromeček" {
-            Switch item=timer_job_xmass_status label="timer"
-            Switch item=obyvak_switch label="stav"
-            Setpoint item=timer_job_xmass_from label="od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_xmass_to label="do" minValue=0 maxValue=23 step=1
+            Switch item=timer_job_xmass_status label="Časovač"
+            Switch item=obyvak_switch label="Stav"
+            Setpoint item=timer_job_xmass_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_xmass_to label="Do" minValue=0 maxValue=23 step=1
         }
     }
     Frame label="Chodba" {
