@@ -17,8 +17,8 @@ sitemap ruprechtice label="Ruprechtice" {
         Frame label="Stromeček" {
             Switch item=timer_job_xmass_status label="timer"
             Switch item=obyvak_switch label="stav"
-            Number timer_job_xmass_from "od"
-            Number timer_job_xmass_to "do"
+            Default timer_job_xmass_from "od"
+            Default timer_job_xmass_to "do"
         }
     }
     Frame label="Chodba" {
