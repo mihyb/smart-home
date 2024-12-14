@@ -2,6 +2,7 @@ package com.hyblerm.homecontroller.service.rules.items
 
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.rules.common.items.CalendarItem
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito

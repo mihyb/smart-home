@@ -1,7 +1,7 @@
-package com.hyblerm.homecontroller.service.rules
+package com.hyblerm.homecontroller.service.rules.common.job
 
 import com.hyblerm.homecontroller.service.repository.DataAccess
-import com.hyblerm.homecontroller.service.rules.items.Switch
+import com.hyblerm.homecontroller.service.rules.common.items.Switch
 import com.hyblerm.homecontroller.service.util.Time
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

@@ -1,0 +1,39 @@
+app:
+  port: 8181
+  openhab:
+    baseUrl: "http://192.168.1.109:8080/rest/"
+  electricity:
+    oteUrl: "https://www.ote-cr.cz/cs/kratkodobe-trhy/elektrina/denni-trh?date="
+  currency:
+    usdRate: 23.82
+    eurRate: 25.02
+  timerJobs:
+    - switchItem: "obyvak_switch"
+      endHourItem: "timer_job_xmass_to"
+      startHourItem: "timer_job_xmass_from"
+      statusItem: "timer_job_xmass_status"
+server:
+  port: "${app.port}"
+logging:
+  level:
+    root: WARN
+    com.hyblerm.homecontroller: DEBUG
+  file:
+    name: home-portal.log
+spring:
+  boot:
+    admin:
+      client:
+        url: "http://127.0.0.1:${app.port}"
+  datasource:
+    url: "jdbc:h2:file:/tmp/data/demo"
+    driverClassName: "org.h2.Driver"
+  jpa:
+    database-platform: "org.hibernate.dialect.H2Dialect"
+    hibernate:
+      ddl-auto: "create"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

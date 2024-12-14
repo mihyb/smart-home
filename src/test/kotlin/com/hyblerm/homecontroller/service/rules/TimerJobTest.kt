@@ -2,6 +2,7 @@ package com.hyblerm.homecontroller.service.rules
 
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.rules.common.job.TimerJob
 import com.hyblerm.homecontroller.service.util.Time
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

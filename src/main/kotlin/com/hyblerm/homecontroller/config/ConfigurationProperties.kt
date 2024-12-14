@@ -7,7 +7,7 @@ class ConfigurationProperties {
 
     var openhab = OpenHab()
     var electricity = Electricity()
-    var nicehash = Nicehash()
+    var timerJobs = mutableListOf<TimerJobConfig>()
 
     class Electricity {
         var oteUrl = ""
@@ -24,9 +24,11 @@ class ConfigurationProperties {
         var itemsRelativePath: String = "items"
         var itemRelativePath: String = "items/{name}"
     }
-    // app.nicehash.l3PlusIncomeUrl
-    class Nicehash {
-        var l3PlusIncomeUrl = ""
-        var miningEnabled = false
+
+    class TimerJobConfig {
+        var switchItem: String = ""
+        var statusItem: String = ""
+        var startHourItem: String = ""
+        var endHourItem: String = ""
     }
 }

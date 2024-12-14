@@ -1,4 +1,4 @@
-package com.hyblerm.homecontroller.service.rules.items
+package com.hyblerm.homecontroller.service.rules.common.items
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
