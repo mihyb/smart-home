@@ -4,6 +4,7 @@ import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRates
+import com.hyblerm.homecontroller.service.repository.electricity.SpotElectricityPriceEvaluator
 import com.hyblerm.homecontroller.service.repository.mining.L3IncomeProvider
 import com.hyblerm.homecontroller.service.util.Time
 import org.junit.jupiter.api.BeforeEach
@@ -32,6 +33,9 @@ internal class CatHouseMiningJobTest {
     lateinit var electricityRateProvider: ElectricityRateProvider
 
     @MockBean
+    lateinit var electricityPriceEvaluator: SpotElectricityPriceEvaluator
+
+    @MockBean
     lateinit var time: Time
 
     @MockBean
@@ -44,6 +48,7 @@ internal class CatHouseMiningJobTest {
     fun setup() {
         whenever(time.clock()).thenReturn(Clock.systemDefaultZone())
         catHouseMiningJob.restartWaitPeriod = 0
+        whenever(electricityPriceEvaluator.isElectricityFree()).thenReturn(false)
     }
 
     @Test

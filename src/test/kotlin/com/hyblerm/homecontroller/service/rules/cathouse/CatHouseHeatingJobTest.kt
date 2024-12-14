@@ -2,6 +2,8 @@ package com.hyblerm.homecontroller.service.rules.cathouse
 
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.repository.electricity.SpotElectricityPriceEvaluator
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.times
@@ -19,8 +21,16 @@ internal class CatHouseHeatingJobTest {
     @MockBean
     lateinit var dataAccess: DataAccess
 
+    @MockBean
+    lateinit var electricityPriceEvaluator: SpotElectricityPriceEvaluator
+
     @Autowired
     lateinit var catHouseHeatingJob: CatHouseHeatingJob
+
+    @BeforeEach
+    fun setup() {
+        whenever(electricityPriceEvaluator.isElectricityFree()).thenReturn(false)
+    }
 
     @Test
     fun `heating on if cats are freezing and heating is enabled and heating is switched off`() {

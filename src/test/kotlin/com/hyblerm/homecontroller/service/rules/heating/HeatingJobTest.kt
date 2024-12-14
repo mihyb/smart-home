@@ -2,6 +2,7 @@ package com.hyblerm.homecontroller.service.rules.heating
 
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.repository.solar.PowerPlant
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -16,7 +17,8 @@ import java.util.stream.Stream
 internal class HeatingJobTest {
 
     private val dataAccess: DataAccess = Mockito.mock(DataAccess::class.java)
-    private val heatingJob: HeatingJob = HeatingJob(dataAccess)
+    private val powerPlant: PowerPlant = Mockito.mock(PowerPlant::class.java)
+    private val heatingJob: HeatingJob = HeatingJob(dataAccess, powerPlant)
 
     @Test
     fun keepTemperature_ShouldDoNothing_ifHeatingIsOff() {

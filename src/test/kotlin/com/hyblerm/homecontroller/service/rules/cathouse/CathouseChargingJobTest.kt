@@ -4,6 +4,7 @@ import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
 import com.hyblerm.homecontroller.service.util.Time
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -57,6 +58,7 @@ class CathouseChargingJobTest {
     }
 
     @Test
+    @Disabled("spot prices disabled")
     fun `charging should turn on if electricity price is negative`() {
         mockItem("pp_battery_soc", "0")
         mockItem("pp_ppv", "0")

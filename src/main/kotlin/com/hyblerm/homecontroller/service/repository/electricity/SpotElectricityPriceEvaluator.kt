@@ -6,12 +6,12 @@ import java.time.LocalTime
 import java.time.ZoneId
 
 @Service
-class ElectricityPriceEvaluator(
+class SpotElectricityPriceEvaluator(
     val electricityRateProvider: ElectricityRateProvider,
     val time: Time
-) {
+) : IElectricityPriceEvaluator {
 
-    fun isElectricityFree(): Boolean {
+    override fun isElectricityFree(): Boolean {
         val currentHour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
         val price = electricityRateProvider.getBuyPriceCZK(currentHour)
         return (price?.compareTo(0) ?: 0) <= 0

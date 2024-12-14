@@ -6,17 +6,16 @@ import com.hyblerm.homecontroller.service.rules.items.MessageItem
 import com.hyblerm.homecontroller.service.util.Time
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.Duration
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 private const val CLOUDINESS_TOMORROW_ITEM = "LocalOnecall_CloudinessTommorow"
-private const val EL_SELL_PRICE_ITEM = "priceKwhSell"
 private const val EXCHANGE_RATE_ITEM = "eurCzkExRate"
 
 @Service
@@ -30,7 +29,7 @@ class ElectricityWarningJob(
 
     val messageItem = MessageItem(dataAccess)
 
-    @Scheduled(cron = "0 55 * ? * *")
+    // @Scheduled(cron = "0 55 * ? * *")
     fun checkNegativePrice() {
 
         val currentPrice = getPrice(time.clock())
@@ -51,7 +50,7 @@ class ElectricityWarningJob(
         return rates.getRate(hour) ?: 0.0
     }
 
-    @Scheduled(cron = "0 05 18 ? * *")
+    // @Scheduled(cron = "0 05 18 ? * *")
     fun checkWeatherForSolarStation() {
 
         val cloudinessItem = dataAccess.getItem(CLOUDINESS_TOMORROW_ITEM)
@@ -62,17 +61,20 @@ class ElectricityWarningJob(
 
         if (cloudinessItem.getPercent() > 80) {
 
-            val cheapAfternoonHours = hourlyRates.getCheapestRates(2, 12, 18)
-            val averagePriceAfternoon = hourlyRates.getAverageRate(16, 22)
-            val percentDifferenceAfternoon = 100 - (
-                cheapMorningHours.toList()[0].second
-                    .div(averagePriceAfternoon) * 100
-                )
+            val cheapAfternoonHours = hourlyRates.getCheapestRates(2, 12, 20)
+            val averagePriceAfternoon = hourlyRates.getAverageRate(12, 20)
+            val percentDifferenceAfternoon = 100 - (cheapMorningHours.toList()[0].second.div(averagePriceAfternoon.div(100)))
             messageItem.command(
                 "Turn on grid charging. " +
                     "It will be ${cloudinessItem.state} cloudy tomorrow. " +
                     "Morning cheap hours are: $cheapMorningHours" +
-                    " and afternoon: $cheapAfternoonHours with difference: ${percentDifferenceAfternoon.roundToInt()}"
+                    " and afternoon: $cheapAfternoonHours with difference: ${percentDifferenceAfternoon.absoluteValue.roundToInt()}"
+            )
+            logger.debug(
+                "El charging eval params. cheapAfternoonHours: {}, averagePriceAfternoon: {} percentDifferenceAfternoon:{}",
+                cheapAfternoonHours,
+                averagePriceAfternoon,
+                percentDifferenceAfternoon
             )
         } else {
             messageItem.command(

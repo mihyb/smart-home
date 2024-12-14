@@ -5,10 +5,12 @@ import com.hyblerm.homecontroller.repository.L3PlusIncomeLoader
 import com.hyblerm.homecontroller.service.repository.mining.L3IncomeProvider
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.whenever
 
+@Disabled("not used anymore")
 internal class L3PlusIncomeLoaderTest {
 
     private val configurationProperties: ConfigurationProperties = Mockito.mock(ConfigurationProperties::class.java)

@@ -1,6 +1,7 @@
 package com.hyblerm.homecontroller.service.rules.heating
 
 import com.hyblerm.homecontroller.service.repository.DataAccess
+import com.hyblerm.homecontroller.service.repository.solar.PowerPlant
 import com.hyblerm.homecontroller.service.rules.JobBase
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service
 import java.util.concurrent.TimeUnit
 
 @Service
-class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
+class HeatingJob(val dataAccess: DataAccess, val powerPlant: PowerPlant) : JobBase(dataAccess) {
 
     val logger: Logger = LoggerFactory.getLogger(HeatingJob::class.java)
 
@@ -39,8 +40,6 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
     val acMode: String = "g2_ac_mode"
     val heatingMainSwitch: String = "heating_main_switch"
     val jablotronStatus: String = "JablotronJA100_Dum"
-    val solarBatterySoc: String = "pp_battery_soc"
-    val solarPanelProduction: String = "pp_ppv"
 
     @Scheduled(fixedRate = 60, timeUnit = TimeUnit.SECONDS)
     fun keepTemperature() {
@@ -105,7 +104,7 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
 
     fun getDayTemperature(): Double {
         val dayTemp = item(requestedDayTemp).getDouble()
-        return if (isSolarActiveAndCharged()) {
+        return if (powerPlant.isSolarActiveAndCharged()) {
             val fullSolarTemperatureBoost = getFullSolarTemperatureBoost()
             logger.debug("Battery is charged. Increasing day temperature by $fullSolarTemperatureBoost")
             dayTemp + fullSolarTemperatureBoost
@@ -124,11 +123,5 @@ class HeatingJob(val dataAccess: DataAccess) : JobBase(dataAccess) {
 
     fun heatingMode(): Appliance.WorkingMode {
         return if (item(acMode).isOn()) Appliance.WorkingMode.HEAT else Appliance.WorkingMode.COOL
-    }
-
-    fun isSolarActiveAndCharged(): Boolean {
-        val batterySoc = item(solarBatterySoc).getInt()
-        val solarProduction = item(solarPanelProduction).getInt()
-        return batterySoc > 95 && solarProduction > 3000
     }
 }

@@ -1,7 +1,7 @@
 package com.hyblerm.homecontroller.service.rules.cathouse
 
 import com.hyblerm.homecontroller.service.repository.DataAccess
-import com.hyblerm.homecontroller.service.repository.electricity.ElectricityPriceEvaluator
+import com.hyblerm.homecontroller.service.repository.electricity.IElectricityPriceEvaluator
 import com.hyblerm.homecontroller.service.rules.JobBase
 import com.hyblerm.homecontroller.service.rules.items.Switch
 import com.hyblerm.homecontroller.service.util.Time
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 @Service
 class CathouseChargingJob(
     val dataAccess: DataAccess,
-    val electricityPriceEvaluator: ElectricityPriceEvaluator,
+    val electricityPriceEvaluator: IElectricityPriceEvaluator,
     val time: Time
 ) : JobBase(dataAccess) {
 

@@ -2,13 +2,13 @@ package com.hyblerm.homecontroller.service.rules.cathouse
 
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.repository.electricity.ElectricityRateProvider
+import com.hyblerm.homecontroller.service.repository.electricity.IElectricityPriceEvaluator
 import com.hyblerm.homecontroller.service.rules.JobBase
 import com.hyblerm.homecontroller.service.rules.items.MessageItem
 import com.hyblerm.homecontroller.service.rules.items.Switch
 import com.hyblerm.homecontroller.service.util.Time
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit
 class CatHouseMiningJob(
     val dataAccess: DataAccess,
     val electricityRateProvider: ElectricityRateProvider,
+    val electricityPriceEvaluator: IElectricityPriceEvaluator,
     val time: Time,
 ) : JobBase(dataAccess) {
 
@@ -37,12 +38,12 @@ class CatHouseMiningJob(
 
     val messageItem = MessageItem(dataAccess)
 
-    @Scheduled(cron = "0 0 * ? * *")
+    // @Scheduled(cron = "0 1/31 * ? * *")
     fun run() {
         processMining()
     }
 
-    @Scheduled(initialDelay = 5, timeUnit = TimeUnit.MINUTES, fixedRate = 5)
+    // @Scheduled(initialDelay = 5, timeUnit = TimeUnit.MINUTES, fixedRate = 5)
     fun runCheck() {
         val miningSwitch = Switch("minersocketzigbee_Power", dataAccess)
         if (miningSwitch.isOn()) {
@@ -73,7 +74,13 @@ class CatHouseMiningJob(
             return
         }
 
-        // TOD could be turned on in case that electricity is negative and we are not selling
+        if (electricityPriceEvaluator.isElectricityFree()) {
+            if (!miningSwitch.isOn()) {
+                miningSwitch.turnOn()
+                logger.debug("Turning on cats mining. Electricity is free.")
+            }
+            return
+        }
 
         miningSwitch.turnOff()
         logger.debug("Turning mining off. Temp: $currentTemp requested: $requestedTemp freeze: $freezeTemp")
