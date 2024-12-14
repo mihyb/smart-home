@@ -14,6 +14,12 @@ sitemap ruprechtice label="Ruprechtice" {
         Switch item=obyvak_switch label="Stromeček"
         Text item=obyvak_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=obyvak_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Frame label="Stromeček" {
+            Switch item=timer_job_xmass_status label="timer"
+            Switch item=obyvak_switch label="stav"
+            Default item=timer_job_xmass_from label="od"
+            Default item=timer_job_xmass_to label="do"
+        }
     }
     Frame label="Chodba" {
         Text item=chodba_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
