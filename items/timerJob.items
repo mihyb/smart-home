@@ -2,3 +2,12 @@
 Number timer_job_xmass_from
 Number timer_job_xmass_to
 Switch timer_job_xmass_status
+//aquarium
+Number timer_job_aquarium_from
+Number timer_job_aquarium_to
+Switch timer_job_aquarium_status
+//agama
+Number timer_job_agama_from
+Number timer_job_agama_to
+Switch timer_job_agama_status
+
