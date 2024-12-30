@@ -49,7 +49,7 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame label="Sklep" {
         Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
-        Text item=sklep_water_tamper label=Voda
+        Text item=sklep_water_water_leak label=Voda
     }
     Frame label="Servis" {
         Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
