@@ -45,11 +45,12 @@ sitemap ruprechtice label="Ruprechtice" {
     }
     Frame label="Kotelna" {
         Switch item=Kotelna_zasuvka label="Zásuvka"
+        Text item=smoke_sensor_smoke label="Kouř poplach" labelcolor=[ON="red"]
     }
     Frame label="Sklep" {
         Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
-        Text item=sklep_water_water_leak label=Voda
+        Text item=sklep_water_water_leak label=Voda labelcolor=[ON="red"]
     }
     Frame label="Servis" {
         Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
@@ -60,5 +61,6 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
         Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
         Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<20="red"]
+        Text item=smoke_sensor_battery_low label="Kourovy sensor slaba baterie" labelcolor=[ON="red"]
     }
 }
