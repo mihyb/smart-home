@@ -26,9 +26,15 @@ class ConfigurationProperties {
     }
 
     class TimerJobConfig {
+        var name: String = ""
         var switchItem: String = ""
         var statusItem: String = ""
         var startHourItem: String = ""
         var endHourItem: String = ""
+        var mode: Mode = Mode.ALL
+
+        enum class Mode {
+            ALL, WEEKDAY, WEEKEND
+        }
     }
 }

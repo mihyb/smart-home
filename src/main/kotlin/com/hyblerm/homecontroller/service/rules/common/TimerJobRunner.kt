@@ -18,7 +18,7 @@ class TimerJobRunner(
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES)
     fun runTimerJobs() {
         config.timerJobs.forEach {
-            TimerJob(repository, time, it.startHourItem, it.endHourItem, it.statusItem, it.switchItem).checkSwitch()
+            TimerJob(repository, time, it).checkSwitch()
         }
     }
 }

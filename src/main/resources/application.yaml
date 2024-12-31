@@ -12,6 +12,19 @@ app:
       endHourItem: "timer_job_xmass_to"
       startHourItem: "timer_job_xmass_from"
       statusItem: "timer_job_xmass_status"
+    - switchItem: "akvarium_svetlo_switch"
+      endHourItem: "timer_job_aquarium_to"
+      startHourItem: "timer_job_aquarium_from"
+      statusItem: "timer_job_aquarium_status"
+    - switchItem: "agama_switch"
+      endHourItem: "timer_job_agama_to"
+      startHourItem: "timer_job_agama_from"
+      statusItem: "timer_job_agama_status"
+    - switchItem: "Infrared_heating_panel_switch"
+      endHourItem: "timer_job_wr_heating_to"
+      startHourItem: "timer_job_wr_heating_from"
+      statusItem: "timer_job_wr_heating_status"
+      mode: weekday
 server:
   port: "${app.port}"
 logging:
