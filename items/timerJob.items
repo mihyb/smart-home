@@ -10,4 +10,8 @@ Switch timer_job_aquarium_status
 Number timer_job_agama_from
 Number timer_job_agama_to
 Switch timer_job_agama_status
+//workrooom heating
+Number timer_job_wr_heating_from
+Number timer_job_wr_heating_to
+Switch timer_job_wr_heating_status
 

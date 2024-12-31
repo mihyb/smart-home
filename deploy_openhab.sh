@@ -1,1 +1,1 @@
-ssh dev@192.168.1.109 'cd /etc/openhab && git pull'
+ssh dev@192.168.1.109 'cd /etc/openhab && git fetch origin && git reset --hard origin/initital_setup'

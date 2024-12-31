@@ -1,7 +1,6 @@
 sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pracovna" {
         Switch item=vysousec_switch label="Zásuvka okno"
-        Switch item=Infrared_heating_panel_switch label="Topení"
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
         Frame label="Rybicky světlo" {
@@ -10,7 +9,17 @@ sitemap ruprechtice label="Ruprechtice" {
             Setpoint item=timer_job_aquarium_from label="Od" minValue=0 maxValue=23 step=1
             Setpoint item=timer_job_aquarium_to label="Do" minValue=0 maxValue=23 step=1
         }
+        Frame label="Topení" {
+            Switch item=timer_job_wr_heating_status label="Časovač"
+            Switch item=Infrared_heating_panel_switch label="Stav"
+            Setpoint item=timer_job_wr_heating_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_wr_heating_to label="Do" minValue=0 maxValue=23 step=1
+        }
     }
+    Frame label="Chodba" {
+            Text item=chodba_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+            Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        }
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
@@ -30,10 +39,6 @@ sitemap ruprechtice label="Ruprechtice" {
             Setpoint item=timer_job_agama_from label="Od" minValue=0 maxValue=23 step=1
             Setpoint item=timer_job_agama_to label="Do" minValue=0 maxValue=23 step=1
         }
-    }
-    Frame label="Chodba" {
-        Text item=chodba_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
-        Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
     }
     Frame label="Koupelna" {
         Text item=koupelna_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
