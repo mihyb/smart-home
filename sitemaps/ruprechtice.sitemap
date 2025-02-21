@@ -23,6 +23,12 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Frame label="Odvlhčovač" {
+            Switch item=timer_job_kr_moisture_status label="Časovač"
+            Switch item=pokoj_vysousec_switch label="Stav"
+            Setpoint item=timer_job_kr_moisture_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_kr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+        }
     }
     Frame label="Obyvák" {
         Text item=obyvak_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
@@ -49,7 +55,6 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=zadveri_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
     }
     Frame label="Kotelna" {
-        Switch item=Kotelna_zasuvka label="Zásuvka"
         Text item=smoke_sensor_smoke label="Kouř poplach" labelcolor=[ON="red"]
     }
     Frame label="Sklep" {
