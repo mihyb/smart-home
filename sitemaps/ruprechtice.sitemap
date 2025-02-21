@@ -18,7 +18,7 @@ sitemap ruprechtice label="Ruprechtice" {
     }
     Frame label="Chodba" {
             Text item=chodba_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
-            Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+            Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10g="blue"]
         }
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
@@ -58,8 +58,8 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=smoke_sensor_smoke label="Kouř poplach" labelcolor=[ON="red"]
     }
     Frame label="Sklep" {
-        Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
-        Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>75="red"]
+        Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
         Text item=sklep_water_water_leak label=Voda labelcolor=[ON="red"]
     }
     Frame label="Servis" {
