@@ -1,0 +1,12 @@
+  rule "Chodba hum calibration"
+   when
+       Item chodba_temp_humidity received command or
+       Item chodba_temp_humidity changed
+   then
+       if (chodba_temp_humidity.state instanceof Number) {
+           val newValue = (chodba_temp_humidity.state as Number) - 15
+           chodba_temp_humidity.postUpdate(newValue)
+       } else {
+           logWarn("item_calibration.rules", "chodba_temp_humidity state is not a number!")
+       }
+   end
