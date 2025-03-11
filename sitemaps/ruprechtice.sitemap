@@ -18,7 +18,7 @@ sitemap ruprechtice label="Ruprechtice" {
     }
     Frame label="Chodba" {
             Text item=chodba_temp_humidity_calibrated label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
-            Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10g="blue"]
+            Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
         }
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]

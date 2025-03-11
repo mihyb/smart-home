@@ -4,9 +4,8 @@
        Item chodba_temp_humidity changed
    then
        if (chodba_temp_humidity.state instanceof Number) {
-           val newValue = (chodba_temp_humidity.state as Number) - 15
-           chodba_temp_humidity_calibrated.postUpdate(newValue)
-           logWarn("item_calibration.rules", "humidity: " + (chodba_temp_humidity.state as Number) + " udpated to: " + newValue)
+           val newValue = (chodba_temp_humidity.state as Number).doubleValue - 0.15
+           chodba_temp_humidity_calibrated.postUpdate(newValue * 100)
        } else {
            logWarn("item_calibration.rules", "chodba_temp_humidity state is not a number!")
        }
