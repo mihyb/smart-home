@@ -1,3 +1,4 @@
 //chodba
 Number chodba_temp_humidity_calibrated
+Number chodba_temp_humidity_calibrated_percent
 

@@ -5,7 +5,8 @@
    then
        if (chodba_temp_humidity.state instanceof Number) {
            val newValue = (chodba_temp_humidity.state as Number).doubleValue - 0.15
-           chodba_temp_humidity_calibrated.postUpdate(newValue * 100)
+           chodba_temp_humidity_calibrated.postUpdate(newValue)
+           chodba_temp_humidity_calibrated_percent.postUpdate(newValue*100)
        } else {
            logWarn("item_calibration.rules", "chodba_temp_humidity state is not a number!")
        }

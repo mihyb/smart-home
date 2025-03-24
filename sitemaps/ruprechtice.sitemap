@@ -22,7 +22,7 @@ sitemap ruprechtice label="Ruprechtice" {
         }
     }
     Frame label="Chodba" {
-            Text item=chodba_temp_humidity_calibrated label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+            Text item=chodba_temp_humidity_calibrated_percent label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
             Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
         }
     Frame label="Pokojíček" {
@@ -67,15 +67,22 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
         Text item=sklep_water_water_leak label=Voda labelcolor=[ON="red"]
     }
-    Frame label="Servis" {
-        Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<20="red"]
-        Text item=smoke_sensor_battery_low label="Kourovy sensor slaba baterie" labelcolor=[ON="red"]
+    Frame label="Admin" {
+        Frame label="Statistiky" {
+            Chart item=humidity_sensors label="Vlhkost" period=W refresh=300
+            Chart item=temp_sensors label="Teplota" period=W refresh=300
+        }
+        Frame label="Servis" {
+            Text item=backend_health_status_item label="Backend status" labelcolor=["DOWN"="red"]
+            Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=smoke_sensor_battery_low label="Kourovy sensor slaba baterie" labelcolor=[ON="red"]
+        }
     }
 }
