@@ -31,7 +31,6 @@ open class TimerJob(
 
     fun checkSwitch() {
         if (isEnabled()) {
-            logger.debug("timer is on")
             val hour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
             val switch = Switch(config.switchItem, repository)
             if (item(config.startHourItem).getDouble() > item(config.endHourItem).getDouble()) {
@@ -39,6 +38,8 @@ open class TimerJob(
             } else {
                 checkHourWithinDay(hour, switch)
             }
+        } else {
+            logger.debug("timer is disabled")
         }
     }
 
@@ -58,28 +59,30 @@ open class TimerJob(
     private fun checkHourCrossDay(hour: Int, switch: Switch) {
         if (hour >= item(config.startHourItem).getDouble() || hour < item(config.endHourItem).getDouble()) {
             if (!switch.isOn()) {
-                logger.info("switching on switch")
+                logger.info("checkHourCrossDay - switching on switch")
                 switch.turnOn()
             }
+            logger.debug("checkHourCrossDay - switch is already on")
         } else if (switch.isOn()) {
-            logger.info("switching off switch")
+            logger.info("checkHourCrossDay - switching off switch")
             switch.turnOff()
         } else {
-            logger.debug("switch is ok")
+            logger.debug("checkHourCrossDay - switch is already off")
         }
     }
 
     private fun checkHourWithinDay(hour: Int, switch: Switch) {
         if (hour >= item(config.startHourItem).getDouble() && hour < item(config.endHourItem).getDouble()) {
             if (!switch.isOn()) {
-                logger.info("switching on switch")
+                logger.info("checkHourWithinDay- switching on switch")
                 switch.turnOn()
             }
+            logger.debug("checkHourWithinDay - switch is already on")
         } else if (switch.isOn()) {
-            logger.info("switching off switch")
+            logger.info("checkHourWithinDay - switching off switch")
             switch.turnOff()
         } else {
-            logger.debug("switch is ok")
+            logger.debug("checkHourWithinDay - switch is already off")
         }
     }
 }

@@ -25,6 +25,10 @@ app:
       startHourItem: "timer_job_wr_heating_from"
       statusItem: "timer_job_wr_heating_status"
       mode: weekday
+    - switchItem: "pokoj_vysousec_switch"
+      endHourItem: "timer_job_kr_moisture_to"
+      startHourItem: "timer_job_kr_moisture_from"
+      statusItem: "timer_job_kr_moisture_status"
 server:
   port: "${app.port}"
 logging:

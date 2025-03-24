@@ -1,5 +1,6 @@
 package com.hyblerm.homecontroller.service.rules
 
+import com.hyblerm.homecontroller.config.ConfigurationProperties
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.rules.common.job.TimerJob
@@ -29,7 +30,7 @@ class TimerJobTest {
 
     private val dataAccess = Mockito.mock(DataAccess::class.java)
     private val time = Mockito.mock(Time::class.java)
-    var timerJob: TimerJob = TimerJob(dataAccess, time, START_HOUR_ID, END_HOUR_ID, STATUS_ID, SWITCH_ID)
+    var timerJob: TimerJob = TimerJob(dataAccess, time, timerJobConfig())
 
     @Test
     fun `checkSwitch should do nothing if it is disabled`() {
@@ -97,5 +98,14 @@ class TimerJobTest {
                 Arguments.of(9, 30, "10", "16"),
             )
         }
+    }
+
+    private fun timerJobConfig(): ConfigurationProperties.TimerJobConfig {
+        val timerJobConfig = ConfigurationProperties.TimerJobConfig()
+        timerJobConfig.switchItem = SWITCH_ID
+        timerJobConfig.statusItem = STATUS_ID
+        timerJobConfig.startHourItem = START_HOUR_ID
+        timerJobConfig.endHourItem = END_HOUR_ID
+        return timerJobConfig
     }
 }
