@@ -18,4 +18,8 @@ Switch timer_job_wr_heating_status
 Number timer_job_kr_moisture_from
 Number timer_job_kr_moisture_to
 Switch timer_job_kr_moisture_status
+//work room moisture
+Number timer_job_wr_moisture_from
+Number timer_job_wr_moisture_to
+Switch timer_job_wr_moisture_status
 
