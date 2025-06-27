@@ -3,10 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.6.2"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.6.0-RC"
-    kotlin("plugin.spring") version "1.6.0-RC"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
     id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.6.10"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.9.23"
     id("com.github.bjornvester.wsdl2java") version "2.0.2"
 }
 
@@ -17,6 +17,19 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 configurations {
     compileOnly {
         extendsFrom(configurations.annotationProcessor.get())
+    }
+    all {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.mockito") {
+                useVersion("5.11.0")
+            }
+            if (requested.group == "org.mockito.kotlin") {
+                useVersion("5.2.1")
+            }
+            if (requested.group == "net.bytebuddy") {
+                useVersion("1.14.10")
+            }
+        }
     }
 }
 
@@ -51,8 +64,9 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.assertj:assertj-core:3.22.0")
+    testImplementation("org.mockito:mockito-core:5.11.0")
 }
 
 tasks.withType<KotlinCompile> {

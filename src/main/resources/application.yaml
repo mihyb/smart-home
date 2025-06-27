@@ -29,6 +29,10 @@ app:
       endHourItem: "timer_job_kr_moisture_to"
       startHourItem: "timer_job_kr_moisture_from"
       statusItem: "timer_job_kr_moisture_status"
+    - switchItem: "vysousec_switch"
+      endHourItem: "timer_job_wr_moisture_to"
+      startHourItem: "timer_job_wr_moisture_from"
+      statusItem: "timer_job_wr_moisture_status"
 server:
   port: "${app.port}"
 logging:
