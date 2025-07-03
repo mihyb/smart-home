@@ -22,4 +22,8 @@ Switch timer_job_kr_moisture_status
 Number timer_job_wr_moisture_from
 Number timer_job_wr_moisture_to
 Switch timer_job_wr_moisture_status
+//water heater
+Number timer_job_wheater_from
+Number timer_job_wheater_to
+Switch timer_job_wheater_status
 
