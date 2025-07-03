@@ -64,6 +64,7 @@ sitemap ruprechtice label="Ruprechtice" {
         Frame label="Bojler" {
                     Switch item=timer_job_wheater_status label="Časovač"
                     Switch item=bojler_switch label="Stav"
+                    Text item=wheater_status
                     Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
                     Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
                 }
