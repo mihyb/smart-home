@@ -2,6 +2,7 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pracovna" {
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Text item=pracovna_okno_OnOff_Switch label="Okno" icon="window-open" valuecolor=[ON="green", OFF="red"]
         Frame label="Rybicky světlo" {
             Switch item=timer_job_aquarium_status label="Časovač"
             Switch item=akvarium_svetlo_switch label="Stav"
@@ -28,6 +29,7 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Text item=pokoj_okno_pokoj_okno_switch label="Okno" icon="window" valuecolor=[ON="green", OFF="red"]
         Frame label="Odvlhčovač" {
             Switch item=timer_job_kr_moisture_status label="Časovač"
             Switch item=pokoj_vysousec_switch label="Stav"
