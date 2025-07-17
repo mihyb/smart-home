@@ -83,14 +83,16 @@ sitemap ruprechtice label="Ruprechtice" {
         }
         Frame label="Servis" {
             Text item=backend_health_status_item label="Backend status" labelcolor=["DOWN"="red"]
-            Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<20="red"]
-            Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<20="red"]
+            Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=pokoj_okno_pokoj_okno_battery label="Pokoj okno baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=pracovna_okno_battery label="Pracovna okno baterie [%.0f %%]" labelcolor=[<10="red"]
             Text item=smoke_sensor_battery_low label="Kourovy sensor slaba baterie" labelcolor=[ON="red"]
         }
     }
