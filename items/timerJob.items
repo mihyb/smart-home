@@ -26,4 +26,8 @@ Switch timer_job_wr_moisture_status
 Number timer_job_wheater_from
 Number timer_job_wheater_to
 Switch timer_job_wheater_status
+//bedroom fan
+Number timer_job_bedroom_fan_from
+Number timer_job_bedroom_fan_to
+Switch timer_job_bedroom_fan_status
 

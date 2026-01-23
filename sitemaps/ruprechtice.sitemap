@@ -71,6 +71,14 @@ sitemap ruprechtice label="Ruprechtice" {
                     Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
                 }
     }
+    Frame label="Loznice" {
+            Frame label="Vetrak" {
+                                Switch item=timer_job_bedroom_fan_status label="Časovač"
+                                Switch item=loznice_vetrak_switch label="Stav"
+                                Setpoint item=timer_job_bedroom_fan_from label="Od" minValue=0 maxValue=23 step=1
+                                Setpoint item=timer_job_bedroom_fan_to label="Do" minValue=0 maxValue=23 step=1
+                            }
+        }
     Frame label="Sklep" {
         Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>75="red"]
         Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
