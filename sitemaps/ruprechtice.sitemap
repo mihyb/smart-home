@@ -27,7 +27,8 @@ sitemap ruprechtice label="Ruprechtice" {
             Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
             Frame label="Kuřátka" {
                         Switch item=chick_01_power label="Stav"
-                        Switch item=Chick_01_switch label="Topení"
+                        Switch item=chicks_01_Chick_01_switch label="Topení"
+                        Text item=chicks_01_Chick_01_temp label="Teplota"
                         Setpoint item=chick_01_min_temp label="Od" minValue=15 maxValue=34 step=1
                         Setpoint item=chick_01_max_temp label="Do" minValue=16 maxValue=35 step=1
                     }
