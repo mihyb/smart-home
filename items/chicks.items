@@ -1,0 +1,4 @@
+//chicks
+Number chick_01_max_temp
+Number chick_01_min_temp
+Switch chick_01_power
