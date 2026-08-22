@@ -1,0 +1,35 @@
+[Unit]
+Description=HomeController OpenHAB rules engine
+Documentation=https://github.com/hyblerm/HomeController
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=majkl
+Group=majkl
+WorkingDirectory=/home/majkl/app
+
+# OpenHAB stays on the old host; override in /etc/default/homecontroller if it moves.
+Environment=OPENHAB_HOST=192.168.1.109
+Environment=OPENHAB_PORT=8080
+Environment=H2_DATA_PATH=/home/majkl/app/data/demo
+EnvironmentFile=-/etc/default/homecontroller
+
+ExecStart=/usr/bin/java -Xms64m -Xmx256m -XX:+ExitOnOutOfMemoryError \
+    -jar /home/majkl/app/HomeController-0.0.1-SNAPSHOT.jar
+
+Restart=always
+RestartSec=15s
+
+# Ceiling so a leak cannot take the box down. .124 has 15GiB, so this is headroom,
+# not a squeeze — measured steady state is ~330M.
+MemoryMax=1G
+MemoryHigh=768M
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=homecontroller
+
+[Install]
+WantedBy=multi-user.target

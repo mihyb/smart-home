@@ -39,3 +39,6 @@ out/
 .vscode/
 /home-portal.log
 /home-portal.log*
+
+# Stray dir from an unexpanded ~ in CLAUDE_CONFIG_DIR — never commit private Claude data
+/~/

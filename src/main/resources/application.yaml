@@ -1,7 +1,7 @@
 app:
   port: 8181
   openhab:
-    baseUrl: "http://192.168.1.109:8080/rest/"
+    baseUrl: "http://${OPENHAB_HOST:192.168.1.109}:${OPENHAB_PORT:8080}/rest/"
   electricity:
     oteUrl: "https://www.ote-cr.cz/cs/kratkodobe-trhy/elektrina/denni-trh?date="
   currency:
@@ -47,7 +47,7 @@ spring:
       client:
         url: "http://127.0.0.1:${app.port}"
   datasource:
-    url: "jdbc:h2:file:/tmp/data/demo"
+    url: "jdbc:h2:file:${H2_DATA_PATH:/tmp/data/demo}"
     driverClassName: "org.h2.Driver"
   jpa:
     database-platform: "org.hibernate.dialect.H2Dialect"
