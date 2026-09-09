@@ -8,3 +8,6 @@
 # Logs pulled down from servers for troubleshooting
 /logs/
 *.log
+
+# Real Tuya credentials — generate from things/tuya.things.example
+openhab-ruprechtice/things/tuya.things

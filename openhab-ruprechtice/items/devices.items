@@ -1,0 +1,52 @@
+// Items converted from JSONDB by scripts/jsondb-to-items.py
+// Channel links are inline here, which is what makes
+// org.openhab.core.thing.link.ItemChannelLink.json unnecessary.
+
+Switch Infrared_heating_panel_switch "switch" <Switch> ["Point"] { channel="tuya:tuyaDevice:bf63f4418aa59a2eafclvb:switch" }
+Number Infrared_heating_panel_temp_set "temp_set" <Number> ["Point"] { channel="tuya:tuyaDevice:bf63f4418aa59a2eafclvb:temp_set" }
+Switch Kotelna_zasuvka "Kotelna zasuvka" ["Point"]
+Switch agama_switch "agama_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:1f14915b91:agama_switch" }
+Switch akvarium_svetlo_switch "akvarium_svetlo_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:5a92bbf1d2:akvarium_svetlo_switch" }
+String backend_health_status_item "backend health status" ["Point"] { channel="http:url:backend_status:backend_status_health" }
+Switch bojler_switch "bojler_switch" ["Point"] { channel="mqtt:topic:bojler_switch:bojler_switch_switch" }
+Switch chicks_01_Chick_01_switch "Chick_01_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:defb672f1d:Chick_01_switch" }
+Number chicks_01_Chick_01_temp "Chick_01_temp" ["Point"] { channel="mqtt:topic:fb0a76c816:defb672f1d:Chick_01_temp" }
+Number chicks_01_chick_01_hum "chick_01_hum" ["Point"] { channel="mqtt:topic:fb0a76c816:defb672f1d:chick_01_hum" }
+Number:Dimensionless chodba_temp_battery "chodba_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:351ffa3b47:chodba_temp_battery" }
+Number:Dimensionless chodba_temp_humidity "chodba_temp_humidity" ["Point"] { channel="mqtt:topic:fb0a76c816:351ffa3b47:chodba_temp_humidity" }
+DateTime chodba_temp_last_seen "chodba_temp_last_seen" ["Point"] { channel="mqtt:topic:fb0a76c816:351ffa3b47:chodba_temp_last_seen" }
+Number:Temperature chodba_temp_temperature "chodba_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:351ffa3b47:chodba_temp_temperature" }
+Group:Number:EQUALITY humidity_sensors "humidity sensors"
+Number:Dimensionless koupelna_temp_battery "koupelna_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:koupelna_temp:koupelna_temp_battery" }
+Number:Dimensionless koupelna_temp_humidity "koupelna_temp_humidity" (humidity_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:koupelna_temp:koupelna_temp_humididty" }
+Number:Temperature koupelna_temp_temperature "koupelna_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:koupelna_temp:koupelna_temp_temperature" }
+Switch loznice_vetrak_switch "loznice_vetrak_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:loznice_vetrak:loznice_vetrak_switch" }
+Switch obyvak_switch "obyvak_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:obyvak:obyvak_switch" }
+Number:Dimensionless obyvak_temp_battery "obyvak_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:obyvak_temp:obyvak_temp_battery" }
+Number:Dimensionless obyvak_temp_humidity "obyvak_temp_humidity" (humidity_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:obyvak_temp:obyvak_temp_humidity" }
+Number:Temperature obyvak_temp_temperature "obyvak_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:obyvak_temp:obyvak_temp_temperature" }
+Number pokoj_okno_pokoj_okno_battery "pokoj_okno_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:pokoj_okno:pokoj_okno_battery" }
+Switch pokoj_okno_pokoj_okno_switch "pokoj_okno_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:pokoj_okno:pokoj_okno_switch" }
+Switch pokoj_vysousec_switch "pokoj_vysousec_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:pokoj_vysousec:pokoj_vysousec_switch" }
+Number:Dimensionless pokojicek_temp_battery "pokojicek_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:b7630cf279:pokojicek_temp_battery" }
+Number:Dimensionless pokojicek_temp_humidity "pokojicek_temp_humidity" (humidity_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:b7630cf279:pokojicek_temp_humidity" }
+Number pokojicek_temp_temperature "pokojicek_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:b7630cf279:pokojicek_temp_temperature" }
+Switch pracovna_okno_OnOff_Switch "On/Off Switch" ["Point"] { channel="mqtt:topic:fb0a76c816:pracovna_okno:pracovna_okno_status" }
+Number pracovna_okno_battery "pracovna_okno_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:pracovna_okno:pracovna_okno_battery" }
+Number:Dimensionless pracovna_teplota_battery "pracovna_teplota_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:ec2baaa8ac:pracovna_teplota_battery" }
+Number:Dimensionless pracovna_teplota_humidity "pracovna_teplota_humidity" (humidity_sensors) ["Battery", "Point"] { channel="mqtt:topic:fb0a76c816:ec2baaa8ac:pracovna_teplota_humidity" }
+Number:Temperature pracovna_teplota_temp "pracovna_teplota_temp" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:ec2baaa8ac:pracovna_teplota_temp" }
+Number:Dimensionless sklep_temp_battery "sklep_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:f306ccaea0:sklep_temp_battery" }
+Number:Dimensionless sklep_temp_humidity "sklep_temp_humidity" (humidity_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:f306ccaea0:sklep_temp_humidity" }
+Number sklep_temp_temperature "sklep_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:f306ccaea0:sklep_temp_temperature" }
+Number:Dimensionless sklep_water_battery "sklep_water_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:a24fad8e52:sklep_water_battery",
+              channel="mqtt:topic:fb0a76c816:sklep_water:sklep_water_battery" }
+Switch sklep_water_tamper "sklep_water_tamper" ["Point"] { channel="mqtt:topic:fb0a76c816:sklep_water:sklep_water_tamper" }
+Switch sklep_water_water_leak "sklep_water_water_leak" ["Point"] { channel="mqtt:topic:fb0a76c816:a24fad8e52:sklep_water_water_leak" }
+Switch smoke_sensor_battery_low "smoke_sensor_battery_low" ["Point"] { channel="mqtt:topic:fb0a76c816:smoke_sensor:smoke_sensor_battery_low" }
+Switch smoke_sensor_smoke "smoke_sensor_smoke" ["Point"] { channel="mqtt:topic:fb0a76c816:smoke_sensor:smoke_sensor_smoke" }
+Group:Number:EQUALITY temp_sensors "temp sensors"
+Switch vysousec_switch "vysousec_switch" ["Point"] { channel="mqtt:topic:fb0a76c816:0a3dfb2310:vysousec_switch" }
+Number:Dimensionless zadveri_temp_battery "zadveri_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:zadveri_temp:zadveri_temp_battery" }
+Number:Dimensionless zadveri_temp_humidity "zadveri_temp_humidity" (humidity_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:zadveri_temp:zadveri_temp_humidity" }
+Number:Temperature zadveri_temp_temperature "zadveri_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:zadveri_temp:zadveri_temp_temperature" }
