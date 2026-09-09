@@ -14,6 +14,21 @@ and the code that consumes it belongs in a single commit.
 | `HomeController/` | Spring Boot / Kotlin rules engine that polls and commands OpenHAB over REST |
 | `scripts/` | Build, deploy, status and log helpers for both halves |
 
+### Reaching history from before the migration
+
+Both projects' full histories are here (earliest commit Nov 2021), but they were
+merged as subtrees, so pre-migration commits used paths without the
+`openhab-ruprechtice/` or `HomeController/` prefix. Git's history simplification
+stops at the merge, which makes a plain path-scoped log look empty:
+
+```bash
+git log -- openhab-ruprechtice/items/timerJob.items   # only the merge commit
+git log --full-history -- 'openhab-ruprechtice/items/timerJob.items' 'items/timerJob.items'
+```
+
+Pass `--full-history` and both the new and old path. `git log` with no path, and
+`git show <old-sha>`, work normally.
+
 ## System overview
 
 **OpenHAB** is the device hub — it integrates the physical hardware (Z-Wave, MQTT,
