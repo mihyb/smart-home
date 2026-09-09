@@ -12,7 +12,20 @@ and the code that consumes it belongs in a single commit.
 |---|---|
 | `openhab-ruprechtice/` | OpenHAB config (items, things, rules, sitemaps, services). Deployed to `/etc/openhab` — **this directory's root maps to the server's `/etc/openhab`** |
 | `HomeController/` | Spring Boot / Kotlin rules engine that polls and commands OpenHAB over REST |
+| `atmos-connector/` | **Submodule** — the custom `atmoswg1000` OpenHAB binding for the Atmos boiler. Standalone reusable component, own repo and release cycle |
 | `scripts/` | Build, deploy, status and log helpers for both halves |
+
+`atmos-connector` is a submodule while the other two are subtrees, and that is
+deliberate. OpenHAB config and HomeController are co-developed — an item rename
+touches both, so they need to land in one commit. The binding is a standalone
+library consumed as a built JAR; it has no reason to change in lockstep. The cost
+is the usual submodule one: `git pull` leaves it at the old pin unless you pass
+`--recurse-submodules`, so it will silently go stale if you forget. Clone with:
+
+```bash
+git clone --recurse-submodules git@github-personal:mihyb/smart-home.git
+git submodule update --init --remote   # in an existing clone
+```
 
 ### Git accounts
 
@@ -139,6 +152,35 @@ default. Server-side drift shows up in the dry run instead of being destroyed.
 `./scripts/status.sh openhab` lists it any time.
 
 `openhab-ruprechtice/deploy_openhab.sh` is a stub that refuses to run.
+
+## The Atmos boiler binding
+
+`atmos-connector/` builds `org.openhab.binding.atmoswg1000-<version>.jar`, which is
+sideloaded into `/usr/share/openhab/addons/` on the OpenHAB host. It is not a
+marketplace addon — there is no upstream to pull from.
+
+The binding is pinned to the OpenHAB version by its pom parent:
+
+```xml
+<parent>
+  <artifactId>org.openhab.addons.reactor.bundles</artifactId>
+  <version>4.3.0</version>
+</parent>
+```
+
+**Upgrading OpenHAB requires rebuilding this binding first.** Bump that parent to
+the target version and fix the API drift. The 16 classes in `protocol/` are pure
+protocol logic with no OpenHAB imports and should carry over untouched; the
+handlers, discovery services and `HandlerFactory` are where the addon API moves
+between majors. `Wg1000ProtocolTest` and `ValuesTest` verify the protocol still
+parses after a bump.
+
+`captured/` is gitignored — it holds ATMOS's own UI assets plus device-identifying
+dumps (serial numbers, network details). Regenerate rather than commit:
+
+```bash
+python -m wg1000.cli --host <gateway> files --out ../captured
+```
 
 ## Rules in `application.yaml`
 

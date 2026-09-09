@@ -1,0 +1,3 @@
+[submodule "atmos-connector"]
+	path = atmos-connector
+	url = git@github-personal:mihyb/atmos-connector.git
