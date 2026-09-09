@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.ote-cr.cz/schema/service/public" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://www.ote-cr.cz/schema/service/public" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:types>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.ote-cr.cz/schema/service/public">
+            <xs:import namespace="http://www.w3.org/2001/XMLSchema" />
+            <xs:element name="GetRutList">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IdRutFrom" minOccurs="0" type="xs:int" />
+                        <xs:element name="IdRutTo" minOccurs="0" type="xs:int" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetRutListResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Rut">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Id" type="xs:string" />
+                                                <xs:element minOccurs="0" name="Ean" >
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:length value="13"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element minOccurs="0" name="Eic" >
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:length value="16"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="VatNo" type="xs:string" />
+                                                <xs:element name="Company" type="xs:string" />
+                                                <xs:element name="RegistrationDate" type="xs:date" />
+                                                <xs:element minOccurs="0" name="SubjectSettlementDateElectricityFrom" type="xs:date" />
+                                                <xs:element minOccurs="0" name="SubjectSettlementDateElectricityTo" type="xs:date" />
+                                                <xs:element minOccurs="0" name="SubjectSettlementDateGasFrom" type="xs:date" />
+                                                <xs:element minOccurs="0" name="SubjectSettlementDateGasTo" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DamElectricityValidityFrom" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DamElectricityValidityTo" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DamGasValidityFrom" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DamGasValidityTo" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DistributorElectricityFrom" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DistributorElectricityTo" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DistributorGasFrom" type="xs:date" />
+                                                <xs:element minOccurs="0" name="DistributorGasTo" type="xs:date" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute name="IdRutFrom" type="xs:int" use="optional" />
+                                <xs:attribute name="IdRutTo" type="xs:int" use="optional" />
+                                <xs:attribute name="RutCount" type="xs:int" use="required"/>
+                                <xs:attribute name="ExceededRecordLimit" use="required">
+                                    <xs:simpleType>
+                                        <xs:restriction base="xs:int">
+                                            <xs:enumeration value="0">
+                                                <xs:annotation>
+                                                    <xs:documentation xml:lang="en">limit not exceeded</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:enumeration>
+                                            <xs:enumeration value="1">
+                                                <xs:annotation>
+                                                    <xs:documentation xml:lang="en">limit exceeded</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:enumeration>
+                                        </xs:restriction>
+                                    </xs:simpleType>
+                                </xs:attribute>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamIndexE">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamIndexEResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded" name="DamIndex">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                            	<xs:element minOccurs="0" name="Emerg" type="xs:decimal"/>
+                                                <xs:element name="Date" type="xs:date"/>
+                                                <xs:element minOccurs="0" name="EurRate" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="BaseLoad" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="PeakLoad" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="OffpeakLoad" type="xs:decimal"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamPriceE">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                        <xs:element minOccurs="0" name="StartHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="EndHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="InEur" type="xs:boolean" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamPriceEResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded"  name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Hour">
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:int">
+                                                            <xs:pattern value="\d{1,2}"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element minOccurs="0" name="Emerg" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="Price" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="Volume" type="xs:decimal"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamAllE">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                        <xs:element minOccurs="0" name="StartHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="EndHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="InEur" type="xs:boolean" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamAllEResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded"  name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Hour">
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:int">
+                                                            <xs:pattern value="\d{1,2}"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element minOccurs="0" name="Emerg" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="PriceCZ" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="VolumeCZ" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="FlowCZSK" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="FlowSKCR" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="ImportCZ" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="ExportCZ" type="xs:decimal"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetBmPriceE">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                        <xs:element minOccurs="0" name="InEur" type="xs:boolean" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetBmPriceEResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded"  name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                            	<xs:element minOccurs="0" name="Emerg" type="xs:decimal"/>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element minOccurs="0" name="Product" type="tns:ProductType" maxOccurs="unbounded"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImPriceE">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                        <xs:element minOccurs="0" name="StartHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="EndHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImPriceEResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded"  name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Hour">
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:int">
+                                                            <xs:pattern value="\d{1,2}"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element minOccurs="0" name="Emerg" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="Price" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="Volume" type="xs:decimal"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImbalanceSettlementE">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Version" type="tns:VersionType"/>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                        <xs:element minOccurs="0" name="StartHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="EndHour" >
+                            <xs:simpleType>
+                                <xs:restriction base="xs:int">
+                                    <xs:pattern value="\d{1,2}"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImbalanceSettlementEResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Version" type="tns:VersionType"/>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Hour" >
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:int">
+                                                            <xs:pattern value="\d{1,2}"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element minOccurs="0" name="Emerg" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="SystemImbalance" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="Sum" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="PositiveImbalance" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="NegativeImbalance" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="RoundedImbalance" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="ReCost" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="ImbalanceCost" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="SettlImbalancePrice" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="SettlCounterImbalancePrice" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="PriceWARE" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="PriceRE" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="PriceWAIM" type="xs:decimal" />
+                                                <xs:element minOccurs="0" name="PriceCurve" type="xs:decimal" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamPriceG">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDamPriceGResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Session">
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:enumeration value="AM"/>
+                                                            <xs:enumeration value="PM"/>
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element minOccurs="0" name="Price" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="Volume" type="xs:decimal"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImPriceG">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImPriceGResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded"  name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element minOccurs="0" name="Price" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="Volume" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="MinPrice" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="MaxPrice" type="xs:decimal"/>
+                                                <xs:element minOccurs="0" name="IndexOte" type="xs:decimal"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImbalanceSettlementG">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Version" type="tns:VersionType"/>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImbalanceSettlementGResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Version" type="tns:VersionType"/>
+                                                <xs:element name="SystemImbalance" type="xs:decimal" />
+                                                <xs:element name="PositiveImbalance" type="xs:decimal" />
+                                                <xs:element name="NegativeImbalance" type="xs:decimal" />
+                                                <xs:element name="TransferTsDs" minOccurs="0" type="xs:decimal" />
+                                                <xs:element name="BalancingGasPrice" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="CnbRate" type="xs:decimal" />
+                                                <xs:element name="BalancingGasSettlPrice" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="MissingBalancingGasPrice" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="ExcessiveBalancingGasPrice" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="Difference" type="xs:decimal" />
+                                                <xs:element name="OffToleranceDeviationPrice" type="xs:decimal" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImbalanceNCBALSettlementG">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Version" type="tns:VersionType"/>
+                        <xs:element name="StartDate" type="xs:date" />
+                        <xs:element name="EndDate" type="xs:date" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetImbalanceNCBALSettlementGResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" maxOccurs="unbounded" name="Item">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Date" type="xs:date" />
+                                                <xs:element name="Version" type="tns:VersionType"/>
+                                                <xs:element name="SystemImbalance" type="xs:decimal" />
+                                                <xs:element name="PositiveImbalance" type="xs:decimal" />
+                                                <xs:element name="NegativeImbalance" type="xs:decimal" />
+                                                <xs:element name="TransferTsDs" minOccurs="0" type="xs:decimal" />
+                                                <xs:element name="CnbRate" type="xs:decimal" />
+                                                <xs:element name="IndexOTE" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="PositiveImbalancePriceCZK" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="NegativeImbalancePriceCZK" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="PositiveImbalancePriceEUR" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="NegativeImbalancePriceEUR" type="xs:decimal" minOccurs="0" />
+                                                <xs:element name="MonthBalancingGasPrice" type="xs:decimal" minOccurs="0" />
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ProductType">
+                <xs:sequence>
+                    <xs:element name="Type">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="BaseLoad"/>
+                                <xs:enumeration value="PeakLoad"/>
+                                <xs:enumeration value="OffpeakLoad"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="Volume" type="xs:decimal" />
+                    <xs:element name="AveragePrice" type="xs:decimal" />
+                    <xs:element name="MinPrice" type="xs:decimal" />
+                    <xs:element name="MaxPrice" type="xs:decimal" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="VersionType">
+                <xs:restriction base="xs:integer">
+                    <xs:enumeration value="0"/>
+                    <xs:enumeration value="1"/>
+                    <xs:enumeration value="2"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="GetRutListSoapIn">
+        <wsdl:part name="parameters" element="tns:GetRutList" />
+    </wsdl:message>
+    <wsdl:message name="GetRutListSoapOut">
+        <wsdl:part name="parameters" element="tns:GetRutListResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetDamIndexESoapIn">
+        <wsdl:part name="parameters" element="tns:GetDamIndexE" />
+    </wsdl:message>
+    <wsdl:message name="GetDamIndexESoapOut">
+        <wsdl:part name="parameters" element="tns:GetDamIndexEResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetDamPriceESoapIn">
+        <wsdl:part name="parameters" element="tns:GetDamPriceE" />
+    </wsdl:message>
+    <wsdl:message name="GetDamAllESoapOut">
+        <wsdl:part name="parameters" element="tns:GetDamAllEResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetDamAllESoapIn">
+        <wsdl:part name="parameters" element="tns:GetDamAllE" />
+    </wsdl:message>
+    <wsdl:message name="GetDamPriceESoapOut">
+        <wsdl:part name="parameters" element="tns:GetDamPriceEResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetBmPriceESoapIn">
+        <wsdl:part name="parameters" element="tns:GetBmPriceE" />
+    </wsdl:message>
+    <wsdl:message name="GetBmPriceESoapOut">
+        <wsdl:part name="parameters" element="tns:GetBmPriceEResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetImPriceESoapIn">
+        <wsdl:part name="parameters" element="tns:GetImPriceE" />
+    </wsdl:message>
+    <wsdl:message name="GetImPriceESoapOut">
+        <wsdl:part name="parameters" element="tns:GetImPriceEResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetImbalanceSettlementESoapIn">
+        <wsdl:part name="parameters" element="tns:GetImbalanceSettlementE" />
+    </wsdl:message>
+    <wsdl:message name="GetImbalanceSettlementESoapOut">
+        <wsdl:part name="parameters" element="tns:GetImbalanceSettlementEResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetDamPriceGSoapIn">
+        <wsdl:part name="parameters" element="tns:GetDamPriceG" />
+    </wsdl:message>
+    <wsdl:message name="GetDamPriceGSoapOut">
+        <wsdl:part name="parameters" element="tns:GetDamPriceGResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetImPriceGSoapIn">
+        <wsdl:part name="parameters" element="tns:GetImPriceG" />
+    </wsdl:message>
+    <wsdl:message name="GetImPriceGSoapOut">
+        <wsdl:part name="parameters" element="tns:GetImPriceGResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetImbalanceSettlementGSoapIn">
+        <wsdl:part name="parameters" element="tns:GetImbalanceSettlementG" />
+    </wsdl:message>
+    <wsdl:message name="GetImbalanceSettlementGSoapOut">
+        <wsdl:part name="parameters" element="tns:GetImbalanceSettlementGResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetImbalanceNCBALSettlementGSoapIn">
+        <wsdl:part name="parameters" element="tns:GetImbalanceNCBALSettlementG" />
+    </wsdl:message>
+    <wsdl:message name="GetImbalanceNCBALSettlementGSoapOut">
+        <wsdl:part name="parameters" element="tns:GetImbalanceNCBALSettlementGResponse" />
+    </wsdl:message>
+    <wsdl:portType name="PublicDataServiceSoap">
+        <wsdl:operation name="GetRutList">
+            <xs:documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací seznam všech registrovaných účastníků trhu</xs:documentation>
+            <wsdl:input message="tns:GetRutListSoapIn" />
+            <wsdl:output message="tns:GetRutListSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetDamIndexE">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací indexy krátkodobého obchodu za elektřinu pro zadané období</documentation>
+            <wsdl:input message="tns:GetDamIndexESoapIn" />
+            <wsdl:output message="tns:GetDamIndexESoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetDamPriceE">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací hodnotu energie a cenu v EUR po hodnách z denního trhu s elektřinou pro zadané období</documentation>
+            <wsdl:input message="tns:GetDamPriceESoapIn" />
+            <wsdl:output message="tns:GetDamPriceESoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetDamAllE">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací výsledky společného denního trhu CR a SR</documentation>
+            <wsdl:input message="tns:GetDamAllESoapIn" />
+            <wsdl:output message="tns:GetDamAllESoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetBmPriceE">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací ceny a množství z krátkodobého trhu za elektřinu pro zadané období</documentation>
+            <wsdl:input message="tns:GetBmPriceESoapIn" />
+            <wsdl:output message="tns:GetBmPriceESoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetImPriceE">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací ceny a množství za vnitrodenní obchody s elektřinou pro zadané období</documentation>
+            <wsdl:input message="tns:GetImPriceESoapIn" />
+            <wsdl:output message="tns:GetImPriceESoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetImbalanceSettlementE">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací výsledky zúčtování odchylek za elektřinu pro zadané období</documentation>
+            <wsdl:input message="tns:GetImbalanceSettlementESoapIn" />
+            <wsdl:output message="tns:GetImbalanceSettlementESoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetDamPriceG">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací ceny a množství denního tru s plynem pro zadané období</documentation>
+            <wsdl:input message="tns:GetDamPriceGSoapIn" />
+            <wsdl:output message="tns:GetDamPriceGSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetImPriceG">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací ceny a množství vnitrodenního tru s plynem pro zadané období</documentation>
+            <wsdl:input message="tns:GetImPriceGSoapIn" />
+            <wsdl:output message="tns:GetImPriceGSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetImbalanceSettlementG">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací výsledky zúčtování odchylek za plyn a pro zadané období</documentation>
+            <wsdl:input message="tns:GetImbalanceSettlementGSoapIn" />
+            <wsdl:output message="tns:GetImbalanceSettlementGSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetImbalanceNCBALSettlementG">
+            <documentation xmlns="http://schemas.xmlsoap.org/wsdl/">Vrací výsledky zúčtování odchylek za plyn a pro zadané období - NCBAL</documentation>
+            <wsdl:input message="tns:GetImbalanceNCBALSettlementGSoapIn" />
+            <wsdl:output message="tns:GetImbalanceNCBALSettlementGSoapOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PublicDataServiceSoap" type="tns:PublicDataServiceSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+        <wsdl:operation name="GetRutList">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetRutList" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetDamIndexE">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetDamIndexE" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetDamPriceE">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetDamPriceE" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetDamAllE">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetDamAllE" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetBmPriceE">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetBmPriceE" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetImbalanceSettlementE">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetImbalanceSettlementE" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetImPriceE">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetImPriceE" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetDamPriceG">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetDamPriceG" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetImPriceG">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetImPriceG" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetImbalanceSettlementG">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetImbalanceSettlementG" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetImbalanceNCBALSettlementG">
+            <soap:operation soapAction="http://www.ote-cr.cz/schema/service/public/GetImbalanceNCBALSettlementG" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PublicDataService">
+        <documentation xmlns="http://schemas.xmlsoap.org/wsdl/" />
+        <wsdl:port name="PublicDataServiceSoap" binding="tns:PublicDataServiceSoap">
+            <soap:address location="http://www.ote-cr.cz/services/PublicDataService" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

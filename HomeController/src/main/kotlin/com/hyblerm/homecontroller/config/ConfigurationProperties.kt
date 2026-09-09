@@ -1,0 +1,55 @@
+package com.hyblerm.homecontroller.config
+
+import org.springframework.boot.context.properties.ConfigurationProperties
+
+@ConfigurationProperties(prefix = "app")
+class ConfigurationProperties {
+
+    var openhab = OpenHab()
+    var electricity = Electricity()
+    var timerJobs = mutableListOf<TimerJobConfig>()
+    var minMaxJobs = mutableListOf<MinMaxJobConfig>()
+
+    class Electricity {
+        var oteUrl = ""
+        var buy = ElectricityPrice()
+        var sell = ElectricityPrice()
+    }
+
+    class ElectricityPrice {
+        var fixedPriceKwh = 0.0
+    }
+
+    class OpenHab {
+        var baseUrl: String = ""
+        var itemsRelativePath: String = "items"
+        var itemRelativePath: String = "items/{name}"
+    }
+
+    class TimerJobConfig {
+        var name: String = ""
+        var switchItem: String = ""
+        var statusItem: String = ""
+        var startHourItem: String = ""
+        var endHourItem: String = ""
+        var mode: Mode = Mode.ALL
+        var conditions: List<Condition> = emptyList()
+
+        enum class Mode {
+            ALL, WEEKDAY, WEEKEND
+        }
+    }
+
+    class Condition {
+        var item: String = ""
+        var value: String = ""
+    }
+
+    class MinMaxJobConfig {
+        var switchItem: String = ""
+        var statusItem: String = ""
+        var valueItem: String = ""
+        var minValueItem: String = ""
+        var maxValueItem: String = ""
+    }
+}

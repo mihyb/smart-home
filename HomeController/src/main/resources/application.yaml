@@ -1,0 +1,80 @@
+app:
+  port: 8181
+  openhab:
+    baseUrl: "http://${OPENHAB_HOST:192.168.1.109}:${OPENHAB_PORT:8080}/rest/"
+  electricity:
+    oteUrl: "https://www.ote-cr.cz/cs/kratkodobe-trhy/elektrina/denni-trh?date="
+  currency:
+    usdRate: 23.82
+    eurRate: 25.02
+  timerJobs:
+    - switchItem: "obyvak_switch"
+      endHourItem: "timer_job_xmass_to"
+      startHourItem: "timer_job_xmass_from"
+      statusItem: "timer_job_xmass_status"
+    - switchItem: "akvarium_svetlo_switch"
+      endHourItem: "timer_job_aquarium_to"
+      startHourItem: "timer_job_aquarium_from"
+      statusItem: "timer_job_aquarium_status"
+    - switchItem: "agama_switch"
+      endHourItem: "timer_job_agama_to"
+      startHourItem: "timer_job_agama_from"
+      statusItem: "timer_job_agama_status"
+    - switchItem: "Infrared_heating_panel_switch"
+      endHourItem: "timer_job_wr_heating_to"
+      startHourItem: "timer_job_wr_heating_from"
+      statusItem: "timer_job_wr_heating_status"
+      mode: weekday
+    - switchItem: "pokoj_vysousec_switch"
+      endHourItem: "timer_job_kr_moisture_to"
+      startHourItem: "timer_job_kr_moisture_from"
+      statusItem: "timer_job_kr_moisture_status"
+      conditions:
+        - item: "pokoj_okno_pokoj_okno_switch"
+          value: "off"
+    - switchItem: "vysousec_switch"
+      endHourItem: "timer_job_wr_moisture_to"
+      startHourItem: "timer_job_wr_moisture_from"
+      statusItem: "timer_job_wr_moisture_status"
+      conditions:
+        - item: "pracovna_okno_OnOff_Switch"
+          value: "off"
+    - switchItem: "bojler_switch"
+      endHourItem: "timer_job_wheater_to"
+      startHourItem: "timer_job_wheater_from"
+      statusItem: "timer_job_wheater_status"
+    - switchItem: "loznice_vetrak_switch"
+      endHourItem: "timer_job_bedroom_fan_to"
+      startHourItem: "timer_job_bedroom_fan_from"
+      statusItem: "timer_job_bedroom_fan_status"
+  minMaxJobs:
+    - switchItem: "chicks_01_Chick_01_switch"
+      statusItem: "chick_01_power"
+      valueItem: "chicks_01_Chick_01_temp"
+      minValueItem: "chick_01_min_temp"
+      maxValueItem: "chick_01_max_temp"
+server:
+  port: "${app.port}"
+logging:
+  level:
+    root: WARN
+    com.hyblerm.homecontroller: DEBUG
+  file:
+    name: home-portal.log
+spring:
+  boot:
+    admin:
+      client:
+        url: "http://127.0.0.1:${app.port}"
+  datasource:
+    url: "jdbc:h2:file:${H2_DATA_PATH:/tmp/data/demo}"
+    driverClassName: "org.h2.Driver"
+  jpa:
+    database-platform: "org.hibernate.dialect.H2Dialect"
+    hibernate:
+      ddl-auto: "create"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
