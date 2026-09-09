@@ -1,0 +1,10 @@
+# IDE
+.idea/
+*.iml
+
+# Claude Code — settings.json is shared, settings.local.json is per-machine
+.claude/settings.local.json
+
+# Logs pulled down from servers for troubleshooting
+/logs/
+*.log
