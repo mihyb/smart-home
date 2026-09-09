@@ -1,0 +1,1 @@
+String wheater_status "Status [%s]" { channel="mqtt:topic:bojler_switch:status" }

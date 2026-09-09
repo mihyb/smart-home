@@ -1,0 +1,114 @@
+sitemap ruprechtice label="Ruprechtice" {
+    Frame label="Pracovna" {
+        Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+        Text item=pracovna_teplota_temp label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Text item=pracovna_okno_OnOff_Switch label="Okno" icon="window-open" valuecolor=[ON="green", OFF="red"]
+        Frame label="Rybicky světlo" {
+            Switch item=timer_job_aquarium_status label="Časovač"
+            Switch item=akvarium_svetlo_switch label="Stav"
+            Setpoint item=timer_job_aquarium_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_aquarium_to label="Do" minValue=0 maxValue=23 step=1
+        }
+        Frame label="Topení" {
+            Switch item=timer_job_wr_heating_status label="Časovač"
+            Switch item=Infrared_heating_panel_switch label="Stav"
+            Setpoint item=timer_job_wr_heating_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_wr_heating_to label="Do" minValue=0 maxValue=23 step=1
+        }
+        Frame label="Odvlhčovač" {
+            Switch item=timer_job_wr_moisture_status label="Časovač"
+            Switch item=vysousec_switch label="Stav"
+            Setpoint item=timer_job_wr_moisture_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_wr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+        }
+    }
+    Frame label="Chodba" {
+            Text item=chodba_temp_humidity_calibrated_percent label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+            Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
+            Frame label="Kuřátka" {
+                        Switch item=chick_01_power label="Stav"
+                        Switch item=chicks_01_Chick_01_switch label="Topení"
+                        Text item=chicks_01_Chick_01_temp label="Teplota"
+                        Setpoint item=chick_01_min_temp label="Od" minValue=15 maxValue=34 step=1
+                        Setpoint item=chick_01_max_temp label="Do" minValue=16 maxValue=35 step=1
+                    }
+        }
+    Frame label="Pokojíček" {
+        Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+        Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Text item=pokoj_okno_pokoj_okno_switch label="Okno" icon="window" valuecolor=[ON="green", OFF="red"]
+        Frame label="Odvlhčovač" {
+            Switch item=timer_job_kr_moisture_status label="Časovač"
+            Switch item=pokoj_vysousec_switch label="Stav"
+            Setpoint item=timer_job_kr_moisture_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_kr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+        }
+    }
+    Frame label="Obyvák" {
+        Text item=obyvak_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+        Text item=obyvak_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+        Frame label="Stromeček" {
+            Switch item=timer_job_xmass_status label="Časovač"
+            Switch item=obyvak_switch label="Stav"
+            Setpoint item=timer_job_xmass_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_xmass_to label="Do" minValue=0 maxValue=23 step=1
+        }
+        Frame label="Seroušek" {
+            Switch item=timer_job_agama_status label="Časovač"
+            Switch item=agama_switch label="Stav"
+            Setpoint item=timer_job_agama_from label="Od" minValue=0 maxValue=23 step=1
+            Setpoint item=timer_job_agama_to label="Do" minValue=0 maxValue=23 step=1
+        }
+    }
+    Frame label="Koupelna" {
+        Text item=koupelna_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+        Text item=koupelna_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+    }
+    Frame label="Zadveri" {
+        Text item=zadveri_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
+        Text item=zadveri_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
+    }
+    Frame label="Kotelna" {
+        Text item=smoke_sensor_smoke label="Kouř poplach" labelcolor=[ON="red"]
+        Frame label="Bojler" {
+                    Switch item=timer_job_wheater_status label="Časovač"
+                    Switch item=bojler_switch label="Stav"
+                    Text item=wheater_status
+                    Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
+                    Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
+                }
+    }
+    Frame label="Loznice" {
+            Frame label="Vetrak" {
+                                Switch item=timer_job_bedroom_fan_status label="Časovač"
+                                Switch item=loznice_vetrak_switch label="Stav"
+                                Setpoint item=timer_job_bedroom_fan_from label="Od" minValue=0 maxValue=23 step=1
+                                Setpoint item=timer_job_bedroom_fan_to label="Do" minValue=0 maxValue=23 step=1
+                            }
+        }
+    Frame label="Sklep" {
+        Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>75="red"]
+        Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
+        Text item=sklep_water_water_leak label=Voda labelcolor=[ON="red"]
+    }
+    Frame label="Admin" {
+        Frame label="Statistiky" {
+            Chart item=humidity_sensors label="Vlhkost" period=W refresh=300
+            Chart item=temp_sensors label="Teplota" period=W refresh=300
+        }
+        Frame label="Servis" {
+            Text item=backend_health_status_item label="Backend status" labelcolor=["DOWN"="red"]
+            Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=pokoj_okno_pokoj_okno_battery label="Pokoj okno baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=pracovna_okno_battery label="Pracovna okno baterie [%.0f %%]" labelcolor=[<10="red"]
+            Text item=smoke_sensor_battery_low label="Kourovy sensor slaba baterie" labelcolor=[ON="red"]
+        }
+    }
+}
