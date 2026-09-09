@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "kotlin-lsp@claude-plugins-official": true
+  },
+  "env": {
+    "CLAUDE_CONFIG_DIR": "/Users/mhybler/.claude-private"
+  }
+}
