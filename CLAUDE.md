@@ -14,6 +14,37 @@ and the code that consumes it belongs in a single commit.
 | `HomeController/` | Spring Boot / Kotlin rules engine that polls and commands OpenHAB over REST |
 | `scripts/` | Build, deploy, status and log helpers for both halves |
 
+### Git accounts
+
+This machine has two GitHub identities. This is a **personal** repo and must use
+the private one.
+
+| | Account | Remote host | Commit email |
+|---|---|---|---|
+| Personal | `mihyb` | `git@github-personal:` (alias for github.com) | `m.hybler@gmail.com` |
+| Work | `mhybler` | `git@github.com:` | `c_mhybler@groupon.com` |
+
+`~/.ssh/config` maps `github-personal` to github.com with `~/.ssh/id_ed25519_mihyb`
+and `IdentitiesOnly yes`. `~/.gitconfig` switches commit identity on the *remote*,
+not the directory:
+
+```
+[includeIf "hasconfig:remote.*.url:git@github-personal:*/**"]
+	path = ~/.gitconfig-personal
+```
+
+Keying on the remote matters because `~/Work/private/projects/` holds work repos
+too (`claude-monitor` → github.groupondev.com); a `gitdir:` condition would
+mislabel those. Note the glob: git treats `**` as special only as a whole path
+component, so `git@github-personal:**` does *not* match — it collapses to `*`,
+which cannot cross the `/` in `mihyb/repo`. The `:*/**` form is required.
+
+New personal repos: `git remote add origin git@github-personal:mihyb/<repo>.git`
+and the identity follows automatically. Verify with `git config user.email`.
+
+Commits before Sep 2026 are authored under work or Cleverlance addresses — the
+identity split postdates them.
+
 ### Reaching history from before the migration
 
 Both projects' full histories are here (earliest commit Nov 2021), but they were
