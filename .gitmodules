@@ -1,6 +1,0 @@
-[submodule "openhab-ruprechtice"]
-	path = openhab-ruprechtice
-	url = git@github.com:mihyb/openhab-ruprechtice.git
-[submodule "HomeController"]
-	path = HomeController
-	url = git@github.com:mihyb/HomeController.git
