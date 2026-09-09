@@ -33,6 +33,13 @@ open class TimerJob(
         if (isEnabled()) {
             val hour: Int = LocalTime.ofInstant(time.clock().instant(), ZoneId.systemDefault()).hour
             val switch = Switch(config.switchItem, repository)
+            if (!allConditionsMet()) {
+                if (switch.isOn()) {
+                    switch.turnOff()
+                    logger.info("Conditions not met, switching off switch")
+                }
+                return
+            }
             if (item(config.startHourItem).getDouble() > item(config.endHourItem).getDouble()) {
                 checkHourCrossDay(hour, switch)
             } else {
@@ -49,6 +56,10 @@ open class TimerJob(
             TimerJobConfig.Mode.WEEKDAY -> !isWeekend(LocalDate.now()) && item(config.statusItem).isOn()
             TimerJobConfig.Mode.WEEKEND -> isWeekend(LocalDate.now()) && item(config.statusItem).isOn()
         }
+    }
+
+    private fun allConditionsMet(): Boolean {
+        return config.conditions.all { condition -> item(condition.item).state.lowercase() == condition.value.lowercase() }
     }
 
     private fun isWeekend(date: LocalDate): Boolean {

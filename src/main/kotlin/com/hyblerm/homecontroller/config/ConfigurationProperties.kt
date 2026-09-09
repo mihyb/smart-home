@@ -8,6 +8,7 @@ class ConfigurationProperties {
     var openhab = OpenHab()
     var electricity = Electricity()
     var timerJobs = mutableListOf<TimerJobConfig>()
+    var minMaxJobs = mutableListOf<MinMaxJobConfig>()
 
     class Electricity {
         var oteUrl = ""
@@ -32,9 +33,23 @@ class ConfigurationProperties {
         var startHourItem: String = ""
         var endHourItem: String = ""
         var mode: Mode = Mode.ALL
+        var conditions: List<Condition> = emptyList()
 
         enum class Mode {
             ALL, WEEKDAY, WEEKEND
         }
+    }
+
+    class Condition {
+        var item: String = ""
+        var value: String = ""
+    }
+
+    class MinMaxJobConfig {
+        var switchItem: String = ""
+        var statusItem: String = ""
+        var valueItem: String = ""
+        var minValueItem: String = ""
+        var maxValueItem: String = ""
     }
 }

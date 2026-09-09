@@ -29,10 +29,30 @@ app:
       endHourItem: "timer_job_kr_moisture_to"
       startHourItem: "timer_job_kr_moisture_from"
       statusItem: "timer_job_kr_moisture_status"
+      conditions:
+        - item: "pokoj_okno_pokoj_okno_switch"
+          value: "off"
     - switchItem: "vysousec_switch"
       endHourItem: "timer_job_wr_moisture_to"
       startHourItem: "timer_job_wr_moisture_from"
       statusItem: "timer_job_wr_moisture_status"
+      conditions:
+        - item: "pracovna_okno_OnOff_Switch"
+          value: "off"
+    - switchItem: "bojler_switch"
+      endHourItem: "timer_job_wheater_to"
+      startHourItem: "timer_job_wheater_from"
+      statusItem: "timer_job_wheater_status"
+    - switchItem: "loznice_vetrak_switch"
+      endHourItem: "timer_job_bedroom_fan_to"
+      startHourItem: "timer_job_bedroom_fan_from"
+      statusItem: "timer_job_bedroom_fan_status"
+  minMaxJobs:
+    - switchItem: "chicks_01_Chick_01_switch"
+      statusItem: "chick_01_power"
+      valueItem: "chicks_01_Chick_01_temp"
+      minValueItem: "chick_01_min_temp"
+      maxValueItem: "chick_01_max_temp"
 server:
   port: "${app.port}"
 logging:
