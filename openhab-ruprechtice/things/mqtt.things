@@ -5,9 +5,9 @@
 Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
     birthRetain=true,
     certificatepin=true,
-    clientid="4647177a-140e-4543-bed4-dd440c1cccf4",
+    clientid="a924faf6-b9c1-4934-ade1-055ee6306de1",   // MUST differ from .109 — same client id makes brokers evict each other
     enableDiscovery=true,
-    host="localhost",
+    host="192.168.1.109",   // parallel-run: use .109's mosquitto until cutover
     hostnameValidated=true,
     keepAlive=60,
     lwtQos=0,
