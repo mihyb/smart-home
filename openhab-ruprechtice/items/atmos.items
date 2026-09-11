@@ -24,3 +24,15 @@ Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:cont
 DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
 String Atmos_GW_Ip "Atmos_GW_Ip" { channel="atmoswg1000:gateway:home:ip-address" }
 Number Atmos_GW_ZbDevices "Atmos_GW_ZbDevices" { channel="atmoswg1000:gateway:home:zigbee-devices" }
+
+// Added for the sitemap. These channels existed on the Thing all along but had
+// no item, so the data was being fetched and discarded.
+
+// Actual DHW tank temperature, as opposed to Atmos_Water_Comfort which is only
+// the setpoint the boiler aims for.
+Number:Temperature Atmos_Water_Tank "Atmos_Water_Tank" { channel="atmoswg1000:controller:home:controller1:water#temperature" }
+
+// The exhaust fan runs while the boiler is burning, so it is the most direct
+// "is it firing" signal — more reliable than the pump, which also runs while
+// circulating residual heat after the fire is out.
+Switch Atmos_Exhaust_Fan "Atmos_Exhaust_Fan" { channel="atmoswg1000:controller:home:controller1:boiler#exhaust-fan" }

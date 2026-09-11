@@ -1,4 +1,10 @@
 sitemap ruprechtice label="Ruprechtice" {
+    // Venkovní teplota z kotle ATMOS — není specifická pro kotelnu a řídí se
+    // podle ní řada rozhodnutí, proto je hned nahoře.
+    Frame {
+        Text item=Atmos_Outdoor label="Venku [%.1f °C]" icon="temperature"
+             valuecolor=[<0="blue", <10="cyan", >25="orange"]
+    }
     Frame label="Pracovna" {
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
@@ -74,8 +80,21 @@ sitemap ruprechtice label="Ruprechtice" {
                     Switch item=timer_job_wheater_status label="Časovač"
                     Switch item=bojler_switch label="Stav"
                     Text item=wheater_status
+                    Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]"
+                         valuecolor=[<40="blue", >60="orange"]
                     Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
                     Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
+                }
+        // Kotel na tuhá paliva. Spaliny + voda dohromady říkají, v jaké je fázi:
+        // spaliny rostou a voda je studená = zatápí se; obojí vysoké = topí;
+        // spaliny klesají a voda drží = dohořívá.
+        Frame label="Kotel" {
+                    Text item=Atmos_Exhaust_Fan label="Hoří" icon="fire"
+                         valuecolor=[ON="red", OFF="gray"]
+                    Text item=Atmos_FlueGas label="Spaliny [%.0f °C]" icon="flow"
+                         valuecolor=[<100="gray", >250="red"]
+                    Text item=Atmos_Boiler_Water label="Voda v kotli [%.1f °C]" icon="temperature"
+                         valuecolor=[<60="blue", >85="red"]
                 }
     }
     Frame label="Loznice" {
