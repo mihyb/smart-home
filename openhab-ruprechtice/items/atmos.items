@@ -1,0 +1,26 @@
+// ATMOS WG1000 boiler items.
+//
+// These existed only on 192.168.1.109 as an untracked, root-owned file, so
+// they were never in git and did not survive to the new host. Recovered from
+// the running instance during the migration.
+//
+// The gateway bridge they depend on lives in things/atmoswg1000.things, which
+// is gitignored because its config carries the gateway login.
+
+Number:Temperature Atmos_Boiler_Water "Atmos_Boiler_Water" { channel="atmoswg1000:controller:home:controller1:boiler#temperature" }
+Number:Temperature Atmos_FlueGas "Atmos_FlueGas" { channel="atmoswg1000:controller:home:controller1:boiler#flue-gas-temperature" }
+Number:Temperature Atmos_Boiler_Demand "Atmos_Boiler_Demand" { channel="atmoswg1000:controller:home:controller1:boiler#demand" }
+String Atmos_Boiler_Type "Atmos_Boiler_Type" { channel="atmoswg1000:controller:home:controller1:boiler#type" }
+Switch Atmos_Boiler_Pump "Atmos_Boiler_Pump" { channel="atmoswg1000:controller:home:controller1:boiler#pump" }
+Number:Time Atmos_Pump_Hours "Atmos_Pump_Hours" { channel="atmoswg1000:controller:home:controller1:boiler#pump-hours" }
+Number:Temperature Atmos_Buffer_1 "Atmos_Buffer_1" { channel="atmoswg1000:controller:home:controller1:buffer#temperature-1" }
+Number:Temperature Atmos_Buffer_4 "Atmos_Buffer_4" { channel="atmoswg1000:controller:home:controller1:buffer#temperature-4" }
+String Atmos_Serial "Atmos_Serial" { channel="atmoswg1000:controller:home:controller1:status#serial-number" }
+Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature" }
+String Atmos_Water_Mode "Atmos_Water_Mode" { channel="atmoswg1000:controller:home:controller1:water#mode" }
+Number:Temperature Atmos_Water_Comfort "Atmos_Water_Comfort" { channel="atmoswg1000:controller:home:controller1:water#comfort-setpoint" }
+String Atmos_C1_Mode "Atmos_C1_Mode" { channel="atmoswg1000:controller:home:controller1:circuit1#mode" }
+Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:controller:home:controller1:circuit1#target-temperature" }
+DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
+String Atmos_GW_Ip "Atmos_GW_Ip" { channel="atmoswg1000:gateway:home:ip-address" }
+Number Atmos_GW_ZbDevices "Atmos_GW_ZbDevices" { channel="atmoswg1000:gateway:home:zigbee-devices" }
