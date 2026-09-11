@@ -20,15 +20,6 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
     secure=false,
     shutdownRetain=true
 ] {
-    Thing topic bojler_switch "bojler_switch" [
-        availabilityTopic="zigbee2mqtt/w_heater_switch/availability",
-        payloadAvailable="online",
-        payloadNotAvailable="offline",
-        transformationPattern="JSONPATH:$.state"
-    ] {
-        Channels:
-            Type switch : bojler_switch_switch "bojler_switch" [ commandTopic="zigbee2mqtt/w_heater_switch/set/state", stateTopic="zigbee2mqtt/w_heater_switch/state" ]
-    }
 
     Thing topic 0a3dfb2310 "vysousec" [
         availabilityTopic="zigbee2mqtt/vysousec/availability",
@@ -253,4 +244,28 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
             Type number : zadveri_temp_humidity "zadveri_temp_humidity" [ stateTopic="zigbee2mqtt/zadveri_temp/humidity", unit="%" ]
             Type number : zadveri_temp_battery "zadveri_temp_battery" [ stateTopic="zigbee2mqtt/zadveri_temp/battery", unit="%" ]
     }
+}
+
+// bojler_switch is declared outside the Bridge block on purpose.
+// Its UID has no broker segment (mqtt:topic:bojler_switch, not
+// mqtt:topic:fb0a76c816:bojler_switch) because it was created by hand.
+// Nesting it makes openHAB derive the UID from the bridge and rename it,
+// which silently breaks every item linked to the original — the Thing
+// still shows ONLINE and the switch still renders, but commands go
+// nowhere. The (bridge) reference keeps the UID verbatim.
+Thing mqtt:topic:bojler_switch "bojler_switch" (mqtt:broker:fb0a76c816) [
+    availabilityTopic="zigbee2mqtt/w_heater_switch/availability",
+    payloadAvailable="online",
+    payloadNotAvailable="offline",
+    transformationPattern="JSONPATH:$.state"
+] {
+    Channels:
+        Type switch : bojler_switch_switch "bojler_switch" [ commandTopic="zigbee2mqtt/w_heater_switch/set/state", stateTopic="zigbee2mqtt/w_heater_switch/state" ]
+        // HDO detection. The boiler circuit is on the low-tariff (HDO)
+        // contactor, so when HDO drops the switch itself loses power,
+        // zigbee2mqtt loses contact and flips availability to offline.
+        // That makes availability a proxy for "is there power to switch".
+        // The thing-level transformationPattern only applies to the
+        // availability *check*, so this channel needs its own.
+        Type string : availability "Dostupnost" [ stateTopic="zigbee2mqtt/w_heater_switch/availability", transformationPattern="JSONPATH:$.state" ]
 }

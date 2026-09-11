@@ -79,7 +79,9 @@ sitemap ruprechtice label="Ruprechtice" {
         Frame label="Bojler" {
                     Switch item=timer_job_wheater_status label="Časovač"
                     Switch item=bojler_switch label="Stav"
-                    Text item=wheater_status
+                    // Rozlišuje "vypnuto časovačem" od "není proud z HDO"
+                    Text item=wheater_status label="HDO [MAP(hdo.map):%s]" icon="energy"
+                         valuecolor=["online"="green", "offline"="red"]
                     Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]"
                          valuecolor=[<40="blue", >60="orange"]
                     Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1

@@ -94,16 +94,39 @@ def thing_id(uid: str, bridge_uid: str | None) -> str:
     return uid.split(":")[-1]
 
 
+def nestable(thing: dict, bridge_uid: str) -> bool:
+    """True when nesting this Thing inside its Bridge preserves its UID.
+
+    openHAB derives a nested Thing's UID from the enclosing bridge:
+    <binding>:<thingType>:<bridgeId>:<thingId>. A Thing whose stored UID does
+    not follow that shape — a hand-made one such as mqtt:topic:bojler_switch,
+    bridged to mqtt:broker:fb0a76c816 — gets silently renamed by nesting, and
+    every item channel link pointing at the old UID stops resolving. The Thing
+    still shows ONLINE and the widget still renders; only commands and state
+    quietly go nowhere.
+    """
+    binding = thing["UID"].split(":")[0]
+    thing_type = thing["thingTypeUID"].split(":")[-1]
+    bridge_id = bridge_uid.split(":")[-1]
+    return thing["UID"].startswith(f"{binding}:{thing_type}:{bridge_id}:")
+
+
 def render_thing(thing: dict, redact: bool, nested: bool) -> list[str]:
     indent = "    " if nested else ""
     uid = thing["UID"]
     type_uid = thing["thingTypeUID"]
     label = thing.get("label") or uid
+    bridge = thing.get("bridgeUID")
     cfg = render_config(config_of(thing), redact, indent)
 
     if nested:
         # Inside a Bridge block the binding prefix is implied.
-        head = f'{indent}Thing {type_uid.split(":")[-1]} {thing_id(uid, thing.get("bridgeUID"))} "{esc(label)}"{cfg}'
+        head = f'{indent}Thing {type_uid.split(":")[-1]} {thing_id(uid, bridge)} "{esc(label)}"{cfg}'
+    elif bridge:
+        # Standalone but bridged. Used when the UID does not sit under the
+        # bridge UID: nesting such a Thing makes openHAB recompute its UID as
+        # <bridge>:<id>, silently breaking every item linked to the original.
+        head = f'{indent}Thing {uid} "{esc(label)}" ({bridge}){cfg}'
     else:
         head = f'{indent}Thing {uid} "{esc(label)}"{cfg}'
 
@@ -159,8 +182,12 @@ def main() -> int:
             if thing.get("isBridge"):
                 continue
             parent = thing.get("bridgeUID")
-            if parent in bridges:
+            if parent in bridges and nestable(thing, parent):
                 children_of[parent].append(thing)
+            elif parent in bridges:
+                # Bridged, but the UID is not bridge-derived — render standalone
+                # with an explicit bridge reference so the UID survives verbatim.
+                standalone.append(thing)
             else:
                 if parent:
                     # Bridge lives outside JSONDB — typically a file-defined bridge
