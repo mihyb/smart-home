@@ -9,61 +9,82 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
         Text item=pracovna_okno_OnOff_Switch label="Okno" icon="window-open" valuecolor=[ON="green", OFF="red"]
-        Frame label="Rybicky světlo" {
-            Switch item=timer_job_aquarium_status label="Časovač"
-            Switch item=akvarium_svetlo_switch label="Stav"
-            Setpoint item=timer_job_aquarium_from label="Od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_aquarium_to label="Do" minValue=0 maxValue=23 step=1
+        Switch item=akvarium_svetlo_switch label="Rybičky světlo"
+        Text item=timer_job_aquarium_status label="Časovač [%s]" icon="clock"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Rybičky světlo — časovač" {
+                Switch item=timer_job_aquarium_status label="Časovač"
+                Setpoint item=timer_job_aquarium_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_aquarium_to label="Do" minValue=0 maxValue=23 step=1
+            }
         }
-        Frame label="Topení" {
-            Switch item=timer_job_wr_heating_status label="Časovač"
-            Switch item=Infrared_heating_panel_switch label="Stav"
-            Setpoint item=timer_job_wr_heating_from label="Od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_wr_heating_to label="Do" minValue=0 maxValue=23 step=1
+        Switch item=Infrared_heating_panel_switch label="Topení"
+        Text item=timer_job_wr_heating_status label="Časovač [%s]" icon="clock"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Topení — časovač" {
+                Switch item=timer_job_wr_heating_status label="Časovač"
+                Setpoint item=timer_job_wr_heating_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_wr_heating_to label="Do" minValue=0 maxValue=23 step=1
+            }
         }
-        Frame label="Odvlhčovač" {
-            Switch item=timer_job_wr_moisture_status label="Časovač"
-            Switch item=vysousec_switch label="Stav"
-            Setpoint item=timer_job_wr_moisture_from label="Od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_wr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+        Switch item=vysousec_switch label="Odvlhčovač"
+        Text item=timer_job_wr_moisture_status label="Časovač [%s]" icon="clock"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Odvlhčovač — časovač" {
+                Switch item=timer_job_wr_moisture_status label="Časovač"
+                Setpoint item=timer_job_wr_moisture_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_wr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+            }
         }
     }
     Frame label="Chodba" {
             Text item=chodba_temp_humidity_calibrated_percent label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
             Text item=chodba_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
-            Frame label="Kuřátka" {
-                        Switch item=chick_01_power label="Stav"
-                        Switch item=chicks_01_Chick_01_switch label="Topení"
-                        Text item=chicks_01_Chick_01_temp label="Teplota"
-                        Setpoint item=chick_01_min_temp label="Od" minValue=15 maxValue=34 step=1
-                        Setpoint item=chick_01_max_temp label="Do" minValue=16 maxValue=35 step=1
-                    }
+            Switch item=chick_01_power label="Kuřátka"
+            Text item=chicks_01_Chick_01_temp label="Teplota [%.1f °C]" icon="temperature"
+            Text item=chicks_01_Chick_01_switch label="Topení [%s]" icon="heating"
+                 valuecolor=[ON="red", OFF="gray"] {
+                Frame label="Kuřátka — termostat" {
+                    Switch item=chicks_01_Chick_01_switch label="Topení"
+                    Setpoint item=chick_01_min_temp label="Od" minValue=15 maxValue=34 step=1
+                    Setpoint item=chick_01_max_temp label="Do" minValue=16 maxValue=35 step=1
+                }
+            }
         }
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pokojicek_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
         Text item=pokoj_okno_pokoj_okno_switch label="Okno" icon="window" valuecolor=[ON="green", OFF="red"]
-        Frame label="Odvlhčovač" {
-            Switch item=timer_job_kr_moisture_status label="Časovač"
-            Switch item=pokoj_vysousec_switch label="Stav"
-            Setpoint item=timer_job_kr_moisture_from label="Od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_kr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+        Switch item=pokoj_vysousec_switch label="Odvlhčovač"
+        Text item=timer_job_kr_moisture_status label="Časovač [%s]" icon="clock"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Odvlhčovač — časovač" {
+                Switch item=timer_job_kr_moisture_status label="Časovač"
+                Setpoint item=timer_job_kr_moisture_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_kr_moisture_to label="Do" minValue=0 maxValue=23 step=1
+            }
         }
     }
     Frame label="Obyvák" {
         Text item=obyvak_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=obyvak_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<18="blue"]
-        Frame label="Stromeček" {
-            Switch item=timer_job_xmass_status label="Časovač"
-            Switch item=obyvak_switch label="Stav"
-            Setpoint item=timer_job_xmass_from label="Od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_xmass_to label="Do" minValue=0 maxValue=23 step=1
+        Switch item=obyvak_switch label="Stromeček"
+        Text item=timer_job_xmass_status label="Časovač [%s]" icon="clock"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Stromeček — časovač" {
+                Switch item=timer_job_xmass_status label="Časovač"
+                Setpoint item=timer_job_xmass_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_xmass_to label="Do" minValue=0 maxValue=23 step=1
+            }
         }
-        Frame label="Seroušek" {
-            Switch item=timer_job_agama_status label="Časovač"
-            Switch item=agama_switch label="Stav"
-            Setpoint item=timer_job_agama_from label="Od" minValue=0 maxValue=23 step=1
-            Setpoint item=timer_job_agama_to label="Do" minValue=0 maxValue=23 step=1
+        Switch item=agama_switch label="Seroušek"
+        Text item=timer_job_agama_status label="Časovač [%s]" icon="clock"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Seroušek — časovač" {
+                Switch item=timer_job_agama_status label="Časovač"
+                Setpoint item=timer_job_agama_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_agama_to label="Do" minValue=0 maxValue=23 step=1
+            }
         }
     }
     Frame label="Koupelna" {
@@ -76,14 +97,15 @@ sitemap ruprechtice label="Ruprechtice" {
     }
     Frame label="Kotelna" {
         Text item=smoke_sensor_smoke label="Kouř poplach" labelcolor=[ON="red"]
-        // Bojler: na hlavní stránce jen stav a teplota vody, ovládání o klik dál.
-        // Pozor — Switch v openHABu nesmí mít vnořené widgety (celý sitemap se
-        // pak tiše zahodí), takže rozklikávací řádek musí být Text. Řádek proto
-        // stav ukazuje, ale nepřepíná; přepíná se uvnitř.
-        Text item=bojler_switch label="Bojler [%s]" icon="water"
+        // Bojler: stav a teplota vody na hlavní stránce, zbytek o klik dál.
+        // Switch nesmí mít vnořené widgety (openHAB by celý sitemap zahodil),
+        // takže rozklikávací řádek je Text — a nese rovnou stav časovače.
+        Switch item=bojler_switch label="Bojler"
+        Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]" icon="temperature"
+             valuecolor=[<40="blue", >60="orange"]
+        Text item=timer_job_wheater_status label="Časovač [%s]" icon="clock"
              valuecolor=[ON="green", OFF="gray"] {
-            Frame label="Ovládání" {
-                Switch item=bojler_switch label="Stav"
+            Frame label="Bojler — časovač" {
                 Switch item=timer_job_wheater_status label="Časovač"
                 Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
                 Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
@@ -94,8 +116,6 @@ sitemap ruprechtice label="Ruprechtice" {
                      valuecolor=["online"="green", "offline"="red"]
             }
         }
-        Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]" icon="temperature"
-             valuecolor=[<40="blue", >60="orange"]
         // Kotel na tuhá paliva. Spaliny + voda dohromady říkají, v jaké je fázi:
         // spaliny rostou a voda je studená = zatápí se; obojí vysoké = topí;
         // spaliny klesají a voda drží = dohořívá.
@@ -125,12 +145,15 @@ sitemap ruprechtice label="Ruprechtice" {
         }
     }
     Frame label="Loznice" {
-            Frame label="Vetrak" {
-                                Switch item=timer_job_bedroom_fan_status label="Časovač"
-                                Switch item=loznice_vetrak_switch label="Stav"
-                                Setpoint item=timer_job_bedroom_fan_from label="Od" minValue=0 maxValue=23 step=1
-                                Setpoint item=timer_job_bedroom_fan_to label="Do" minValue=0 maxValue=23 step=1
-                            }
+            Switch item=loznice_vetrak_switch label="Větrák"
+            Text item=timer_job_bedroom_fan_status label="Časovač [%s]" icon="clock"
+                 valuecolor=[ON="green", OFF="gray"] {
+                Frame label="Větrák — časovač" {
+                    Switch item=timer_job_bedroom_fan_status label="Časovač"
+                    Setpoint item=timer_job_bedroom_fan_from label="Od" minValue=0 maxValue=23 step=1
+                    Setpoint item=timer_job_bedroom_fan_to label="Do" minValue=0 maxValue=23 step=1
+                }
+            }
         }
     Frame label="Sklep" {
         Text item=sklep_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>75="red"]
