@@ -94,6 +94,11 @@ Next:
   2. Give this host a static IP or DHCP reservation before going further.
   3. Deploy config:  HOST=${HOST} ./scripts/deploy-openhab.sh --apply
   4. Build and install the binding:
+     *** DO NOT DO THIS YET ***  The 5.2.1 jar leaks websockets to the ATMOS
+     gateway and exhausts its socket table, leaving it unreachable until it is
+     physically power-cycled. Stopping the bundle is not enough — orphaned Jetty
+     threads survive bundle:stop and keep dialling; only an openHAB restart
+     clears them. Wait for a fixed build.
        cd atmos-connector && ./mvnw -s .mvn/settings.xml clean package
        scp bundles/*/target/org.openhab.binding.atmoswg1000-${OH_VERSION}.jar \\
            ${USER_NAME}@${HOST}:/tmp/ && ssh ${USER_NAME}@${HOST} \\

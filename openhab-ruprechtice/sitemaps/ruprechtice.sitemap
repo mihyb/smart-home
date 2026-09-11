@@ -26,6 +26,15 @@ sitemap ruprechtice label="Ruprechtice" {
                 Setpoint item=timer_job_wr_heating_from label="Od" minValue=0 maxValue=23 step=1
                 Setpoint item=timer_job_wr_heating_to label="Do" minValue=0 maxValue=23 step=1
             }
+            Frame label="Teplota" {
+                // Čidlo uvnitř panelu, ne teplota místnosti — ta je nahoře
+                // v rámu Pracovna. Panel reguluje podle tohoto čidla.
+                Text item=Infrared_heating_panel_temp_current label="Čidlo topení [%d °C]" icon="temperature"
+                Setpoint item=Infrared_heating_panel_temp_set label="Cílová teplota" minValue=5 maxValue=50 step=1
+            }
+            Frame label="Displej" {
+                Switch item=Infrared_heating_panel_light_display label="Kontrolka"
+            }
         }
         Text item=vysousec_switch label="Odvlhčovač [%s]" icon="humidity"
              valuecolor=[ON="green", OFF="gray"] {
@@ -48,8 +57,12 @@ sitemap ruprechtice label="Ruprechtice" {
                     Setpoint item=chick_01_min_temp label="Od" minValue=15 maxValue=34 step=1
                     Setpoint item=chick_01_max_temp label="Do" minValue=16 maxValue=35 step=1
                 }
+                Frame label="Teplota" {
+                    // Teplota v líhni, ne na chodbě — ta je o řádek výš
+                    // v rámu Chodba a pletla se s touhle.
+                    Text item=chicks_01_Chick_01_temp label="Teplota v líhni [%.1f °C]" icon="temperature"
+                }
             }
-            Text item=chicks_01_Chick_01_temp label="Teplota [%.1f °C]" icon="temperature"
         }
     Frame label="Pokojíček" {
         Text item=pokojicek_temp_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
@@ -93,6 +106,9 @@ sitemap ruprechtice label="Ruprechtice" {
                 // vrací i Tuya cloud; regulace ale jede podle tohoto čidla.
                 Text item=obyvak_topeni_temp_current label="Čidlo topení [%d °C]" icon="temperature"
                 Setpoint item=obyvak_topeni_temp_set label="Cílová teplota" minValue=5 maxValue=50 step=1
+            }
+            Frame label="Displej" {
+                Switch item=obyvak_topeni_light_display label="Kontrolka"
             }
         }
         Text item=agama_switch label="Seroušek [%s]" icon="heating"

@@ -56,3 +56,18 @@ Number:Temperature zadveri_temp_temperature "zadveri_temp_temperature" (temp_sen
 Switch obyvak_topeni_switch "switch" <Switch> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:switch" }
 Number obyvak_topeni_temp_set "temp_set" <Number> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:temp_set" }
 Number obyvak_topeni_temp_current "temp_current" <Number> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:temp_current" }
+
+// Pracovna — infrapanel. Kanály temp_current a light na Thingu byly od začátku,
+// jen k nim nebyly položky, takže se hodnoty stahovaly a zahazovaly.
+Number Infrared_heating_panel_temp_current "temp_current" <Number> ["Point"] { channel="tuya:tuyaDevice:bf63f4418aa59a2eafclvb:temp_current" }
+// Kontrolka na panelu (dp 10) — dá se zhasnout, aby v noci nesvítila.
+Switch Infrared_heating_panel_light "light" <Switch> ["Point"] { channel="tuya:tuyaDevice:bf63f4418aa59a2eafclvb:light" }
+Switch obyvak_topeni_light "light" <Switch> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:light" }
+
+// Kontrolka na panelu hlásí dp 10 obráceně: ON = zhasnuto. Ovládat přímo by
+// znamenalo mít v sitemapu tlačítko, které dělá opak toho, co říká, takže se
+// otáčí přes proxy položku a rules/tuya_light_invert.rules. openHAB nemá profil
+// system:invert a transformační profily jsou jen pro stav, ne pro příkazy —
+// pouhý MAP by opravil zobrazení, ale přepínal by pořád špatně.
+Switch obyvak_topeni_light_display "Kontrolka"
+Switch Infrared_heating_panel_light_display "Kontrolka"

@@ -1,3 +1,16 @@
+// ⚠️  BINDING STAŽENO Z PROVOZU — NENASAZOVAT
+//
+// org.openhab.binding.atmoswg1000 5.2.1 má chybu: neuzavírá websockety k bráně
+// a vyčerpá jí tabulku socketů, takže brána přestane přijímat spojení a pomůže
+// jen fyzický restart. Na .132 bylo 5 ESTAB + 12 SYN-SENT a přibývaly i poté,
+// co byly Thingy zakázané.
+//
+// Zastavení bundle nestačí — osiřelé Jetty vlákna přežijí bundle:stop a dál
+// vytáčejí. Nutný je restart openHABu.
+//
+// Jar je v karanténě v /home/ruprecht/atmos-jar-quarantine/ na .132.
+// Opravená verze se chystá; do té doby jar nevracet do addons/.
+//
 // atmoswg1000 Things — gateway bridge hand-written, controller generated from
 // JSONDB by scripts/jsondb-to-things.py.
 //
