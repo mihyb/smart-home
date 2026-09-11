@@ -77,6 +77,19 @@ sitemap ruprechtice label="Ruprechtice" {
                 Setpoint item=timer_job_xmass_to label="Do" minValue=0 maxValue=23 step=1
             }
         }
+        Text item=obyvak_topeni_switch label="Topení [%s]" icon="heating"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Topení" {
+                Switch item=obyvak_topeni_switch label="Stav"
+                Switch item=timer_job_lr_heating_status label="Časovač"
+                Setpoint item=timer_job_lr_heating_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_lr_heating_to label="Do" minValue=0 maxValue=23 step=1
+            }
+            Frame label="Teplota" {
+                Text item=obyvak_topeni_temp_current label="Teplota v místnosti [%d °C]"
+                Setpoint item=obyvak_topeni_temp_set label="Cílová teplota" minValue=5 maxValue=50 step=1
+            }
+        }
         Text item=agama_switch label="Seroušek [%s]" icon="heating"
              valuecolor=[ON="green", OFF="gray"] {
             Frame label="Seroušek" {
@@ -167,6 +180,8 @@ sitemap ruprechtice label="Ruprechtice" {
         }
         Frame label="Servis" {
             Text item=backend_health_status_item label="Backend status" labelcolor=["DOWN"="red"]
+            Text item=Atmos_GW_Status label="ATMOS brána [%s]" icon="network"
+                 valuecolor=["ONLINE"="green", "OFFLINE"="red", "UNKNOWN"="orange", "UNINITIALIZED"="orange"]
             Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
             Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
             Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<10="red"]

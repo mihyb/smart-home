@@ -1,4 +1,4 @@
-# openHAB item states captured from 192.168.1.109 on 2026-09-11T10:28:35Z
+# openHAB item states captured from 192.168.1.132 on 2026-09-11T19:19:43Z
 # These are setpoints set from the sitemap, not device readings.
 # Restore with: ./scripts/sync-item-states.sh apply --write
 chick_01_max_temp	28.0
@@ -16,6 +16,9 @@ timer_job_bedroom_fan_to	16.0
 timer_job_kr_moisture_from	8.0
 timer_job_kr_moisture_status	ON
 timer_job_kr_moisture_to	19.0
+timer_job_lr_heating_from	6
+timer_job_lr_heating_status	OFF
+timer_job_lr_heating_to	22
 timer_job_wheater_from	10.0
 timer_job_wheater_status	ON
 timer_job_wheater_to	16.0

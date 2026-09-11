@@ -19,8 +19,8 @@ Bridge atmoswg1000:gateway:home "ATMOS WG1000 Gateway" [
     port=443,
     username="<<SET_ME>>",
     password="<<SET_ME>>",
-    refreshInterval=30,
-    infoRefreshInterval=60,
+    refreshInterval=60,
+    infoRefreshInterval=120,
     language="ENG",
     trustAllCertificates=true
 ] {

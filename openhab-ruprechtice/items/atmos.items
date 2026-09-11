@@ -50,3 +50,9 @@ Number:Temperature Atmos_Water_Tank "Atmos_Water_Tank" { channel="atmoswg1000:co
 // "is it firing" signal — more reliable than the pump, which also runs while
 // circulating residual heat after the fire is out.
 Switch Atmos_Exhaust_Fan "Atmos_Exhaust_Fan" { channel="atmoswg1000:controller:home:controller1:boiler#exhaust-fan" }
+
+// Stav brány ATMOS. openHAB nemá kanál, kterým by šel stav Thingu přečíst jako
+// položku, takže ho sem překlápí rules/atmos_gateway.rules. Bez toho není výpadek
+// brány nikde vidět — hodnoty prostě zamrznou na posledních známých, což vypadá
+// jako by všechno běželo.
+String Atmos_GW_Status "ATMOS brána [%s]"

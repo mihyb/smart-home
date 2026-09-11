@@ -65,3 +65,22 @@ Thing tuya:tuyaDevice:bf63f4418aa59a2eafclvb "Infrared heating panel" [
         Type string : countdown_set "countdown_set" [ dp=19, range="cancel,1h,2h,3h,4h,5h,6h" ]
         Type switch : switch "switch" [ dp=1 ]
 }
+
+Thing tuya:tuyaDevice:bfe4474d059d121bebaqz4 "Obyvak topeni" [
+    deviceId="bfe4474d059d121bebaqz4",
+    localKey="<<SET_ME>>",
+    pollingInterval=30,
+    productId="9byzkuhaavzgkeid",
+    protocol="3.3"
+] {
+    Channels:
+        Type switch : switch "switch" [ dp=1 ]
+        Type number : temp_set "temp_set" [ dp=2, max=50, min=5 ]
+        Type number : temp_current "temp_current" [ dp=3, max=180, min=0 ]
+        Type switch : mode_eco "mode_eco" [ dp=6 ]
+        Type switch : lock "lock" [ dp=7 ]
+        Type switch : light "light" [ dp=10 ]
+        Type string : work_state "work_state" [ dp=11, range="heating" ]
+        Type string : countdown_set "countdown_set" [ dp=19, range="cancel,1h,2h,3h,4h,5h,6h" ]
+        Type number : countdown_left "countdown_left" [ dp=20, max=1440, min=0 ]
+}

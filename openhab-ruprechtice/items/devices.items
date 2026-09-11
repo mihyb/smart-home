@@ -50,3 +50,9 @@ Switch vysousec_switch "vysousec_switch" ["Point"] { channel="mqtt:topic:fb0a76c
 Number:Dimensionless zadveri_temp_battery "zadveri_temp_battery" ["Point"] { channel="mqtt:topic:fb0a76c816:zadveri_temp:zadveri_temp_battery" }
 Number:Dimensionless zadveri_temp_humidity "zadveri_temp_humidity" (humidity_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:zadveri_temp:zadveri_temp_humidity" }
 Number:Temperature zadveri_temp_temperature "zadveri_temp_temperature" (temp_sensors) ["Point"] { channel="mqtt:topic:fb0a76c816:zadveri_temp:zadveri_temp_temperature" }
+
+// Obyvák — přímotop Climative IRH-077 (Tuya). Stejné dp jako panel v pracovně,
+// ověřeno proti /v2.0/cloud/thing/<id>/model, kde abilityId = dp.
+Switch obyvak_topeni_switch "switch" <Switch> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:switch" }
+Number obyvak_topeni_temp_set "temp_set" <Number> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:temp_set" }
+Number obyvak_topeni_temp_current "temp_current" <Number> ["Point"] { channel="tuya:tuyaDevice:bfe4474d059d121bebaqz4:temp_current" }
