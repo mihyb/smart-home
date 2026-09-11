@@ -86,13 +86,11 @@ sitemap ruprechtice label="Ruprechtice" {
                 Setpoint item=timer_job_lr_heating_to label="Do" minValue=0 maxValue=23 step=1
             }
             Frame label="Teplota" {
-                // Pozor na rozdíl: obyvak_temp_temperature je pokojové čidlo
-                // (zigbee), obyvak_topeni_temp_current je vlastní čidlo uvnitř
-                // topení. To je u panelových topidel u zdi a studené, takže
-                // ukazuje výrazně míň než vzduch v místnosti — 16 vs 20,6 °C
-                // při vypnutém topení. Není to chyba převodu, stejnou hodnotu
-                // vrací i Tuya cloud; regulace ale jede podle čidla topení.
-                Text item=obyvak_temp_temperature label="Teplota v místnosti [%.1f °C]" icon="temperature"
+                // Vlastní čidlo uvnitř topení, ne teplota místnosti — ta je
+                // nahoře v rámu Obyvák. U panelových topidel je čidlo u zdi a
+                // studené, takže ukazuje výrazně míň (16 vs 20,6 °C při
+                // vypnutém topení). Není to chyba převodu, stejnou hodnotu
+                // vrací i Tuya cloud; regulace ale jede podle tohoto čidla.
                 Text item=obyvak_topeni_temp_current label="Čidlo topení [%d °C]" icon="temperature"
                 Setpoint item=obyvak_topeni_temp_set label="Cílová teplota" minValue=5 maxValue=50 step=1
             }
