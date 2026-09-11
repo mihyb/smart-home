@@ -3,6 +3,15 @@
 // and are what makes this config reproducible on a new machine.
 // Secrets replaced with <<SET_ME>>. Copy to tuya.things
 // and fill in from the password manager; that file is gitignored.
+//
+// Uses the OFFICIAL openhab-binding-tuya (ships with openHAB 5.2.1), not the
+// SmartHome/J marketplace addon that .109 runs. SmartHome/J stopped at 4.3.2
+// with no openHAB 5 build, so it is a dead end for this migration. The official
+// binding uses the same thing type UIDs, so this config carries over unchanged.
+//
+// pollingInterval is 30, not 0 as inherited from .109. With 0 the binding only
+// updates when the device pushes a change, so items sit NULL until something
+// happens — which is why .109 showed a stale temp_set for days.
 
 Thing tuya:project:71b4a95ecc "Tuya Cloud Project" [
     accessId="<<SET_ME>>",
@@ -17,7 +26,7 @@ Thing tuya:project:71b4a95ecc "Tuya Cloud Project" [
 Thing tuya:tuyaDevice:0270011094b97e0bab58 "Smart Aroma Diffuser" [
     deviceId="0270011094b97e0bab58",
     localKey="<<SET_ME>>",
-    pollingInterval=0,
+    pollingInterval=30,
     productId="jhScexmS2WhfeOnt",
     protocol="3.3"
 ] {
@@ -41,7 +50,7 @@ Thing tuya:tuyaDevice:bf63f4418aa59a2eafclvb "Infrared heating panel" [
     deviceId="bf63f4418aa59a2eafclvb",
     ip="192.168.1.107",
     localKey="<<SET_ME>>",
-    pollingInterval=0,
+    pollingInterval=30,
     productId="jroalgo2kwzwsbe4",
     protocol="3.3"
 ] {
