@@ -13,8 +13,22 @@ Number:Temperature Atmos_Boiler_Demand "Atmos_Boiler_Demand" { channel="atmoswg1
 String Atmos_Boiler_Type "Atmos_Boiler_Type" { channel="atmoswg1000:controller:home:controller1:boiler#type" }
 Switch Atmos_Boiler_Pump "Atmos_Boiler_Pump" { channel="atmoswg1000:controller:home:controller1:boiler#pump" }
 Number:Time Atmos_Pump_Hours "Atmos_Pump_Hours" { channel="atmoswg1000:controller:home:controller1:boiler#pump-hours" }
-Number:Temperature Atmos_Buffer_1 "Atmos_Buffer_1" { channel="atmoswg1000:controller:home:controller1:buffer#temperature-1" }
-Number:Temperature Atmos_Buffer_4 "Atmos_Buffer_4" { channel="atmoswg1000:controller:home:controller1:buffer#temperature-4" }
+// Akumulační nádrž má čtyři čidla po výšce: 1 je nahoře, 4 dole. Nádrž se
+// nabíjí shora dolů, takže rozdíl mezi 1 a 4 říká, jak hluboko je nabitá.
+Number:Temperature Atmos_Buffer_1 "Atmos_Buffer_1" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-1" }
+Number:Temperature Atmos_Buffer_2 "Atmos_Buffer_2" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-2" }
+Number:Temperature Atmos_Buffer_3 "Atmos_Buffer_3" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-3" }
+Number:Temperature Atmos_Buffer_4 "Atmos_Buffer_4" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-4" }
+
+// Skupina pro graf průběhu nabíjení.
+Group:Number:AVG atmos_buffer "Akumulace průměr [%.1f °C]"
+
+// Odvozené položky, počítá je rules/atmos_buffer.rules — bez kanálu.
+// Nabití 0-100 % = kolik ze čtyř čidel dosáhlo BUFFER_HOT_C, škálováno na
+// procenta, aby šla použít ikona s výplní (batterylevel).
+Number Atmos_Buffer_Charge "Nabití [%d %%]" <batterylevel>
+// Kolik čidel je nahřátých, 0-4 — to, co se dá přečíst na první pohled.
+Number Atmos_Buffer_Zones "Nahřátá čidla [%d ze 4]"
 String Atmos_Serial "Atmos_Serial" { channel="atmoswg1000:controller:home:controller1:status#serial-number" }
 Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature" }
 String Atmos_Water_Mode "Atmos_Water_Mode" { channel="atmoswg1000:controller:home:controller1:water#mode" }

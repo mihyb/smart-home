@@ -76,17 +76,26 @@ sitemap ruprechtice label="Ruprechtice" {
     }
     Frame label="Kotelna" {
         Text item=smoke_sensor_smoke label="Kouř poplach" labelcolor=[ON="red"]
-        Frame label="Bojler" {
-                    Switch item=timer_job_wheater_status label="Časovač"
-                    Switch item=bojler_switch label="Stav"
-                    // Rozlišuje "vypnuto časovačem" od "není proud z HDO"
-                    Text item=wheater_status label="HDO [MAP(hdo.map):%s]" icon="energy"
-                         valuecolor=["online"="green", "offline"="red"]
-                    Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]"
-                         valuecolor=[<40="blue", >60="orange"]
-                    Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
-                    Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
-                }
+        // Bojler: na hlavní stránce jen stav a teplota vody, ovládání o klik dál.
+        // Pozor — Switch v openHABu nesmí mít vnořené widgety (celý sitemap se
+        // pak tiše zahodí), takže rozklikávací řádek musí být Text. Řádek proto
+        // stav ukazuje, ale nepřepíná; přepíná se uvnitř.
+        Text item=bojler_switch label="Bojler [%s]" icon="water"
+             valuecolor=[ON="green", OFF="gray"] {
+            Frame label="Ovládání" {
+                Switch item=bojler_switch label="Stav"
+                Switch item=timer_job_wheater_status label="Časovač"
+                Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
+                Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
+            }
+            Frame label="Napájení" {
+                // Rozlišuje "vypnuto časovačem" od "není proud z HDO"
+                Text item=wheater_status label="HDO [MAP(hdo.map):%s]" icon="energy"
+                     valuecolor=["online"="green", "offline"="red"]
+            }
+        }
+        Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]" icon="temperature"
+             valuecolor=[<40="blue", >60="orange"]
         // Kotel na tuhá paliva. Spaliny + voda dohromady říkají, v jaké je fázi:
         // spaliny rostou a voda je studená = zatápí se; obojí vysoké = topí;
         // spaliny klesají a voda drží = dohořívá.
@@ -98,6 +107,22 @@ sitemap ruprechtice label="Ruprechtice" {
                     Text item=Atmos_Boiler_Water label="Voda v kotli [%.1f °C]" icon="temperature"
                          valuecolor=[<60="blue", >85="red"]
                 }
+        // Akumulace jako jeden řádek — detail po rozkliknutí. Text s vnořenými
+        // widgety dělá v openHABu podstránku, takže hlavní stránka zůstane
+        // přehledná a zároveň to není další Frame ve Frame.
+        Text item=Atmos_Buffer_Charge label="Akumulace [%d %%]" icon="batterylevel"
+             valuecolor=[<25="gray", <75="orange", >=75="green"] {
+            Frame label="Čidla po výšce nádrže" {
+                Text item=Atmos_Buffer_Zones label="Nahřátá čidla [%d ze 4]" icon="heating"
+                Text item=Atmos_Buffer_1 label="1 nahoře [%.1f °C]" valuecolor=[>=70="red", <40="blue"]
+                Text item=Atmos_Buffer_2 label="2 [%.1f °C]"        valuecolor=[>=70="red", <40="blue"]
+                Text item=Atmos_Buffer_3 label="3 [%.1f °C]"        valuecolor=[>=70="red", <40="blue"]
+                Text item=Atmos_Buffer_4 label="4 dole [%.1f °C]"   valuecolor=[>=70="red", <40="blue"]
+            }
+            Frame label="Průběh nabíjení" {
+                Chart item=atmos_buffer period=D refresh=300
+            }
+        }
     }
     Frame label="Loznice" {
             Frame label="Vetrak" {
