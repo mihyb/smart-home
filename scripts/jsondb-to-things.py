@@ -154,6 +154,7 @@ def main() -> int:
         bridges = {t["UID"]: t for t in group if t.get("isBridge")}
         children_of: dict[str, list] = defaultdict(list)
         standalone = []
+        orphans = []
         for thing in group:
             if thing.get("isBridge"):
                 continue
@@ -161,6 +162,12 @@ def main() -> int:
             if parent in bridges:
                 children_of[parent].append(thing)
             else:
+                if parent:
+                    # Bridge lives outside JSONDB — typically a file-defined bridge
+                    # holding credentials. Dropping the association silently would
+                    # leave the Thing UNINITIALIZED with
+                    # "Configuring a bridge is mandatory", so say so loudly.
+                    orphans.append((thing["UID"], parent))
                 standalone.append(thing)
 
         lines = [
@@ -183,12 +190,15 @@ def main() -> int:
         name = f"{binding}.things.example" if redact else f"{binding}.things"
         path = out_dir / name
         path.write_text("\n".join(lines).rstrip() + "\n")
-        written.append((name, len(group), redact))
+        written.append((name, len(group), redact, orphans))
 
-    for name, count, redact in written:
+    for name, count, redact, orphans in written:
         flag = "  (secrets redacted)" if redact else ""
         print(f"  {name}: {count} things{flag}")
-    print(f"\n{sum(c for _, c, _ in written)} things -> {out_dir}")
+        for uid, parent in orphans:
+            print(f"    WARNING: {uid} needs bridge {parent}, which is not in JSONDB.")
+            print(f"             Define it by hand or the Thing stays UNINITIALIZED.")
+    print(f"\n{sum(c for _, c, _, _ in written)} things -> {out_dir}")
     return 0
 
 

@@ -11,3 +11,6 @@
 
 # Real Tuya credentials — generate from things/tuya.things.example
 openhab-ruprechtice/things/tuya.things
+
+# Real ATMOS gateway credentials — generate from things/atmoswg1000.things.example
+openhab-ruprechtice/things/atmoswg1000.things
