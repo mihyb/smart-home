@@ -7,15 +7,15 @@
 #   ./scripts/logs.sh openhab-events    # openhab events.log (item state changes)
 set -euo pipefail
 
-CTL_HOST="${CTL_HOST:-192.168.1.124}"
-CTL_USER="${CTL_USER:-majkl}"
-OH_HOST="${OPENHAB_HOST:-192.168.1.109}"
-OH_USER="${OPENHAB_USER:-dev}"
+CTL_HOST="${CTL_HOST:-192.168.1.132}"
+CTL_USER="${CTL_USER:-ruprecht}"
+OH_HOST="${OPENHAB_HOST:-192.168.1.132}"
+OH_USER="${OPENHAB_USER:-ruprecht}"
 
 SSH="ssh -o ConnectTimeout=8"
 
 case "${1:-controller}" in
-  controller)      ${SSH} -t "${CTL_USER}@${CTL_HOST}" 'tail -f /home/majkl/app/home-portal.log' ;;
+  controller)      ${SSH} -t "${CTL_USER}@${CTL_HOST}" 'tail -f /home/ruprecht/app/home-portal.log' ;;
   controller-unit) ${SSH} -t "${CTL_USER}@${CTL_HOST}" 'journalctl -u homecontroller -f' ;;
   openhab)         ${SSH} -t "${OH_USER}@${OH_HOST}"   'tail -f /var/log/openhab/openhab.log' ;;
   openhab-events)  ${SSH} -t "${OH_USER}@${OH_HOST}"   'tail -f /var/log/openhab/events.log' ;;
