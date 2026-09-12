@@ -40,7 +40,15 @@ open class TimerJob(
                 }
                 return
             }
-            if (item(config.startHourItem).getDouble() > item(config.endHourItem).getDouble()) {
+            // Same story as MinMaxJob: these are virtual items whose value lives
+            // only in persistence, so they read NULL until it is restored.
+            val startHour = item(config.startHourItem).getDoubleOrNull()
+            val endHour = item(config.endHourItem).getDoubleOrNull()
+            if (startHour == null || endHour == null) {
+                logger.warn("skipping: no value for {} / {}", config.startHourItem, config.endHourItem)
+                return
+            }
+            if (startHour > endHour) {
                 checkHourCrossDay(hour, switch)
             } else {
                 checkHourWithinDay(hour, switch)

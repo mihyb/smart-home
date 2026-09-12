@@ -6,6 +6,9 @@ import com.hyblerm.homecontroller.service.repository.DataAccess
 import com.hyblerm.homecontroller.service.rules.common.job.MinMaxJob
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
@@ -29,6 +32,34 @@ class MinMaxJobTest {
 
         verify(dataAccess).getItem(STATUS_ID)
         verifyNoMoreInteractions(dataAccess)
+    }
+
+    @Test
+    fun `checkSwitch skips when the sensor has no value`() {
+        // An item reads NULL while its thing is offline. Parsing that as a number
+        // used to throw and kill the scheduled task every five minutes.
+        mockItem(STATUS_ID, "ON")
+        mockItem(VALUE_ID, "NULL")
+        mockItem(MIN_ID, "20.0")
+        mockItem(MAX_ID, "25.0")
+
+        job.checkSwitch()
+
+        verify(dataAccess, never()).commandItem(eq(SWITCH_ID), any())
+    }
+
+    @Test
+    fun `checkSwitch skips when a setpoint has not been restored yet`() {
+        // Setpoints live only in persistence, so they read NULL until
+        // restoreOnStartup has run.
+        mockItem(STATUS_ID, "ON")
+        mockItem(VALUE_ID, "18.0")
+        mockItem(MIN_ID, "NULL")
+        mockItem(MAX_ID, "25.0")
+
+        job.checkSwitch()
+
+        verify(dataAccess, never()).commandItem(eq(SWITCH_ID), any())
     }
 
     @Test
