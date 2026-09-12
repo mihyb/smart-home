@@ -142,15 +142,6 @@ sitemap ruprechtice label="Ruprechtice" {
                 Setpoint item=timer_job_wheater_from label="Od" minValue=0 maxValue=23 step=1
                 Setpoint item=timer_job_wheater_to label="Do" minValue=0 maxValue=23 step=1
             }
-            Frame label="Režim" {
-                // Absence a Návštěva vyprší, ostatní režimy platí, dokud je nezměníš.
-                // "Na jak dlouho" se posílá jen s nimi — regulátor si ukládá koncový čas,
-                // ne délku, takže se tahle položka nikdy nevyčte zpátky.
-                Selection item=Atmos_Water_Mode label="Režim" mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort", AWAY="Absence", VISIT="Návštěva"]
-                Selection item=Atmos_Water_Mode_Duration label="Na jak dlouho" mappings=[30="30 min", 60="1 h", 90="1,5 h", 120="2 h", 150="2,5 h", 180="3 h", 210="3,5 h", 240="4 h", 300="5 h", 360="6 h", 480="8 h", 600="10 h", 720="12 h"]
-                Text item=Atmos_Water_Deadline label="Končí [%1$tH:%1$tM]" icon="time"
-                Text item=Atmos_Water_Permanent_Mode label="Potom [%s]"
-            }
             Frame label="Napájení" {
                 // Rozlišuje "vypnuto časovačem" od "není proud z HDO"
                 Text item=wheater_status label="HDO [MAP(hdo.map):%s]" icon="energy"
@@ -162,26 +153,33 @@ sitemap ruprechtice label="Ruprechtice" {
         // Kotel na tuhá paliva. Spaliny + voda dohromady říkají, v jaké je fázi:
         // spaliny rostou a voda je studená = zatápí se; obojí vysoké = topí;
         // spaliny klesají a voda drží = dohořívá.
-        Frame label="Kotel" {
-                    Text item=Atmos_Exhaust_Fan label="Hoří" icon="fire"
-                         valuecolor=[ON="red", OFF="gray"]
-                    Text item=Atmos_FlueGas label="Spaliny [%.0f °C]" icon="flow"
-                         valuecolor=[<100="gray", >250="red"]
-                    Text item=Atmos_Boiler_Water label="Voda v kotli [%.1f °C]" icon="temperature"
-                         valuecolor=[<60="blue", >85="red"]
-                }
-        // Akumulace jako jeden řádek — detail po rozkliknutí. Text s vnořenými
-        // widgety dělá v openHABu podstránku, takže hlavní stránka zůstane
-        // přehledná a zároveň to není další Frame ve Frame.
-        Text item=Atmos_C1_Mode label="Topný okruh [%s]" icon="heating" {
-            Frame label="Režim" {
-                // Absence a Návštěva vyprší, ostatní režimy platí, dokud je nezměníš.
-                // "Na jak dlouho" se posílá jen s nimi — regulátor si ukládá koncový čas,
-                // ne délku, takže se tahle položka nikdy nevyčte zpátky.
+        // Kotel a jeho dva okruhy. Topný okruh i teplá voda jsou okruhy tohohle
+        // kotle, proto sedí tady a ne u elektrického bojleru výš — ten je úplně
+        // jiný spotřebič, který s ATMOSem nemá nic společného.
+        Text item=Atmos_Exhaust_Fan label="Kotel [%s]" icon="fire"
+             valuecolor=[ON="red", OFF="gray"] {
+            Frame label="Hoření" {
+                // Spaliny + voda dohromady říkají fázi: spaliny rostou a voda je
+                // studená = zatápí se; obojí vysoké = topí; spaliny klesají a
+                // voda drží = dohořívá.
+                Text item=Atmos_Exhaust_Fan label="Hoří" icon="fire"
+                     valuecolor=[ON="red", OFF="gray"]
+                Text item=Atmos_FlueGas label="Spaliny [%.0f °C]" icon="flow"
+                     valuecolor=[<100="gray", >250="red"]
+                Text item=Atmos_Boiler_Water label="Voda v kotli [%.1f °C]" icon="temperature"
+                     valuecolor=[<60="blue", >85="red"]
+            }
+            Frame label="Topný okruh" {
                 Selection item=Atmos_C1_Mode label="Režim" mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort", AWAY="Absence", VISIT="Návštěva"]
                 Selection item=Atmos_C1_Mode_Duration label="Na jak dlouho" mappings=[30="30 min", 60="1 h", 90="1,5 h", 120="2 h", 150="2,5 h", 180="3 h", 210="3,5 h", 240="4 h", 300="5 h", 360="6 h", 480="8 h", 600="10 h", 720="12 h"]
                 Text item=Atmos_C1_Deadline label="Končí [%1$tH:%1$tM]" icon="time"
                 Text item=Atmos_C1_Permanent_Mode label="Potom [%s]"
+            }
+            Frame label="Teplá voda" {
+                Selection item=Atmos_Water_Mode label="Režim" mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort", AWAY="Absence", VISIT="Návštěva"]
+                Selection item=Atmos_Water_Mode_Duration label="Na jak dlouho" mappings=[30="30 min", 60="1 h", 90="1,5 h", 120="2 h", 150="2,5 h", 180="3 h", 210="3,5 h", 240="4 h", 300="5 h", 360="6 h", 480="8 h", 600="10 h", 720="12 h"]
+                Text item=Atmos_Water_Deadline label="Končí [%1$tH:%1$tM]" icon="time"
+                Text item=Atmos_Water_Permanent_Mode label="Potom [%s]"
             }
         }
         Text item=Atmos_Buffer_Charge label="Akumulace [%d %%]" icon="batterylevel"
