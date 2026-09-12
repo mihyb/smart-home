@@ -56,3 +56,14 @@ Switch Atmos_Exhaust_Fan "Atmos_Exhaust_Fan" { channel="atmoswg1000:controller:h
 // brány nikde vidět — hodnoty prostě zamrznou na posledních známých, což vypadá
 // jako by všechno běželo.
 String Atmos_GW_Status "ATMOS brána [%s]"
+
+// Režimy okruhů. AWAY a VISIT vyprší — kdy, to říká deadline; permanent-mode je
+// režim, na který se to pak vrátí. Duration je jen zadání pro příští časovaný
+// režim, zařízení si ho neukládá (ukládá koncový čas), takže se nikdy nevyčte.
+String Atmos_Water_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:controller:home:controller1:water#permanent-mode" }
+DateTime Atmos_Water_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:water#deadline" }
+Number Atmos_Water_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:water#mode-duration" }
+
+String Atmos_C1_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:controller:home:controller1:circuit1#permanent-mode" }
+DateTime Atmos_C1_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:circuit1#deadline" }
+Number Atmos_C1_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:circuit1#mode-duration" }
