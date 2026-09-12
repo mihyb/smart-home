@@ -30,13 +30,15 @@ Number Atmos_Buffer_Charge "Nabití [%d %%]" <batterylevel>
 // Kolik čidel je nahřátých, 0-4 — to, co se dá přečíst na první pohled.
 Number Atmos_Buffer_Zones "Nahřátá čidla [%d ze 4]"
 String Atmos_Serial "Atmos_Serial" { channel="atmoswg1000:controller:home:controller1:status#serial-number" }
-Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature" }
+Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature", autoupdate="false" }
 String Atmos_Water_Mode "Atmos_Water_Mode" { channel="atmoswg1000:controller:home:controller1:water#mode" }
 Number:Temperature Atmos_Water_Comfort "Atmos_Water_Comfort" { channel="atmoswg1000:controller:home:controller1:water#comfort-setpoint" }
 String Atmos_C1_Mode "Atmos_C1_Mode" { channel="atmoswg1000:controller:home:controller1:circuit1#mode" }
 Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:controller:home:controller1:circuit1#target-temperature" }
 DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
-String Atmos_GW_Ip "Atmos_GW_Ip" { channel="atmoswg1000:gateway:home:ip-address" }
+// autoupdate vypnuto: tlačítko Obnovit posílá téhle položce REFRESH a optimistický
+// autoupdate by ho zapsal jako stav — v sitemapu by pak místo IP svítilo "REFRESH".
+String Atmos_GW_Ip "Atmos_GW_Ip" { channel="atmoswg1000:gateway:home:ip-address", autoupdate="false" }
 Number Atmos_GW_ZbDevices "Atmos_GW_ZbDevices" { channel="atmoswg1000:gateway:home:zigbee-devices" }
 
 // Added for the sitemap. These channels existed on the Thing all along but had
@@ -67,3 +69,9 @@ Number Atmos_Water_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000
 String Atmos_C1_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:controller:home:controller1:circuit1#permanent-mode" }
 DateTime Atmos_C1_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:circuit1#deadline" }
 Number Atmos_C1_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:circuit1#mode-duration" }
+
+// Tlačítko pro okamžité načtení. openHAB posílá RefreshType položkám, ne
+// Thingu, a oba handlery na něj reagují plným dotazem — u brány navíc zruší
+// čekání po chybě (backoff().allowNow()). Stačí proto poslat REFRESH jedné
+// položce z regulátoru a jedné z brány, ostatní se aktualizují s nimi.
+Switch Atmos_Refresh "Obnovit"
