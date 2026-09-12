@@ -17,7 +17,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SRC="${SRC:-192.168.1.109}"
+SRC="${SRC:-192.168.1.132}"
 DST="${DST:-192.168.1.132}"
 FILE="${FILE:-${ROOT}/config/item-states.tsv}"
 
@@ -69,9 +69,13 @@ case "${1:-}" in
     ;;
 
   diff)
-    printf "  %-34s %-12s %s\n" "ITEM" "${SRC}" "${DST}"
+    # Compares the captured snapshot against the live host. It used to compare
+    # two live instances, which stopped meaning anything once the old openHAB
+    # was retired — every item read as missing and the check cried wolf.
+    [ -f "${FILE}" ] || { echo "no ${FILE} — run 'export' first" >&2; exit 1; }
+    printf "  %-34s %-12s %s\n" "ITEM" "snapshot" "${DST}"
     join -t$'\t' -a1 -a2 -e "(unset)" -o 0,1.2,2.2 \
-      <(fetch "${SRC}") <(fetch "${DST}") \
+      <(grep -v '^#' "${FILE}" | sort) <(fetch "${DST}") \
       | awk -F'\t' '{ printf "  %-34s %-12s %s%s\n", $1, $2, $3, ($2==$3?"":"   <-- differs") }'
     ;;
 
