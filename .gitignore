@@ -14,3 +14,7 @@ openhab-ruprechtice/things/tuya.things
 
 # Real ATMOS gateway credentials — generate from things/atmoswg1000.things.example
 openhab-ruprechtice/things/atmoswg1000.things
+
+# Python bytecode from the generator scripts
+__pycache__/
+*.pyc
