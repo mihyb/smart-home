@@ -1,0 +1,133 @@
+// ⚠️  BINDING STAŽENO Z PROVOZU — NENASAZOVAT
+//
+// org.openhab.binding.atmoswg1000 5.2.1 má chybu: neuzavírá websockety k bráně
+// a vyčerpá jí tabulku socketů, takže brána přestane přijímat spojení a pomůže
+// jen fyzický restart. Na .132 bylo 5 ESTAB + 12 SYN-SENT a přibývaly i poté,
+// co byly Thingy zakázané.
+//
+// Zastavení bundle nestačí — osiřelé Jetty vlákna přežijí bundle:stop a dál
+// vytáčejí. Nutný je restart openHABu.
+//
+// Jar je v karanténě v /home/ruprecht/atmos-jar-quarantine/ na .132.
+// Opravená verze se chystá; do té doby jar nevracet do addons/.
+//
+// atmoswg1000 Things — gateway bridge hand-written, controller generated from
+// JSONDB by scripts/jsondb-to-things.py.
+//
+// The gateway is NOT in JSONDB: on 192.168.1.109 it lives in a root-owned
+// /etc/openhab/things/atmos.things, because its config carries credentials.
+// That is why the converter warns that this controller's bridge is missing.
+//
+// Copy to atmoswg1000.things and fill in username/password; that file is
+// gitignored. Without a bridge the controller stays UNINITIALIZED with
+// "Configuring a bridge is mandatory".
+//
+// Config keys come from GatewayConfiguration.java in the atmos-connector
+// submodule. trustAllCertificates defaults true because the gateway presents
+// a private "Atmos Device Root CA" cert whose CN is the hostname, so
+// verification fails when connecting by IP address.
+
+Bridge atmoswg1000:gateway:home "ATMOS WG1000 Gateway" [
+    hostname="192.168.1.122",
+    port=443,
+    username="<<SET_ME>>",
+    password="<<SET_ME>>",
+    refreshInterval=60,
+    infoRefreshInterval=120,
+    language="ENG",
+    trustAllCertificates=true
+] {
+    Thing controller controller1 "ATMOS Boiler" [ address=1 ] {
+        Channels:
+            Type temperature : outdoor#temperature "Temperature"
+            Type temperature : outdoor#temperature-average "Average Temperature"
+            Type temperature : outdoor#temperature-min "Minimum Today"
+            Type temperature : outdoor#temperature-max "Maximum Today"
+            Type text : boiler#type "Boiler Type"
+            Type temperature : boiler#temperature "Water Temperature"
+            Type temperature : boiler#demand "Water Demand"
+            Type temperature : boiler#flue-gas-temperature "Flue Gas Temperature"
+            Type readonly-switch : boiler#exhaust-fan "Exhaust Fan"
+            Type readonly-switch : boiler#wood-ignition "Automatic Wood Ignition"
+            Type readonly-switch : boiler#pump "Boiler Pump"
+            Type hours : boiler#pump-hours "Pump Operating Hours"
+            Type number : boiler#pump-starts "Pump Starts"
+            Type temperature : buffer#demand "Demand"
+            Type temperature : buffer#temperature-1 "Temperature PF (Top)"
+            Type temperature : buffer#temperature-2 "Temperature PF2"
+            Type temperature : buffer#temperature-3 "Temperature PF3"
+            Type temperature : buffer#temperature-4 "Temperature PF4 (Bottom)"
+            Type mode : water#mode "Mode"
+            Type permanent-mode : water#permanent-mode "Permanent Mode"
+            Type program : water#program "Weekly Programme"
+            Type deadline : water#deadline "Mode Ends"
+            Type mode-duration : water#mode-duration "Mode Duration"
+            Type temperature : water#temperature "Tank Temperature"
+            Type temperature : water#demand "Tank Demand"
+            Type temperature : water#target-temperature "Target Temperature"
+            Type setpoint : water#comfort-setpoint "Comfort Setpoint"
+            Type setpoint : water#reduced-setpoint "Reduced Setpoint"
+            Type humidity : water#humidity "Humidity"
+            Type readonly-switch : water#pump "Circulation Pump"
+            Type mode : circuit1#mode "Mode"
+            Type permanent-mode : circuit1#permanent-mode "Permanent Mode"
+            Type program : circuit1#program "Weekly Programme"
+            Type deadline : circuit1#deadline "Mode Ends"
+            Type mode-duration : circuit1#mode-duration "Mode Duration"
+            Type temperature : circuit1#temperature "Room Temperature"
+            Type temperature : circuit1#target-temperature "Target Temperature"
+            Type setpoint : circuit1#comfort-setpoint "Comfort Setpoint"
+            Type setpoint : circuit1#reduced-setpoint "Reduced Setpoint"
+            Type humidity : circuit1#humidity "Humidity"
+            Type temperature : circuit1#flow-temperature "Flow Temperature"
+            Type temperature : circuit1#flow-demand "Flow Demand"
+            Type percentage : circuit1#valve-position "Mixing Valve Position"
+            Type readonly-switch : circuit1#pump "Circuit Pump"
+            Type mode : circuit2#mode "Mode"
+            Type permanent-mode : circuit2#permanent-mode "Permanent Mode"
+            Type program : circuit2#program "Weekly Programme"
+            Type deadline : circuit2#deadline "Mode Ends"
+            Type temperature : circuit2#temperature "Room Temperature"
+            Type temperature : circuit2#target-temperature "Target Temperature"
+            Type setpoint : circuit2#comfort-setpoint "Comfort Setpoint"
+            Type setpoint : circuit2#reduced-setpoint "Reduced Setpoint"
+            Type humidity : circuit2#humidity "Humidity"
+            Type temperature : circuit2#flow-temperature "Flow Temperature"
+            Type temperature : circuit2#flow-demand "Flow Demand"
+            Type percentage : circuit2#valve-position "Mixing Valve Position"
+            Type readonly-switch : circuit2#pump "Circuit Pump"
+            Type mode : circuit3#mode "Mode"
+            Type permanent-mode : circuit3#permanent-mode "Permanent Mode"
+            Type program : circuit3#program "Weekly Programme"
+            Type deadline : circuit3#deadline "Mode Ends"
+            Type temperature : circuit3#temperature "Room Temperature"
+            Type temperature : circuit3#target-temperature "Target Temperature"
+            Type setpoint : circuit3#comfort-setpoint "Comfort Setpoint"
+            Type setpoint : circuit3#reduced-setpoint "Reduced Setpoint"
+            Type humidity : circuit3#humidity "Humidity"
+            Type temperature : circuit3#flow-temperature "Flow Temperature"
+            Type temperature : circuit3#flow-demand "Flow Demand"
+            Type percentage : circuit3#valve-position "Mixing Valve Position"
+            Type readonly-switch : circuit3#pump "Circuit Pump"
+            Type mode : circuit4#mode "Mode"
+            Type permanent-mode : circuit4#permanent-mode "Permanent Mode"
+            Type program : circuit4#program "Weekly Programme"
+            Type deadline : circuit4#deadline "Mode Ends"
+            Type temperature : circuit4#temperature "Room Temperature"
+            Type temperature : circuit4#target-temperature "Target Temperature"
+            Type setpoint : circuit4#comfort-setpoint "Comfort Setpoint"
+            Type setpoint : circuit4#reduced-setpoint "Reduced Setpoint"
+            Type humidity : circuit4#humidity "Humidity"
+            Type temperature : circuit4#flow-temperature "Flow Temperature"
+            Type temperature : circuit4#flow-demand "Flow Demand"
+            Type percentage : circuit4#valve-position "Mixing Valve Position"
+            Type readonly-switch : circuit4#pump "Circuit Pump"
+            Type clock : status#clock "Controller Clock"
+            Type number : status#alarm-count "Active Alarms"
+            Type text : status#alarm-text "Alarm Text"
+            Type text : status#program-version "Program Version"
+            Type text : status#firmware-version "Firmware Version"
+            Type text : status#serial-number "Serial Number"
+            Type text : status#hydraulic-schema "Hydraulic Schema"
+    }
+}

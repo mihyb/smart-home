@@ -1,0 +1,271 @@
+// mqtt Things — generated from JSONDB by scripts/jsondb-to-things.py
+// Edit this file, not the UI: file-defined Things are read-only in the UI
+// and are what makes this config reproducible on a new machine.
+
+Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
+    birthRetain=true,
+    certificatepin=true,
+    clientid="a924faf6-b9c1-4934-ade1-055ee6306de1",   // distinct id: two openHABs on one broker evict each other by client id
+    enableDiscovery=true,
+    host="192.168.1.109",   // mosquitto and zigbee2mqtt still live on .109
+    hostnameValidated=true,
+    keepAlive=60,
+    lwtQos=0,
+    lwtRetain=true,
+    mqttVersion="V3",
+    protocol="TCP",
+    publickeypin=true,
+    qos=0,
+    reconnectTime=60000,
+    secure=false,
+    shutdownRetain=true
+] {
+
+    Thing topic 0a3dfb2310 "vysousec" [
+        availabilityTopic="zigbee2mqtt/vysousec/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : vysousec_switch "vysousec_switch" [ commandTopic="zigbee2mqtt/vysousec/set/state", stateTopic="zigbee2mqtt/vysousec/state" ]
+    }
+
+    Thing topic 1f14915b91 "Agama" [
+        availabilityTopic="zigbee2mqtt/agama/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : agama_switch "agama_switch" [ commandTopic="zigbee2mqtt/agama/set/state", stateTopic="zigbee2mqtt/agama/state" ]
+    }
+
+    Thing topic 351ffa3b47 "chodba_temp" [
+        availabilityTopic="zigbee2mqtt/chodba_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : chodba_temp_temperature "chodba_temp_temperature" [ stateTopic="zigbee2mqtt/chodba_temp/temperature", unit="°C" ]
+            Type number : chodba_temp_humidity "chodba_temp_humidity" [ stateTopic="zigbee2mqtt/chodba_temp/humidity", unit="%" ]
+            Type number : chodba_temp_battery "chodba_temp_battery" [ stateTopic="zigbee2mqtt/chodba_temp/battery", unit="%" ]
+            Type datetime : chodba_temp_last_seen "chodba_temp_last_seen" [ stateTopic="zigbee2mqtt/chodba_temp/last_seen" ]
+    }
+
+    Thing topic 5a92bbf1d2 "akvarium_svetlo" [
+        availabilityTopic="zigbee2mqtt/akvarko_svetlo/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : akvarium_svetlo_switch "akvarium_svetlo_switch" [ commandTopic="zigbee2mqtt/akvarko_svetlo/set/state", stateTopic="zigbee2mqtt/akvarko_svetlo/state" ]
+    }
+
+    Thing topic a24fad8e52 "sklep_water" [
+        availabilityTopic="zigbee2mqtt/sklep_water/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : sklep_water_battery "sklep_water_battery" [ stateTopic="zigbee2mqtt/sklep_water/battery", unit="%" ]
+            Type switch : sklep_water_water_leak "sklep_water_water_leak" [ off="false", on="true", stateTopic="zigbee2mqtt/sklep_water/water_leak" ]
+    }
+
+    Thing topic b7630cf279 "pokojicek_temp" [
+        availabilityTopic="zigbee2mqtt/pokojicek_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : pokojicek_temp_battery "pokojicek_temp_battery" [ stateTopic="zigbee2mqtt/pokojicek_temp/battery", unit="%" ]
+            Type number : pokojicek_temp_humidity "pokojicek_temp_humidity" [ stateTopic="zigbee2mqtt/pokojicek_temp/humidity", unit="%" ]
+            Type number : pokojicek_temp_temperature "pokojicek_temp_temperature" [ stateTopic="zigbee2mqtt/pokojicek_temp/temperature" ]
+    }
+
+    Thing topic bojler "bojler" [
+        availabilityTopic="zigbee2mqtt/w_heater_switch/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : w_heater_switch "w_heater_switch" [ commandTopic="zigbee2mqtt/w_heater_switch/set/state", stateTopic="zigbee2mqtt/w_heater_switch/state" ]
+    }
+
+    Thing topic defb672f1d "chicks_01" [ availabilityTopic="mqtt/Chick_01/LWT", payloadAvailable="Online", payloadNotAvailable="Offline" ] {
+        Channels:
+            Type number : Chick_01_temp "Chick_01_temp" [ stateTopic="mqtt/Chick_01/SENSOR", transformationPattern="JSONPATH:$.SI7021.Temperature" ]
+            Type number : chick_01_hum "chick_01_hum" [ stateTopic="mqtt/Chick_01/SENSOR", transformationPattern="JSONPATH:$.SI7021.Humidity" ]
+            Type switch : Chick_01_switch "Chick_01_switch" [
+                commandTopic="mqtt/Chick_01/cmnd/POWER",
+                off="OFF",
+                on="ON",
+                postCommand=true,
+                stateTopic="mqtt/Chick_01/STATE",
+                transformationPattern="JSONPATH:$.POWER"
+            ]
+    }
+
+    Thing topic ec2baaa8ac "pracovna_temp" [
+        availabilityTopic="zigbee2mqtt/pracovna_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : pracovna_teplota_battery "pracovna_teplota_battery" [ stateTopic="zigbee2mqtt/pracovna_temp/battery", unit="%" ]
+            Type number : pracovna_teplota_temp "pracovna_teplota_temp" [ stateTopic="zigbee2mqtt/pracovna_temp/temperature", unit="°C" ]
+            Type number : pracovna_teplota_humidity "pracovna_teplota_humidity" [ stateTopic="zigbee2mqtt/pracovna_temp/humidity", unit="%" ]
+    }
+
+    Thing topic f306ccaea0 "sklep_temp" [
+        availabilityTopic="zigbee2mqtt/sklep_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : sklep_temp_temperature "sklep_temp_temperature" [ stateTopic="zigbee2mqtt/sklep_temp/temperature", unit="°C" ]
+            Type number : sklep_temp_humidity "sklep_temp_humidity" [ stateTopic="zigbee2mqtt/sklep_temp/humidity", unit="%" ]
+            Type number : sklep_temp_battery "sklep_temp_battery" [ stateTopic="zigbee2mqtt/sklep_temp/battery", unit="%" ]
+    }
+
+    Thing topic koupelna_temp "koupelna_temp" [
+        availabilityTopic="zigbee2mqtt/koupelna_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : koupelna_temp_temperature "koupelna_temp_temperature" [ stateTopic="zigbee2mqtt/koupelna_temp/temperature", unit="°C" ]
+            Type number : koupelna_temp_humididty "koupelna_temp_humididty" [ stateTopic="zigbee2mqtt/koupelna_temp/humidity", unit="%" ]
+            Type number : koupelna_temp_battery "koupelna_temp_battery" [ stateTopic="zigbee2mqtt/koupelna_temp/battery", unit="%" ]
+    }
+
+    Thing topic loznice_vetrak "loznice_vetrak" [
+        availabilityTopic="zigbee2mqtt/loznice_vetrak/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : loznice_vetrak_switch "loznice_vetrak_switch" [ commandTopic="zigbee2mqtt/loznice_vetrak/set/state", stateTopic="zigbee2mqtt/loznice_vetrak/state" ]
+    }
+
+    Thing topic obyvak "obyvak" [
+        availabilityTopic="zigbee2mqtt/obyvak/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : obyvak_switch "obyvak_switch" [ commandTopic="zigbee2mqtt/obyvak/set/state", stateTopic="zigbee2mqtt/obyvak/state" ]
+    }
+
+    Thing topic obyvak_temp "obyvak_temp" [
+        availabilityTopic="zigbee2mqtt/obyvak_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : obyvak_temp_temperature "obyvak_temp_temperature" [ stateTopic="zigbee2mqtt/obyvak_temp/temperature", unit="°C" ]
+            Type number : obyvak_temp_battery "obyvak_temp_battery" [ stateTopic="zigbee2mqtt/obyvak_temp/battery", unit="%" ]
+            Type number : obyvak_temp_humidity "obyvak_temp_humidity" [ stateTopic="zigbee2mqtt/obyvak_temp/humidity", unit="%" ]
+    }
+
+    Thing topic pokoj_okno "pokoj_okno" [
+        availabilityTopic="zigbee2mqtt/pokoj_okno/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : pokoj_okno_switch "pokoj_okno_switch" [ off="false", on="true", stateTopic="zigbee2mqtt/pokoj_okno/alarm_1" ]
+            Type number : pokoj_okno_battery "pokoj_okno_battery" [ stateTopic="zigbee2mqtt/pokoj_okno/battery" ]
+    }
+
+    Thing topic pokoj_vysousec "pokoj_vysousec" [
+        availabilityTopic="zigbee2mqtt/pokoj_vysousec/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : pokoj_vysousec_switch "pokoj_vysousec_switch" [ commandTopic="zigbee2mqtt/pokoj_vysousec/set/state", stateTopic="zigbee2mqtt/pokoj_vysousec/state" ]
+    }
+
+    Thing topic pracovna_okno "pracovna_okno" [
+        availabilityTopic="zigbee2mqtt/pracovna_okno/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : pracovna_okno_status "On/Off Switch" [ off="false", on="true", stateTopic="zigbee2mqtt/pracovna_okno/alarm_1" ]
+            Type number : pracovna_okno_battery "pracovna_okno_battery" [ stateTopic="zigbee2mqtt/pracovna_okno/battery" ]
+    }
+
+    Thing topic sklep_water "sklep_water" [
+        availabilityTopic="zigbee2mqtt/sklep_water/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : sklep_water_battery "sklep_water_battery" [ stateTopic="zigbee2mqtt/sklep_water/battery", unit="%" ]
+            Type switch : sklep_water_tamper "sklep_water_tamper" [ off="false", on="true", stateTopic="zigbee2mqtt/sklep_water/tamper" ]
+    }
+
+    Thing topic smoke_sensor "smoke_sensor" [
+        availabilityTopic="zigbee2mqtt/smoke_sensor/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type switch : smoke_sensor_battery_low "smoke_sensor_battery_low" [ off="false", on="true", stateTopic="zigbee2mqtt/smoke_sensor/battery_low" ]
+            Type switch : smoke_sensor_smoke "smoke_sensor_smoke" [ off="false", on="true", stateTopic="zigbee2mqtt/smoke_sensor/smoke" ]
+    }
+
+    Thing topic zadveri_temp "zadveri_temp" [
+        availabilityTopic="zigbee2mqtt/zadveri_temp/availability",
+        payloadAvailable="online",
+        payloadNotAvailable="offline",
+        transformationPattern="JSONPATH:$.state"
+    ] {
+        Channels:
+            Type number : zadveri_temp_temperature "zadveri_temp_temperature" [ stateTopic="zigbee2mqtt/zadveri_temp/temperature", unit="°C" ]
+            Type number : zadveri_temp_humidity "zadveri_temp_humidity" [ stateTopic="zigbee2mqtt/zadveri_temp/humidity", unit="%" ]
+            Type number : zadveri_temp_battery "zadveri_temp_battery" [ stateTopic="zigbee2mqtt/zadveri_temp/battery", unit="%" ]
+    }
+}
+
+// bojler_switch is declared outside the Bridge block on purpose.
+// Its UID has no broker segment (mqtt:topic:bojler_switch, not
+// mqtt:topic:fb0a76c816:bojler_switch) because it was created by hand.
+// Nesting it makes openHAB derive the UID from the bridge and rename it,
+// which silently breaks every item linked to the original — the Thing
+// still shows ONLINE and the switch still renders, but commands go
+// nowhere. The (bridge) reference keeps the UID verbatim.
+Thing mqtt:topic:bojler_switch "bojler_switch" (mqtt:broker:fb0a76c816) [
+    availabilityTopic="zigbee2mqtt/w_heater_switch/availability",
+    payloadAvailable="online",
+    payloadNotAvailable="offline",
+    transformationPattern="JSONPATH:$.state"
+] {
+    Channels:
+        Type switch : bojler_switch_switch "bojler_switch" [ commandTopic="zigbee2mqtt/w_heater_switch/set/state", stateTopic="zigbee2mqtt/w_heater_switch/state" ]
+        // HDO detection. The boiler circuit is on the low-tariff (HDO)
+        // contactor, so when HDO drops the switch itself loses power,
+        // zigbee2mqtt loses contact and flips availability to offline.
+        // That makes availability a proxy for "is there power to switch".
+        // The thing-level transformationPattern only applies to the
+        // availability *check*, so this channel needs its own.
+        Type string : availability "Dostupnost" [ stateTopic="zigbee2mqtt/w_heater_switch/availability", transformationPattern="JSONPATH:$.state" ]
+}

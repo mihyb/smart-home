@@ -1,0 +1,86 @@
+// tuya Things — generated from JSONDB by scripts/jsondb-to-things.py
+// Edit this file, not the UI: file-defined Things are read-only in the UI
+// and are what makes this config reproducible on a new machine.
+// Secrets replaced with <<SET_ME>>. Copy to tuya.things
+// and fill in from the password manager; that file is gitignored.
+//
+// Uses the OFFICIAL openhab-binding-tuya (ships with openHAB 5.2.1), not the
+// SmartHome/J marketplace addon that .109 runs. SmartHome/J stopped at 4.3.2
+// with no openHAB 5 build, so it is a dead end for this migration. The official
+// binding uses the same thing type UIDs, so this config carries over unchanged.
+//
+// pollingInterval is 30, not 0 as inherited from .109. With 0 the binding only
+// updates when the device pushes a change, so items sit NULL until something
+// happens — which is why .109 showed a stale temp_set for days.
+
+Thing tuya:project:71b4a95ecc "Tuya Cloud Project" [
+    accessId="<<SET_ME>>",
+    accessSecret="<<SET_ME>>",
+    countryCode=420,
+    dataCenter="https://openapi.tuyaeu.com",
+    password="<<SET_ME>>",
+    schema="smartLife",
+    username="<<SET_ME>>"
+]
+
+Thing tuya:tuyaDevice:0270011094b97e0bab58 "Smart Aroma Diffuser" [
+    deviceId="0270011094b97e0bab58",
+    localKey="<<SET_ME>>",
+    pollingInterval=30,
+    productId="jhScexmS2WhfeOnt",
+    protocol="3.3"
+] {
+    Channels:
+        Type string : mode "mode" [ dp=2, range="large,middle,small" ]
+        Type switch : switch_spray "switch_spray" [ dp=1 ]
+        Type number : countdown_left "countdown_left" [ dp=4, max=360, min=0 ]
+        Type string : countdown "countdown" [ dp=3, range="cancel,1,3,6" ]
+        Type color : colour_data "colour_data" [ dp=8, dp2=5 ]
+        Type dimmer : bright_value "bright_value" [
+            dp=7,
+            dp2=5,
+            max=255,
+            min=0
+        ]
+        Type string : work_mode "work_mode" [ dp=6, range="colour,colourful1" ]
+        Type switch : switch "switch" [ dp=10 ]
+}
+
+Thing tuya:tuyaDevice:bf63f4418aa59a2eafclvb "Infrared heating panel" [
+    deviceId="bf63f4418aa59a2eafclvb",
+    ip="192.168.1.107",
+    localKey="<<SET_ME>>",
+    pollingInterval=30,
+    productId="jroalgo2kwzwsbe4",
+    protocol="3.3"
+] {
+    Channels:
+        Type switch : mode_eco "mode_eco" [ dp=6 ]
+        Type number : temp_set "temp_set" [ dp=2, max=50, min=5 ]
+        Type number : countdown_left "countdown_left" [ dp=20, max=1440, min=0 ]
+        Type number : temp_current "temp_current" [ dp=3, max=180, min=0 ]
+        Type string : work_state "work_state" [ dp=11, range="heating" ]
+        Type switch : light "light" [ dp=10 ]
+        Type switch : lock "lock" [ dp=7 ]
+        Type string : countdown_set "countdown_set" [ dp=19, range="cancel,1h,2h,3h,4h,5h,6h" ]
+        Type switch : switch "switch" [ dp=1 ]
+}
+
+Thing tuya:tuyaDevice:bfe4474d059d121bebaqz4 "Obyvak topeni" [
+    deviceId="bfe4474d059d121bebaqz4",
+    localKey="<<SET_ME>>",
+    pollingInterval=30,
+    productId="9byzkuhaavzgkeid",
+    protocol="3.3"
+] {
+    Channels:
+        Type switch : switch "switch" [ dp=1 ]
+        Type number : temp_set "temp_set" [ dp=2, max=50, min=5 ]
+        Type number : temp_current "temp_current" [ dp=3, max=180, min=0 ]
+        Type switch : mode_eco "mode_eco" [ dp=6 ]
+        Type switch : lock "lock" [ dp=7 ]
+        Type switch : light "light" [ dp=10 ]
+        Type string : work_state "work_state" [ dp=11, range="heating" ]
+        Type string : countdown_set "countdown_set" [ dp=19, range="cancel,1h,2h,3h,4h,5h,6h" ]
+        Type number : countdown_left "countdown_left" [ dp=20, max=1440, min=0 ]
+}

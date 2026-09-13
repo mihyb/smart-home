@@ -31,3 +31,9 @@ Number timer_job_bedroom_fan_from
 Number timer_job_bedroom_fan_to
 Switch timer_job_bedroom_fan_status
 
+
+// Časovač pro přímotop v obýváku. Virtuální položky bez kanálu — stav drží
+// rrd4j, hodnoty nastavuje sitemap a čte je HomeController.
+Switch timer_job_lr_heating_status
+Number timer_job_lr_heating_from
+Number timer_job_lr_heating_to

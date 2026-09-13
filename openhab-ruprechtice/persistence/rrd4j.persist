@@ -1,0 +1,18 @@
+// Persistence pro rrd4j.
+//
+// Bez tohohle souboru se na novem stroji nezaregistrovala zadna persistence
+// service ("No Persistence service found" v logu) a rrd4j nenapsal jediny
+// soubor - pri kazdem restartu openHABu se tedy ztratil cely rozvrh topeni.
+// Na .109 se to nastavilo samo, tady ne, takze je to napsane natvrdo.
+//
+// restoreOnStartup je to podstatne: timer_job_*, chick_01_* a nastaveni rezimu
+// existuji jen jako stav polozky. Bez obnoveni po startu nabehne HomeController
+// s prazdnym rozvrhem a nic se nesepne.
+
+Strategies {
+    everyMinute : "0 * * * * ?"
+}
+
+Items {
+    * : strategy = everyChange, everyMinute, restoreOnStartup
+}

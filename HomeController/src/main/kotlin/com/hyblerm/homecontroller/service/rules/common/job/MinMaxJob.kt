@@ -18,9 +18,20 @@ open class MinMaxJob(
             logger.debug("job is disabled")
             return
         }
-        val currentValue = item(config.valueItem).getDouble()
-        val minValue = item(config.minValueItem).getDouble()
-        val maxValue = item(config.maxValueItem).getDouble()
+        // The sensor reads NULL whenever its thing is offline, and the setpoints
+        // read NULL until persistence restores them after a restart. Acting on a
+        // missing temperature would mean guessing whether to heat, so skip the
+        // cycle instead: the next one runs in five minutes.
+        val currentValue = item(config.valueItem).getDoubleOrNull()
+        val minValue = item(config.minValueItem).getDoubleOrNull()
+        val maxValue = item(config.maxValueItem).getDoubleOrNull()
+        if (currentValue == null || minValue == null || maxValue == null) {
+            logger.warn(
+                "skipping: no value for one of {} / {} / {}",
+                config.valueItem, config.minValueItem, config.maxValueItem
+            )
+            return
+        }
         val switch = Switch(config.switchItem, repository)
         when {
             currentValue < minValue -> {

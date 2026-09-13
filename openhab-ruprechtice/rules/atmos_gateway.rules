@@ -1,0 +1,24 @@
+// Stav brány ATMOS do položky.
+//
+// Proč vůbec: když brána přestane odpovídat, binding si drží poslední hodnoty a
+// sitemap dál ukazuje teploty, jako by se nic nedělo. Výpadek je poznat jen ze
+// stavu Thingu, který se ale sám o sobě nedá zobrazit.
+//
+// Implicitní proměnná newThingStatusInfo v tomhle DSL neexistuje (rule tiše
+// padala na "cannot be resolved"), takže se stav čte přes getThingStatusInfo.
+
+rule "ATMOS brana - zmena stavu"
+ when
+     Thing "atmoswg1000:gateway:home" changed
+ then
+     val info = getThingStatusInfo("atmoswg1000:gateway:home")
+     Atmos_GW_Status.postUpdate(if (info === null) "UNKNOWN" else info.getStatus().toString())
+ end
+
+rule "ATMOS brana - stav po startu"
+ when
+     System started
+ then
+     val info = getThingStatusInfo("atmoswg1000:gateway:home")
+     Atmos_GW_Status.postUpdate(if (info === null) "UNKNOWN" else info.getStatus().toString())
+ end

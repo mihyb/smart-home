@@ -1,0 +1,77 @@
+// ATMOS WG1000 boiler items.
+//
+// These existed only on 192.168.1.109 as an untracked, root-owned file, so
+// they were never in git and did not survive to the new host. Recovered from
+// the running instance during the migration.
+//
+// The gateway bridge they depend on lives in things/atmoswg1000.things, which
+// is gitignored because its config carries the gateway login.
+
+Number:Temperature Atmos_Boiler_Water "Atmos_Boiler_Water" { channel="atmoswg1000:controller:home:controller1:boiler#temperature" }
+Number:Temperature Atmos_FlueGas "Atmos_FlueGas" { channel="atmoswg1000:controller:home:controller1:boiler#flue-gas-temperature" }
+Number:Temperature Atmos_Boiler_Demand "Atmos_Boiler_Demand" { channel="atmoswg1000:controller:home:controller1:boiler#demand" }
+String Atmos_Boiler_Type "Atmos_Boiler_Type" { channel="atmoswg1000:controller:home:controller1:boiler#type" }
+Switch Atmos_Boiler_Pump "Atmos_Boiler_Pump" { channel="atmoswg1000:controller:home:controller1:boiler#pump" }
+Number:Time Atmos_Pump_Hours "Atmos_Pump_Hours" { channel="atmoswg1000:controller:home:controller1:boiler#pump-hours" }
+// Akumulační nádrž má čtyři čidla po výšce: 1 je nahoře, 4 dole. Nádrž se
+// nabíjí shora dolů, takže rozdíl mezi 1 a 4 říká, jak hluboko je nabitá.
+Number:Temperature Atmos_Buffer_1 "Atmos_Buffer_1" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-1" }
+Number:Temperature Atmos_Buffer_2 "Atmos_Buffer_2" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-2" }
+Number:Temperature Atmos_Buffer_3 "Atmos_Buffer_3" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-3" }
+Number:Temperature Atmos_Buffer_4 "Atmos_Buffer_4" (atmos_buffer) { channel="atmoswg1000:controller:home:controller1:buffer#temperature-4" }
+
+// Skupina pro graf průběhu nabíjení.
+Group:Number:AVG atmos_buffer "Akumulace průměr [%.1f °C]"
+
+// Odvozené položky, počítá je rules/atmos_buffer.rules — bez kanálu.
+// Nabití 0-100 % = kolik ze čtyř čidel dosáhlo BUFFER_HOT_C, škálováno na
+// procenta, aby šla použít ikona s výplní (batterylevel).
+Number Atmos_Buffer_Charge "Nabití [%d %%]" <batterylevel>
+// Kolik čidel je nahřátých, 0-4 — to, co se dá přečíst na první pohled.
+Number Atmos_Buffer_Zones "Nahřátá čidla [%d ze 4]"
+String Atmos_Serial "Atmos_Serial" { channel="atmoswg1000:controller:home:controller1:status#serial-number" }
+Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature", autoupdate="false" }
+String Atmos_Water_Mode "Atmos_Water_Mode" { channel="atmoswg1000:controller:home:controller1:water#mode" }
+Number:Temperature Atmos_Water_Comfort "Atmos_Water_Comfort" { channel="atmoswg1000:controller:home:controller1:water#comfort-setpoint" }
+String Atmos_C1_Mode "Atmos_C1_Mode" { channel="atmoswg1000:controller:home:controller1:circuit1#mode" }
+Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:controller:home:controller1:circuit1#target-temperature" }
+DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
+// autoupdate vypnuto: tlačítko Obnovit posílá téhle položce REFRESH a optimistický
+// autoupdate by ho zapsal jako stav — v sitemapu by pak místo IP svítilo "REFRESH".
+String Atmos_GW_Ip "Atmos_GW_Ip" { channel="atmoswg1000:gateway:home:ip-address", autoupdate="false" }
+Number Atmos_GW_ZbDevices "Atmos_GW_ZbDevices" { channel="atmoswg1000:gateway:home:zigbee-devices" }
+
+// Added for the sitemap. These channels existed on the Thing all along but had
+// no item, so the data was being fetched and discarded.
+
+// Actual DHW tank temperature, as opposed to Atmos_Water_Comfort which is only
+// the setpoint the boiler aims for.
+Number:Temperature Atmos_Water_Tank "Atmos_Water_Tank" { channel="atmoswg1000:controller:home:controller1:water#temperature" }
+
+// The exhaust fan runs while the boiler is burning, so it is the most direct
+// "is it firing" signal — more reliable than the pump, which also runs while
+// circulating residual heat after the fire is out.
+Switch Atmos_Exhaust_Fan "Atmos_Exhaust_Fan" { channel="atmoswg1000:controller:home:controller1:boiler#exhaust-fan" }
+
+// Stav brány ATMOS. openHAB nemá kanál, kterým by šel stav Thingu přečíst jako
+// položku, takže ho sem překlápí rules/atmos_gateway.rules. Bez toho není výpadek
+// brány nikde vidět — hodnoty prostě zamrznou na posledních známých, což vypadá
+// jako by všechno běželo.
+String Atmos_GW_Status "ATMOS brána [%s]"
+
+// Režimy okruhů. AWAY a VISIT vyprší — kdy, to říká deadline; permanent-mode je
+// režim, na který se to pak vrátí. Duration je jen zadání pro příští časovaný
+// režim, zařízení si ho neukládá (ukládá koncový čas), takže se nikdy nevyčte.
+String Atmos_Water_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:controller:home:controller1:water#permanent-mode" }
+DateTime Atmos_Water_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:water#deadline" }
+Number Atmos_Water_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:water#mode-duration" }
+
+String Atmos_C1_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:controller:home:controller1:circuit1#permanent-mode" }
+DateTime Atmos_C1_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:circuit1#deadline" }
+Number Atmos_C1_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:circuit1#mode-duration" }
+
+// Tlačítko pro okamžité načtení. openHAB posílá RefreshType položkám, ne
+// Thingu, a oba handlery na něj reagují plným dotazem — u brány navíc zruší
+// čekání po chybě (backoff().allowNow()). Stačí proto poslat REFRESH jedné
+// položce z regulátoru a jedné z brány, ostatní se aktualizují s nimi.
+Switch Atmos_Refresh "Obnovit"

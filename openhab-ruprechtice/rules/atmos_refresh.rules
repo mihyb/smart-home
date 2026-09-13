@@ -1,0 +1,20 @@
+// Ruční načtení dat z kotle.
+//
+// pollInformation plní jen alarmy, které tu nemáme, takže pollParameters
+// spuštěný RefreshTypem pokrývá všechno zobrazované.
+//
+// RefreshType se v tomhle DSL nedá pojmenovat přímo (rule padala na
+// "RefreshType cannot be resolved"), proto dvouargumentový sendCommand —
+// ten řetězec "REFRESH" naparsuje sám.
+
+rule "ATMOS - rucni obnoveni"
+ when
+     Item Atmos_Refresh received command ON
+ then
+     // Regulátor: spustí pollParameters.
+     sendCommand(Atmos_Outdoor, "REFRESH")
+     // Brána: spustí poll a zruší případné čekání po chybě.
+     sendCommand(Atmos_GW_Ip, "REFRESH")
+     // Tlačítko se vrátí, aby šlo zmáčknout znovu.
+     Atmos_Refresh.postUpdate(OFF)
+ end

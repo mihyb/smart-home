@@ -13,8 +13,8 @@
 # up in the dry-run instead of being silently destroyed.
 set -euo pipefail
 
-HOST="${OPENHAB_HOST:-192.168.1.109}"
-USER="${OPENHAB_USER:-dev}"
+HOST="${OPENHAB_HOST:-192.168.1.132}"
+USER="${OPENHAB_USER:-ruprecht}"
 DEST="${OPENHAB_DIR:-/etc/openhab}"
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/openhab-ruprechtice"
 
@@ -36,6 +36,21 @@ rsync "${RSYNC_ARGS[@]}" "${SRC}/" "${USER}@${HOST}:${DEST}/"
 
 if [ -n "${APPLY}" ]; then
   echo "==> OpenHAB picks up items/things/rules changes automatically; no restart needed."
+
+  # A sitemap openHAB refuses to parse is discarded whole, and Basic UI then
+  # says "you have not defined any sitemaps yet" rather than erroring. That has
+  # happened; checking the rendered size is the cheapest way to catch it.
+  echo "==> Smoke test"
+  sleep 15
+  size=$(curl -s --max-time 15 "http://${HOST}:8080/basicui/app?sitemap=ruprechtice" | wc -c | tr -d " ")
+  if [ "${size:-0}" -gt 20000 ]; then
+    echo "    sitemap renders (${size} bytes)"
+  else
+    echo "    SITEMAP BROKEN (${size} bytes) — openHAB has discarded it; check the log" >&2
+    exit 1
+  fi
+  items=$(curl -s --max-time 15 "http://${HOST}:8080/rest/items" | grep -o '"name"' | wc -l | tr -d " ")
+  echo "    ${items} items loaded"
   echo "==> Watch it apply:  ./scripts/logs.sh openhab"
 else
   echo "==> Nothing was written."

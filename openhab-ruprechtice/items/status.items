@@ -1,1 +1,12 @@
-String wheater_status "Status [%s]" { channel="mqtt:topic:bojler_switch:status" }
+// Boiler power availability, used as an HDO indicator.
+//
+// This item previously pointed at mqtt:topic:bojler_switch:status, a channel
+// that never existed on the thing, so it rendered as a blank line in the
+// sitemap. Repointed at the new availability channel, which is what it was
+// presumably always meant to show.
+//
+// Caveat: offline means "zigbee2mqtt cannot reach the switch". On this circuit
+// that is almost always HDO being off, but a flat battery, a failed device or a
+// zigbee dropout look identical. Treat it as "no power to the switch", not as a
+// direct reading of the HDO relay.
+String wheater_status "HDO [MAP(hdo.map):%s]" { channel="mqtt:topic:bojler_switch:availability" }

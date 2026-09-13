@@ -1,0 +1,34 @@
+// Nabití akumulační nádrže.
+//
+// Nádrž má čtyři čidla po výšce (1 nahoře, 4 dole) a nabíjí se shora dolů.
+// Počet čidel, která dosáhla BUFFER_HOT_C, proto říká, jak hluboko je nádrž
+// nabitá — 4 znamená nabitou celou.
+//
+// BUFFER_HOT_C je hranice "nahřáto" a BUFFER_MAX_C je teplota, přes kterou
+// nádrž nejde. Obě jsou vlastnost nádrže, ne odhad, takže jsou tu pojmenované
+// a ne zadrátované v podmínce.
+
+val Number BUFFER_HOT_C = 70
+val Number BUFFER_MAX_C = 80
+
+rule "Akumulace - nabiti"
+ when
+     Item Atmos_Buffer_1 changed or
+     Item Atmos_Buffer_2 changed or
+     Item Atmos_Buffer_3 changed or
+     Item Atmos_Buffer_4 changed
+ then
+     val probes = newArrayList(Atmos_Buffer_1, Atmos_Buffer_2, Atmos_Buffer_3, Atmos_Buffer_4)
+
+     // Čidlo, které ještě neposlalo hodnotu, se nepočítá jako nahřáté ani
+     // nenahřáté — dokud nejsou známá všechna, nabití nemá smysl hlásit.
+     if (probes.exists[ p | !(p.state instanceof Number) ]) {
+         logWarn("atmos_buffer.rules", "Akumulace: ne vsechna cidla maji hodnotu, nabiti se nepocita")
+         return;
+     }
+
+     val hot = probes.filter[ p | (p.state as Number).doubleValue >= BUFFER_HOT_C.doubleValue ].size
+
+     Atmos_Buffer_Zones.postUpdate(hot)
+     Atmos_Buffer_Charge.postUpdate(hot * 100 / probes.size)
+ end

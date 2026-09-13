@@ -1,0 +1,32 @@
+// Otočení kontrolky na Tuya topidlech.
+//
+// Zařízení používá dp 10 obráceně (ON = zhasnuto), takže se mezi skutečnou
+// položkou a tou v sitemapu překlápí obě strany: příkaz i stav.
+
+rule "Kontrolka obyvak - prikaz"
+ when
+     Item obyvak_topeni_light_display received command
+ then
+     obyvak_topeni_light.sendCommand(if (receivedCommand == ON) OFF else ON)
+ end
+
+rule "Kontrolka obyvak - stav"
+ when
+     Item obyvak_topeni_light received update
+ then
+     obyvak_topeni_light_display.postUpdate(if (obyvak_topeni_light.state == ON) OFF else ON)
+ end
+
+rule "Kontrolka pracovna - prikaz"
+ when
+     Item Infrared_heating_panel_light_display received command
+ then
+     Infrared_heating_panel_light.sendCommand(if (receivedCommand == ON) OFF else ON)
+ end
+
+rule "Kontrolka pracovna - stav"
+ when
+     Item Infrared_heating_panel_light received update
+ then
+     Infrared_heating_panel_light_display.postUpdate(if (Infrared_heating_panel_light.state == ON) OFF else ON)
+ end
