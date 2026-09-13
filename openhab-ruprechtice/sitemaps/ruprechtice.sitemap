@@ -4,6 +4,34 @@ sitemap ruprechtice label="Ruprechtice" {
     Frame {
         Text item=Atmos_Outdoor label="Venku [%.1f °C]" icon="temperature"
              valuecolor=[<0="blue", <10="cyan", >25="orange"]
+        // Zhoršený = některé sledované zařízení je offline. Skupina je AND, takže
+        // stačí jeden výpadek. Detail říká který.
+        Text item=system_health label="Stav systému [MAP(health.map):%s]" icon="network"
+             valuecolor=[ON="green", OFF="red"] {
+            Frame label="Zigbee zařízení" {
+                Text item=bojler_online         valuecolor=[ON="green", OFF="red"]
+                Text item=vysousec_online       valuecolor=[ON="green", OFF="red"]
+                Text item=pokoj_vysousec_online valuecolor=[ON="green", OFF="red"]
+                Text item=agama_online          valuecolor=[ON="green", OFF="red"]
+                Text item=akvarium_online       valuecolor=[ON="green", OFF="red"]
+                Text item=obyvak_online         valuecolor=[ON="green", OFF="red"]
+                Text item=loznice_vetrak_online valuecolor=[ON="green", OFF="red"]
+                Text item=pokoj_okno_online     valuecolor=[ON="green", OFF="red"]
+                Text item=pracovna_okno_online  valuecolor=[ON="green", OFF="red"]
+            }
+            Frame label="Čidla" {
+                Text item=chodba_temp_online    valuecolor=[ON="green", OFF="red"]
+                Text item=pokojicek_temp_online valuecolor=[ON="green", OFF="red"]
+                Text item=pracovna_temp_online  valuecolor=[ON="green", OFF="red"]
+                Text item=koupelna_temp_online  valuecolor=[ON="green", OFF="red"]
+                Text item=obyvak_temp_online    valuecolor=[ON="green", OFF="red"]
+                Text item=zadveri_temp_online   valuecolor=[ON="green", OFF="red"]
+            }
+            Frame label="Služby" {
+                Text item=atmos_gw_online       valuecolor=[ON="green", OFF="red"]
+                Text item=backend_online        valuecolor=[ON="green", OFF="red"]
+            }
+        }
     }
     Frame label="Pracovna" {
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
@@ -223,9 +251,6 @@ sitemap ruprechtice label="Ruprechtice" {
             Chart item=temp_sensors label="Teplota" period=W refresh=300
         }
         Frame label="Servis" {
-            Text item=backend_health_status_item label="Backend status" labelcolor=["DOWN"="red"]
-            Text item=Atmos_GW_Status label="ATMOS brána [%s]" icon="network"
-                 valuecolor=["ONLINE"="green", "OFFLINE"="red", "UNKNOWN"="orange", "UNINITIALIZED"="orange"]
             Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
             Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
             Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<10="red"]

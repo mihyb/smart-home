@@ -1,0 +1,35 @@
+// Stav systému.
+//
+// Zigbee zařízení mizí ze sítě tiše: openHAB si drží poslední známý stav, takže
+// v sitemapu vypadá všechno normálně a je to poznat až když něco nesepne. Tohle
+// z dostupnosti udělá položku a sloučí je do jednoho ukazatele.
+//
+// Skupina agreguje sama: AND(ON,OFF) znamená ON jen když jsou ON všichni
+// členové. Žádné pravidlo na to není potřeba.
+//
+// Ve skupině jsou schválně jen zařízení, která se používají. Několik jich je
+// trvale offline (sklep_temp, sklep_water, smoke_sensor, chicks_01) a hlásit
+// kvůli nim pořád "zhoršený stav" by ukazatel znehodnotilo.
+Group:Switch:AND(ON,OFF) system_health "Stav systému [MAP(health.map):%s]" <network>
+
+Switch bojler_online          "Bojler"            (system_health) { channel="mqtt:topic:bojler_switch:online" }
+Switch vysousec_online        "Odvlhčovač"        (system_health) { channel="mqtt:topic:fb0a76c816:0a3dfb2310:online" }
+Switch agama_online           "Seroušek"          (system_health) { channel="mqtt:topic:fb0a76c816:1f14915b91:online" }
+Switch chodba_temp_online     "Chodba čidlo"      (system_health) { channel="mqtt:topic:fb0a76c816:351ffa3b47:online" }
+Switch akvarium_online        "Akvárium"          (system_health) { channel="mqtt:topic:fb0a76c816:5a92bbf1d2:online" }
+Switch pokojicek_temp_online  "Pokojíček čidlo"   (system_health) { channel="mqtt:topic:fb0a76c816:b7630cf279:online" }
+Switch pracovna_temp_online   "Pracovna čidlo"    (system_health) { channel="mqtt:topic:fb0a76c816:ec2baaa8ac:online" }
+Switch koupelna_temp_online   "Koupelna čidlo"    (system_health) { channel="mqtt:topic:fb0a76c816:koupelna_temp:online" }
+Switch loznice_vetrak_online  "Ložnice větrák"    (system_health) { channel="mqtt:topic:fb0a76c816:loznice_vetrak:online" }
+Switch obyvak_online          "Obyvák zásuvka"    (system_health) { channel="mqtt:topic:fb0a76c816:obyvak:online" }
+Switch obyvak_temp_online     "Obyvák čidlo"      (system_health) { channel="mqtt:topic:fb0a76c816:obyvak_temp:online" }
+Switch pokoj_okno_online      "Pokoj okno"        (system_health) { channel="mqtt:topic:fb0a76c816:pokoj_okno:online" }
+Switch pracovna_okno_online   "Pracovna okno"     (system_health) { channel="mqtt:topic:fb0a76c816:pracovna_okno:online" }
+Switch zadveri_temp_online    "Zádveří čidlo"     (system_health) { channel="mqtt:topic:fb0a76c816:zadveri_temp:online" }
+Switch pokoj_vysousec_online  "Pokoj odvlhčovač"  (system_health) { channel="mqtt:topic:fb0a76c816:pokoj_vysousec:online" }
+
+// Nezigbee přispěvatelé. Jejich zdroje jsou řetězce (ONLINE/OFFLINE, UP/DOWN),
+// takže je na Switch překlápí rules/system_health.rules — skupina umí agregovat
+// jen jeden typ.
+Switch atmos_gw_online        "ATMOS brána"       (system_health)
+Switch backend_online         "HomeController"    (system_health)

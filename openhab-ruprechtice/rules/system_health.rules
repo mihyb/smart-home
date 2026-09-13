@@ -1,0 +1,22 @@
+// Převod dvou textových stavů na Switch, aby mohly být ve skupině system_health.
+//
+// Skupina agreguje jeden typ, a tyhle dva zdroje jsou řetězce: brána hlásí
+// ONLINE/OFFLINE (přes rules/atmos_gateway.rules) a backend UP/DOWN (z actuatoru).
+// Zbytek členů skupiny jde rovnou z MQTT a žádné pravidlo nepotřebuje.
+//
+// received update, ne changed: po restartu openHABu jinak proxy zůstane NULL,
+// dokud se zdroj náhodou nezmění.
+
+rule "Stav systemu - ATMOS brana"
+ when
+     Item Atmos_GW_Status received update
+ then
+     atmos_gw_online.postUpdate(if (Atmos_GW_Status.state.toString == "ONLINE") ON else OFF)
+ end
+
+rule "Stav systemu - backend"
+ when
+     Item backend_health_status_item received update
+ then
+     backend_online.postUpdate(if (backend_health_status_item.state.toString == "UP") ON else OFF)
+ end

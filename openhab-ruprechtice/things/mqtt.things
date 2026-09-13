@@ -28,6 +28,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/vysousec/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : vysousec_switch "vysousec_switch" [ commandTopic="zigbee2mqtt/vysousec/set/state", stateTopic="zigbee2mqtt/vysousec/state" ]
     }
 
@@ -38,6 +39,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/agama/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : agama_switch "agama_switch" [ commandTopic="zigbee2mqtt/agama/set/state", stateTopic="zigbee2mqtt/agama/state" ]
     }
 
@@ -48,6 +50,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/chodba_temp/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type number : chodba_temp_temperature "chodba_temp_temperature" [ stateTopic="zigbee2mqtt/chodba_temp/temperature", unit="°C" ]
             Type number : chodba_temp_humidity "chodba_temp_humidity" [ stateTopic="zigbee2mqtt/chodba_temp/humidity", unit="%" ]
             Type number : chodba_temp_battery "chodba_temp_battery" [ stateTopic="zigbee2mqtt/chodba_temp/battery", unit="%" ]
@@ -61,6 +64,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/akvarko_svetlo/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : akvarium_svetlo_switch "akvarium_svetlo_switch" [ commandTopic="zigbee2mqtt/akvarko_svetlo/set/state", stateTopic="zigbee2mqtt/akvarko_svetlo/state" ]
     }
 
@@ -82,6 +86,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/pokojicek_temp/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type number : pokojicek_temp_battery "pokojicek_temp_battery" [ stateTopic="zigbee2mqtt/pokojicek_temp/battery", unit="%" ]
             Type number : pokojicek_temp_humidity "pokojicek_temp_humidity" [ stateTopic="zigbee2mqtt/pokojicek_temp/humidity", unit="%" ]
             Type number : pokojicek_temp_temperature "pokojicek_temp_temperature" [ stateTopic="zigbee2mqtt/pokojicek_temp/temperature" ]
@@ -118,6 +123,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/pracovna_temp/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type number : pracovna_teplota_battery "pracovna_teplota_battery" [ stateTopic="zigbee2mqtt/pracovna_temp/battery", unit="%" ]
             Type number : pracovna_teplota_temp "pracovna_teplota_temp" [ stateTopic="zigbee2mqtt/pracovna_temp/temperature", unit="°C" ]
             Type number : pracovna_teplota_humidity "pracovna_teplota_humidity" [ stateTopic="zigbee2mqtt/pracovna_temp/humidity", unit="%" ]
@@ -142,6 +148,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/koupelna_temp/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type number : koupelna_temp_temperature "koupelna_temp_temperature" [ stateTopic="zigbee2mqtt/koupelna_temp/temperature", unit="°C" ]
             Type number : koupelna_temp_humididty "koupelna_temp_humididty" [ stateTopic="zigbee2mqtt/koupelna_temp/humidity", unit="%" ]
             Type number : koupelna_temp_battery "koupelna_temp_battery" [ stateTopic="zigbee2mqtt/koupelna_temp/battery", unit="%" ]
@@ -154,6 +161,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/loznice_vetrak/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : loznice_vetrak_switch "loznice_vetrak_switch" [ commandTopic="zigbee2mqtt/loznice_vetrak/set/state", stateTopic="zigbee2mqtt/loznice_vetrak/state" ]
     }
 
@@ -164,6 +172,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/obyvak/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : obyvak_switch "obyvak_switch" [ commandTopic="zigbee2mqtt/obyvak/set/state", stateTopic="zigbee2mqtt/obyvak/state" ]
     }
 
@@ -174,6 +183,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/obyvak_temp/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type number : obyvak_temp_temperature "obyvak_temp_temperature" [ stateTopic="zigbee2mqtt/obyvak_temp/temperature", unit="°C" ]
             Type number : obyvak_temp_battery "obyvak_temp_battery" [ stateTopic="zigbee2mqtt/obyvak_temp/battery", unit="%" ]
             Type number : obyvak_temp_humidity "obyvak_temp_humidity" [ stateTopic="zigbee2mqtt/obyvak_temp/humidity", unit="%" ]
@@ -186,6 +196,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/pokoj_okno/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : pokoj_okno_switch "pokoj_okno_switch" [ off="false", on="true", stateTopic="zigbee2mqtt/pokoj_okno/alarm_1" ]
             Type number : pokoj_okno_battery "pokoj_okno_battery" [ stateTopic="zigbee2mqtt/pokoj_okno/battery" ]
     }
@@ -197,6 +208,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/pokoj_vysousec/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : pokoj_vysousec_switch "pokoj_vysousec_switch" [ commandTopic="zigbee2mqtt/pokoj_vysousec/set/state", stateTopic="zigbee2mqtt/pokoj_vysousec/state" ]
     }
 
@@ -207,6 +219,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/pracovna_okno/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type switch : pracovna_okno_status "On/Off Switch" [ off="false", on="true", stateTopic="zigbee2mqtt/pracovna_okno/alarm_1" ]
             Type number : pracovna_okno_battery "pracovna_okno_battery" [ stateTopic="zigbee2mqtt/pracovna_okno/battery" ]
     }
@@ -240,6 +253,7 @@ Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
         transformationPattern="JSONPATH:$.state"
     ] {
         Channels:
+            Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/zadveri_temp/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
             Type number : zadveri_temp_temperature "zadveri_temp_temperature" [ stateTopic="zigbee2mqtt/zadveri_temp/temperature", unit="°C" ]
             Type number : zadveri_temp_humidity "zadveri_temp_humidity" [ stateTopic="zigbee2mqtt/zadveri_temp/humidity", unit="%" ]
             Type number : zadveri_temp_battery "zadveri_temp_battery" [ stateTopic="zigbee2mqtt/zadveri_temp/battery", unit="%" ]
@@ -260,6 +274,7 @@ Thing mqtt:topic:bojler_switch "bojler_switch" (mqtt:broker:fb0a76c816) [
     transformationPattern="JSONPATH:$.state"
 ] {
     Channels:
+        Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/w_heater_switch/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
         Type switch : bojler_switch_switch "bojler_switch" [ commandTopic="zigbee2mqtt/w_heater_switch/set/state", stateTopic="zigbee2mqtt/w_heater_switch/state" ]
         // HDO detection. The boiler circuit is on the low-tariff (HDO)
         // contactor, so when HDO drops the switch itself loses power,
