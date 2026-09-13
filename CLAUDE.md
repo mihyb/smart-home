@@ -136,6 +136,14 @@ skip the cycle rather than die.
   device is switched off and the window skipped).
 - `app.minMaxJobs` — thermostat-style. On below `minValueItem`, off above
   `maxValueItem`. Used for the chick brooder.
+- `app.boilerModeJobs` — follows the solid-fuel boiler. While `runningItem`
+  (the exhaust fan) is ON both Atmos circuits go to COMFORT; when it is OFF the
+  hot water circuit goes to STANDBY and heating back to AUTO. Modes are a
+  `BoilerMode` enum, so a typo fails at startup rather than commanding something
+  the controller silently rejects. It **re-asserts** the target every cycle, so
+  a mode set by hand in the sitemap is taken back within five minutes —
+  `boiler_auto_control` is the way to stop that. It never commands a mode the
+  circuit already holds, which is what keeps the gateway's socket table intact.
 
 **The integration contract is item names.** Strings in
 `openhab-ruprechtice/items/*.items` are the same strings in `application.yaml`.

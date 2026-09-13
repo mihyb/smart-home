@@ -59,6 +59,18 @@ app:
       valueItem: "chicks_01_Chick_01_temp"
       minValueItem: "chick_01_min_temp"
       maxValueItem: "chick_01_max_temp"
+  boilerModeJobs:
+    # While the solid-fuel boiler burns, take the heat on both circuits. Once it
+    # is out, the hot water circuit would drain a tank with nothing refilling it,
+    # so it stops and the heating goes back to its own schedule.
+    - statusItem: "boiler_auto_control"
+      runningItem: "Atmos_Exhaust_Fan"
+      heatingModeItem: "Atmos_C1_Mode"
+      waterModeItem: "Atmos_Water_Mode"
+      runningHeatingMode: comfort
+      runningWaterMode: comfort
+      idleHeatingMode: auto
+      idleWaterMode: standby
 server:
   port: "${app.port}"
 logging:

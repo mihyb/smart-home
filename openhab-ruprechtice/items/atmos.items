@@ -34,6 +34,10 @@ Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controll
 String Atmos_Water_Mode "Atmos_Water_Mode" { channel="atmoswg1000:controller:home:controller1:water#mode" }
 Number:Temperature Atmos_Water_Comfort "Atmos_Water_Comfort" { channel="atmoswg1000:controller:home:controller1:water#comfort-setpoint" }
 String Atmos_C1_Mode "Atmos_C1_Mode" { channel="atmoswg1000:controller:home:controller1:circuit1#mode" }
+// Spínač automatiky pro HomeController: dokud je ON, řídí režim topného okruhu
+// a teplé vody podle toho, jestli kotel hoří, a přepíše i režim nastavený ručně.
+// Virtuální položka, stav drží jen persistence.
+Switch boiler_auto_control
 Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:controller:home:controller1:circuit1#target-temperature" }
 DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
 // autoupdate vypnuto: tlačítko Obnovit posílá téhle položce REFRESH a optimistický

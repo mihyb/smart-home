@@ -11,7 +11,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 YAML="${ROOT}/HomeController/src/main/resources/application.yaml"
 ITEMS="${ROOT}/openhab-ruprechtice/items"
 
-referenced=$(grep -oE '(switchItem|statusItem|startHourItem|endHourItem|valueItem|minValueItem|maxValueItem):[[:space:]]*"[^"]+"' "${YAML}" \
+referenced=$(grep -oE '(switchItem|statusItem|startHourItem|endHourItem|valueItem|minValueItem|maxValueItem|runningItem|heatingModeItem|waterModeItem):[[:space:]]*"[^"]+"' "${YAML}" \
   | sed 's/.*"\(.*\)"/\1/' | sort -u)
 
 defined=$(grep -rhoE '^[[:space:]]*(Switch|Number[^[:space:]]*|String|Contact|Dimmer|Rollershutter|Color|DateTime|Location|Group[^[:space:]]*)[[:space:]]+[A-Za-z0-9_]+' "${ITEMS}"/*.items \

@@ -9,6 +9,7 @@ class ConfigurationProperties {
     var electricity = Electricity()
     var timerJobs = mutableListOf<TimerJobConfig>()
     var minMaxJobs = mutableListOf<MinMaxJobConfig>()
+    var boilerModeJobs = mutableListOf<BoilerModeJobConfig>()
 
     class Electricity {
         var oteUrl = ""
@@ -51,5 +52,33 @@ class ConfigurationProperties {
         var valueItem: String = ""
         var minValueItem: String = ""
         var maxValueItem: String = ""
+    }
+
+    /**
+     * The operating modes the Atmos controller accepts on a circuit.
+     *
+     * An enum rather than a string so a typo in application.yaml fails at
+     * startup. Commanding a mode the controller does not know is rejected
+     * silently, which would look exactly like the automation not running.
+     * AWAY and VISIT are here for completeness; only AUTO, STANDBY and COMFORT
+     * are meaningful without also setting an end time.
+     */
+    enum class BoilerMode {
+        AUTO, STANDBY, COMFORT, AWAY, VISIT
+    }
+
+    /**
+     * Follows the solid-fuel boiler: while it burns, take the heat; once it is
+     * out, stop drawing from the tank and hand the heating back to its schedule.
+     */
+    class BoilerModeJobConfig {
+        var statusItem: String = ""
+        var runningItem: String = ""
+        var heatingModeItem: String = ""
+        var waterModeItem: String = ""
+        var runningHeatingMode: BoilerMode = BoilerMode.COMFORT
+        var runningWaterMode: BoilerMode = BoilerMode.COMFORT
+        var idleHeatingMode: BoilerMode = BoilerMode.AUTO
+        var idleWaterMode: BoilerMode = BoilerMode.STANDBY
     }
 }
