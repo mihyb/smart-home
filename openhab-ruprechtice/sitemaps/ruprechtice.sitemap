@@ -185,7 +185,7 @@ sitemap ruprechtice label="Ruprechtice" {
         // kotle, proto sedí tady a ne u elektrického bojleru výš — ten je úplně
         // jiný spotřebič, který s ATMOSem nemá nic společného.
         Text item=Atmos_Exhaust_Fan label="Kotel [%s]" icon="fire"
-             valuecolor=[ON="red", OFF="gray"] {
+             valuecolor=[ON="green", OFF="gray"] {
             Frame label="Hoření" {
                 // Spaliny + voda dohromady říkají fázi: spaliny rostou a voda je
                 // studená = zatápí se; obojí vysoké = topí; spaliny klesají a
@@ -251,17 +251,27 @@ sitemap ruprechtice label="Ruprechtice" {
             Chart item=temp_sensors label="Teplota" period=W refresh=300
         }
         Frame label="Servis" {
-            Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=pokoj_okno_pokoj_okno_battery label="Pokoj okno baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=pracovna_okno_battery label="Pracovna okno baterie [%.0f %%]" labelcolor=[<10="red"]
-            Text item=smoke_sensor_battery_low label="Kourovy sensor slaba baterie" labelcolor=[ON="red"]
+            // Vyměnit = některá baterie pod 5 %. Jednotlivé články jsou o klik dál,
+            // aby Servis nebyl deset řádků procent. Kouřový senzor tu není:
+            // hlásí jen battery_low a jeho integrace není spolehlivá.
+            Text item=battery_status label="Baterie [%s]" icon="batterylevel"
+                 valuecolor=["OK"="green", "Vyměnit"="red"] {
+                // Prahy jsou v procentech i u položek Number:Dimensionless, které
+                // uvnitř drží poměr (0,19): openHAB čte číslo v podmínce v jednotce
+                // ze state description, a tu tady určuje formát "%.0f %%".
+                Frame label="Jednotlivé baterie" {
+                    Text item=pracovna_teplota_battery label="Pracovna teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=pokojicek_temp_battery label="Pokojicek teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=chodba_temp_battery label="Chodba teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=zadveri_temp_battery label="Zadveří teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=koupelna_temp_battery label="Koupelna teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=obyvak_temp_battery label="Obyvák teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=sklep_temp_battery label="Sklep teploměr baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=sklep_water_battery label="Sklep voda baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=pokoj_okno_pokoj_okno_battery label="Pokoj okno baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                    Text item=pracovna_okno_battery label="Pracovna okno baterie [%.0f %%]" valuecolor=[<5="red", <20="orange", >=20="green"]
+                }
+            }
         }
     }
 }

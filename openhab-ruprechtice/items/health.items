@@ -33,3 +33,16 @@ Switch pokoj_vysousec_online  "Pokoj odvlhčovač [MAP(online.map):%s]"  (system
 // jen jeden typ.
 Switch atmos_gw_online        "ATMOS brána [MAP(online.map):%s]"       (system_health)
 Switch backend_online         "HomeController [MAP(online.map):%s]"    (system_health)
+
+// Stav baterií.
+//
+// Pozor na dvě různé škály: čidla s unit="%" na kanálu drží openHAB jako poměr
+// (0.87 = 87 %), zatímco okenní senzory jsou prosté Number s procenty (37 = 37 %).
+// Na displeji to vypadá stejně, ale porovnávat je mezi sebou nelze — proto se
+// v rules/battery_status.rules normalizuje podle typu položky, ne odhadem.
+//
+// Kouřový senzor tu schválně není: hlásí jen battery_low a jeho integrace není
+// spolehlivá.
+Group battery_all "Baterie"
+String battery_status "Baterie [%s]" <batterylevel>
+Number battery_lowest "Nejnižší [%.0f %%]"

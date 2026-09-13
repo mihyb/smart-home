@@ -1,0 +1,52 @@
+// Stav baterií: OK, nebo Vyměnit když je některá pod 5 %.
+//
+// Nejde použít Group:Number:MIN, protože členové mají dvě různé škály. Čidla
+// mají na kanálu unit="%", takže je openHAB drží jako bezrozměrný poměr
+// (0.87 = 87 %); okenní senzory jsou prosté Number s procenty (37 = 37 %).
+// MIN by porovnával 0.19 se 37 a vrátil 0.19, což vypadá jako 0,19 % a není.
+//
+// Normalizuje se proto podle typu: QuantityType -> toUnit("%"), jinak se bere
+// hodnota tak jak je. Podle typu, ne podle velikosti — heuristika "menší než 1
+// je poměr" by u skutečně vybité baterie na 1 % dala špatný výsledek.
+
+val Number BATTERY_LOW_PERCENT = 5
+
+rule "Stav baterii"
+ when
+     Member of battery_all changed or
+     System started or
+     Time cron "0 7 * * * ?"
+ then
+     var Number lowest = 999
+     var String worst = ""
+
+     battery_all.members.forEach[ item |
+         val state = item.state
+         var Number percent = null
+         if (state instanceof QuantityType<?>) {
+             val q = (state as QuantityType<?>).toUnit("%")
+             if (q !== null) percent = q.doubleValue
+         } else if (state instanceof DecimalType) {
+             percent = (state as DecimalType).doubleValue
+         }
+         // Položka bez hodnoty se nepočítá: čidlo může být offline a hlásit
+         // NULL, což není vybitá baterie.
+         if (percent !== null && percent.doubleValue < lowest.doubleValue) {
+             lowest = percent
+             worst = item.name
+         }
+     ]
+
+     if (lowest.doubleValue > 998) {
+         battery_status.postUpdate("?")
+         battery_lowest.postUpdate(UNDEF)
+     } else {
+         battery_lowest.postUpdate(lowest)
+         if (lowest.doubleValue < BATTERY_LOW_PERCENT.doubleValue) {
+             battery_status.postUpdate("Vyměnit")
+             logInfo("battery_status.rules", "nejnizsi baterie: " + worst + " " + lowest + " %")
+         } else {
+             battery_status.postUpdate("OK")
+         }
+     }
+ end
