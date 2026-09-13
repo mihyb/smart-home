@@ -1,6 +1,5 @@
 package com.hyblerm.homecontroller.service.rules
 
-import com.hyblerm.homecontroller.config.ConfigurationProperties.BoilerMode
 import com.hyblerm.homecontroller.config.ConfigurationProperties.BoilerModeJobConfig
 import com.hyblerm.homecontroller.repository.entity.OpenHabModel
 import com.hyblerm.homecontroller.service.repository.DataAccess
@@ -18,6 +17,10 @@ private const val STATUS_ID = "boiler_auto_control"
 private const val RUNNING_ID = "Atmos_Exhaust_Fan"
 private const val HEATING_ID = "Atmos_C1_Mode"
 private const val WATER_ID = "Atmos_Water_Mode"
+private const val RUNNING_HEATING_ID = "boiler_auto_running_heating"
+private const val RUNNING_WATER_ID = "boiler_auto_running_water"
+private const val IDLE_HEATING_ID = "boiler_auto_idle_heating"
+private const val IDLE_WATER_ID = "boiler_auto_idle_water"
 
 class BoilerModeJobTest {
 
@@ -47,9 +50,11 @@ class BoilerModeJobTest {
     }
 
     @Test
-    fun `checkModes puts both circuits into comfort while the boiler burns`() {
+    fun `checkModes applies the modes chosen in the sitemap while the boiler burns`() {
         mockItem(STATUS_ID, "ON")
         mockItem(RUNNING_ID, "ON")
+        mockItem(RUNNING_HEATING_ID, "COMFORT")
+        mockItem(RUNNING_WATER_ID, "COMFORT")
         mockItem(HEATING_ID, "AUTO")
         mockItem(WATER_ID, "STANDBY")
 
@@ -60,9 +65,11 @@ class BoilerModeJobTest {
     }
 
     @Test
-    fun `checkModes releases heating to auto and stops hot water once the boiler is out`() {
+    fun `checkModes applies the idle modes once the boiler is out`() {
         mockItem(STATUS_ID, "ON")
         mockItem(RUNNING_ID, "OFF")
+        mockItem(IDLE_HEATING_ID, "AUTO")
+        mockItem(IDLE_WATER_ID, "STANDBY")
         mockItem(HEATING_ID, "COMFORT")
         mockItem(WATER_ID, "COMFORT")
 
@@ -73,12 +80,31 @@ class BoilerModeJobTest {
     }
 
     @Test
+    fun `checkModes follows the sitemap when the choice changes`() {
+        // The point of moving these out of application.yaml: STANDBY here would
+        // have needed a redeploy before.
+        mockItem(STATUS_ID, "ON")
+        mockItem(RUNNING_ID, "OFF")
+        mockItem(IDLE_HEATING_ID, "STANDBY")
+        mockItem(IDLE_WATER_ID, "STANDBY")
+        mockItem(HEATING_ID, "AUTO")
+        mockItem(WATER_ID, "STANDBY")
+
+        job.checkModes()
+
+        verify(dataAccess).commandItem(HEATING_ID, "STANDBY")
+        verify(dataAccess, never()).commandItem(eq(WATER_ID), any())
+    }
+
+    @Test
     fun `checkModes does not re-send a mode the circuit is already in`() {
         // The job runs every five minutes and the gateway has very few sockets.
         // Re-asserting a mode it already holds is how the binding once exhausted
         // them, so a no-op cycle must stay a no-op.
         mockItem(STATUS_ID, "ON")
         mockItem(RUNNING_ID, "ON")
+        mockItem(RUNNING_HEATING_ID, "COMFORT")
+        mockItem(RUNNING_WATER_ID, "COMFORT")
         mockItem(HEATING_ID, "COMFORT")
         mockItem(WATER_ID, "COMFORT")
 
@@ -93,6 +119,8 @@ class BoilerModeJobTest {
         // one is still corrected.
         mockItem(STATUS_ID, "ON")
         mockItem(RUNNING_ID, "ON")
+        mockItem(RUNNING_HEATING_ID, "COMFORT")
+        mockItem(RUNNING_WATER_ID, "COMFORT")
         mockItem(HEATING_ID, "NULL")
         mockItem(WATER_ID, "AUTO")
 
@@ -100,6 +128,40 @@ class BoilerModeJobTest {
 
         verify(dataAccess, never()).commandItem(eq(HEATING_ID), any())
         verify(dataAccess).commandItem(WATER_ID, "COMFORT")
+    }
+
+    @Test
+    fun `checkModes leaves a circuit alone until its target has been chosen`() {
+        // The four target items live only in persistence, so they read NULL on a
+        // rebuilt machine until restoreOnStartup has run.
+        mockItem(STATUS_ID, "ON")
+        mockItem(RUNNING_ID, "ON")
+        mockItem(RUNNING_HEATING_ID, "NULL")
+        mockItem(RUNNING_WATER_ID, "COMFORT")
+        mockItem(HEATING_ID, "AUTO")
+        mockItem(WATER_ID, "AUTO")
+
+        job.checkModes()
+
+        verify(dataAccess, never()).commandItem(eq(HEATING_ID), any())
+        verify(dataAccess).commandItem(WATER_ID, "COMFORT")
+    }
+
+    @Test
+    fun `checkModes refuses a target mode that expires on its own`() {
+        // AWAY and VISIT end at a time of day and fall back to AUTO. As a target
+        // the job would re-send them every five minutes for the rest of the day,
+        // which is exactly the command storm the socket guard exists to avoid.
+        mockItem(STATUS_ID, "ON")
+        mockItem(RUNNING_ID, "ON")
+        mockItem(RUNNING_HEATING_ID, "AWAY")
+        mockItem(RUNNING_WATER_ID, "VISIT")
+        mockItem(HEATING_ID, "AUTO")
+        mockItem(WATER_ID, "AUTO")
+
+        job.checkModes()
+
+        verify(dataAccess, never()).commandItem(any(), any())
     }
 
     private fun mockItem(name: String, state: String) {
@@ -112,10 +174,10 @@ class BoilerModeJobTest {
         config.runningItem = RUNNING_ID
         config.heatingModeItem = HEATING_ID
         config.waterModeItem = WATER_ID
-        config.runningHeatingMode = BoilerMode.COMFORT
-        config.runningWaterMode = BoilerMode.COMFORT
-        config.idleHeatingMode = BoilerMode.AUTO
-        config.idleWaterMode = BoilerMode.STANDBY
+        config.runningHeatingModeItem = RUNNING_HEATING_ID
+        config.runningWaterModeItem = RUNNING_WATER_ID
+        config.idleHeatingModeItem = IDLE_HEATING_ID
+        config.idleWaterModeItem = IDLE_WATER_ID
         return config
     }
 }

@@ -67,10 +67,12 @@ app:
       runningItem: "Atmos_Exhaust_Fan"
       heatingModeItem: "Atmos_C1_Mode"
       waterModeItem: "Atmos_Water_Mode"
-      runningHeatingMode: comfort
-      runningWaterMode: comfort
-      idleHeatingMode: auto
-      idleWaterMode: standby
+      # Which mode each case means is chosen from the sitemap, not here, so it
+      # can be changed without a redeploy.
+      runningHeatingModeItem: "boiler_auto_running_heating"
+      runningWaterModeItem: "boiler_auto_running_water"
+      idleHeatingModeItem: "boiler_auto_idle_heating"
+      idleWaterModeItem: "boiler_auto_idle_water"
 server:
   port: "${app.port}"
 logging:

@@ -13,10 +13,13 @@ private const val STATE_OFF = "OFF"
  * Drives the Atmos heating circuit and hot water from whether the boiler burns.
  *
  * The boiler is loaded by hand, so nothing knows in advance when it will run.
- * While it burns there is more heat than the buffer tank can hold, and both
+ * While it burns there is more heat than the buffer tank can hold and both
  * circuits should take it; once it is out, the hot water circuit would drain a
  * tank that has nothing refilling it, so it stops and the heating goes back to
  * its own schedule.
+ *
+ * Which mode each of those four cases means is read from openHAB rather than
+ * from configuration, so it can be changed from the sitemap.
  *
  * This re-asserts the target mode on every cycle rather than only on a change,
  * which means a mode set by hand in the sitemap is taken back within one cycle.
@@ -43,24 +46,50 @@ open class BoilerModeJob(
             return
         }
         val burning = running == STATE_ON
-        apply(config.heatingModeItem, if (burning) config.runningHeatingMode else config.idleHeatingMode)
-        apply(config.waterModeItem, if (burning) config.runningWaterMode else config.idleWaterMode)
+        apply(
+            config.heatingModeItem,
+            if (burning) config.runningHeatingModeItem else config.idleHeatingModeItem
+        )
+        apply(
+            config.waterModeItem,
+            if (burning) config.runningWaterModeItem else config.idleWaterModeItem
+        )
     }
 
-    private fun apply(name: String, target: BoilerMode) {
-        val current = item(name).state
+    private fun apply(modeItem: String, targetItem: String) {
+        val target = target(targetItem) ?: return
+        val current = item(modeItem).state
         if (current == target.name) {
-            logger.debug("{} already {}", name, target)
+            logger.debug("{} already {}", modeItem, target)
             return
         }
         // The gateway has very few sockets and commanding one that is not
         // answering achieves nothing. An unreadable mode means it is not
         // answering.
-        if (BoilerMode.values().none { it.name == current }) {
-            logger.warn("skipping {}: reads {}", name, current)
+        if (mode(current) == null) {
+            logger.warn("skipping {}: reads {}", modeItem, current)
             return
         }
-        logger.info("{}: {} -> {}", name, current, target)
-        repository.commandItem(name, target.name)
+        logger.info("{}: {} -> {}", modeItem, current, target)
+        repository.commandItem(modeItem, target.name)
     }
+
+    /** The mode chosen in the sitemap, or null when it cannot be used as one. */
+    private fun target(targetItem: String): BoilerMode? {
+        val state = item(targetItem).state
+        val target = mode(state)
+        if (target == null) {
+            // Reads NULL until persistence restores it, or until it is set for
+            // the first time on a rebuilt machine.
+            logger.warn("skipping: {} reads {}", targetItem, state)
+            return null
+        }
+        if (target.expires) {
+            logger.warn("skipping: {} is {}, which ends by itself and cannot be a target", targetItem, target)
+            return null
+        }
+        return target
+    }
+
+    private fun mode(state: String): BoilerMode? = BoilerMode.values().firstOrNull { it.name == state }
 }

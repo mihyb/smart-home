@@ -57,14 +57,18 @@ class ConfigurationProperties {
     /**
      * The operating modes the Atmos controller accepts on a circuit.
      *
-     * An enum rather than a string so a typo in application.yaml fails at
-     * startup. Commanding a mode the controller does not know is rejected
-     * silently, which would look exactly like the automation not running.
-     * AWAY and VISIT are here for completeness; only AUTO, STANDBY and COMFORT
-     * are meaningful without also setting an end time.
+     * [expires] marks the two that end by themselves: the controller stores an
+     * end time of day for AWAY and VISIT and falls back to AUTO when it passes.
+     * Neither can be an automation target -- the job would find the circuit back
+     * in AUTO on the next cycle and re-send the mode every five minutes for the
+     * rest of the day.
      */
-    enum class BoilerMode {
-        AUTO, STANDBY, COMFORT, AWAY, VISIT
+    enum class BoilerMode(val expires: Boolean) {
+        AUTO(false),
+        STANDBY(false),
+        COMFORT(false),
+        AWAY(true),
+        VISIT(true)
     }
 
     /**
@@ -76,9 +80,14 @@ class ConfigurationProperties {
         var runningItem: String = ""
         var heatingModeItem: String = ""
         var waterModeItem: String = ""
-        var runningHeatingMode: BoilerMode = BoilerMode.COMFORT
-        var runningWaterMode: BoilerMode = BoilerMode.COMFORT
-        var idleHeatingMode: BoilerMode = BoilerMode.AUTO
-        var idleWaterMode: BoilerMode = BoilerMode.STANDBY
+
+        // The four targets are item names, not modes: they are chosen from the
+        // sitemap, so changing what "the boiler is burning" should mean is a tap
+        // rather than a redeploy. Like every other setpoint here they live only
+        // as openHAB item state -- see scripts/sync-item-states.sh.
+        var runningHeatingModeItem: String = ""
+        var runningWaterModeItem: String = ""
+        var idleHeatingModeItem: String = ""
+        var idleWaterModeItem: String = ""
     }
 }

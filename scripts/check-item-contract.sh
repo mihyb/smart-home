@@ -11,7 +11,9 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 YAML="${ROOT}/HomeController/src/main/resources/application.yaml"
 ITEMS="${ROOT}/openhab-ruprechtice/items"
 
-referenced=$(grep -oE '(switchItem|statusItem|startHourItem|endHourItem|valueItem|minValueItem|maxValueItem|runningItem|heatingModeItem|waterModeItem):[[:space:]]*"[^"]+"' "${YAML}" \
+# Any key ending in Item holds an item name -- matching the convention rather
+# than a list means a new job type is covered without touching this script.
+referenced=$(grep -oE '[A-Za-z]+Item:[[:space:]]*"[^"]+"' "${YAML}" \
   | sed 's/.*"\(.*\)"/\1/' | sort -u)
 
 defined=$(grep -rhoE '^[[:space:]]*(Switch|Number[^[:space:]]*|String|Contact|Dimmer|Rollershutter|Color|DateTime|Location|Group[^[:space:]]*)[[:space:]]+[A-Za-z0-9_]+' "${ITEMS}"/*.items \

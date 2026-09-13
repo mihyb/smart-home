@@ -206,6 +206,16 @@ sitemap ruprechtice label="Ruprechtice" {
                 // Zapnuto = režim níž řídí HomeController podle toho, jestli kotel
                 // hoří, a ruční přepnutí vezme zpátky do pěti minut.
                 Switch item=boiler_auto_control label="Řídit podle kotle"
+                // Jen režimy, které samy nevyprší — AWAY a VISIT končí v daný čas
+                // a automatika by je pak posílala pořád dokola.
+                Selection item=boiler_auto_running_heating label="Topení když hoří" icon="fire"
+                          mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort"]
+                Selection item=boiler_auto_running_water label="Voda když hoří" icon="water"
+                          mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort"]
+                Selection item=boiler_auto_idle_heating label="Topení když nehoří" icon="fire"
+                          mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort"]
+                Selection item=boiler_auto_idle_water label="Voda když nehoří" icon="water"
+                          mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort"]
             }
             Frame label="Topný okruh" {
                 Selection item=Atmos_C1_Mode label="Režim" mappings=[AUTO="Auto", STANDBY="Standby", COMFORT="Komfort", AWAY="Absence", VISIT="Návštěva"]
