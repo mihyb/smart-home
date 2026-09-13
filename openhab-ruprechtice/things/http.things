@@ -4,7 +4,10 @@
 
 Thing http:url:backend_status "HTTP URL Thing" [
     authMode="BASIC",
-    baseURL="http://192.168.1.109:8181/actuator",
+    // HomeController runs on this same host now, so loopback: the check was
+    // still pointed at .109 after the cutover and had been reading a dead
+    // endpoint ever since.
+    baseURL="http://127.0.0.1:8181/actuator",
     bufferSize=2048,
     commandMethod="GET",
     contentType="application/json",

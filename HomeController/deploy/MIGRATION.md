@@ -1,3 +1,10 @@
+> **Historical.** This describes the August 2026 move of HomeController off
+> `192.168.1.109` onto `192.168.1.124`. Both of those hosts have since been
+> retired: HomeController and openHAB now run together on `192.168.1.132`. Kept
+> for the provisioning steps, which still apply to a fresh host. See CLAUDE.md
+> for the current topology and `scripts/cutover-controller.sh` for the move that
+> superseded this one.
+
 # Migrating HomeController off 192.168.1.109
 
 `192.168.1.109` has only **732 MB of RAM**, and OpenHAB alone occupies ~448 MB of it.

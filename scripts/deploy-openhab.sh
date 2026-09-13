@@ -13,8 +13,8 @@
 # up in the dry-run instead of being silently destroyed.
 set -euo pipefail
 
-HOST="${OPENHAB_HOST:-192.168.1.109}"
-USER="${OPENHAB_USER:-dev}"
+HOST="${OPENHAB_HOST:-192.168.1.132}"
+USER="${OPENHAB_USER:-ruprecht}"
 DEST="${OPENHAB_DIR:-/etc/openhab}"
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/openhab-ruprechtice"
 

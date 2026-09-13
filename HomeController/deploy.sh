@@ -3,8 +3,8 @@
 # Override the target without editing this file:  HOST=192.168.1.130 ./deploy.sh
 set -euo pipefail
 
-HOST="${HOST:-192.168.1.124}"
-APP_USER="${APP_USER:-majkl}"
+HOST="${HOST:-192.168.1.132}"
+APP_USER="${APP_USER:-ruprecht}"
 APP_DIR="${APP_DIR:-/home/${APP_USER}/app}"
 JAR="build/libs/HomeController-0.0.1-SNAPSHOT.jar"
 

@@ -5,9 +5,9 @@
 Bridge mqtt:broker:fb0a76c816 "MQTT Broker" [
     birthRetain=true,
     certificatepin=true,
-    clientid="a924faf6-b9c1-4934-ade1-055ee6306de1",   // MUST differ from .109 — same client id makes brokers evict each other
+    clientid="a924faf6-b9c1-4934-ade1-055ee6306de1",   // distinct id: two openHABs on one broker evict each other by client id
     enableDiscovery=true,
-    host="192.168.1.109",   // parallel-run: use .109's mosquitto until cutover
+    host="192.168.1.109",   // mosquitto and zigbee2mqtt still live on .109
     hostnameValidated=true,
     keepAlive=60,
     lwtQos=0,
