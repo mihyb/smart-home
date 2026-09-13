@@ -110,6 +110,21 @@ writes the literal command into the item, so a String item displays "REFRESH".
 produce rules that load fine and then throw on every trigger. Use
 `getThingStatusInfo(uid)` and the two-argument `sendCommand(item, "REFRESH")`.
 
+**A sitemap condition compares in the item's display unit.** The battery items
+that arrive as `Number:Dimensionless` hold a ratio (`0.19`) but render `19 %`,
+and `valuecolor=[<20=...]` matches the rendered 19, not the stored 0.19 --
+openHAB parses the bare number using the unit from the state description, which
+the `%.0f %%` format sets. So percent thresholds are written as percent on both
+scales. Rules see the raw state and do need the two cases; `battery_status.rules`
+normalises by item type.
+
+**`deploy-openhab.sh` used to report success while writing nothing.**
+`/etc/openhab` is `openhab:openhab` 755 and `ruprecht` is not in that group, so
+rsync was denied on every file, exited 0 on the local side, and the smoke test
+happily measured the config already on the server. It runs the receiver under
+`sudo` now. If a config change ever seems not to take, check the file on the
+server before believing the deploy.
+
 **Items read `NULL` when their thing is offline.** `getDouble()` throws on that;
 `getDoubleOrNull()` exists for rules that read sensors. MinMaxJob and TimerJob
 skip the cycle rather than die.
