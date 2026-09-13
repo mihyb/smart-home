@@ -9,7 +9,6 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=system_health label="Stav systému [MAP(health.map):%s]" icon="network"
              valuecolor=[ON="green", OFF="red"] {
             Frame label="Zigbee zařízení" {
-                Text item=bojler_online         valuecolor=[ON="green", OFF="red"]
                 Text item=vysousec_online       valuecolor=[ON="green", OFF="red"]
                 Text item=pokoj_vysousec_online valuecolor=[ON="green", OFF="red"]
                 Text item=agama_online          valuecolor=[ON="green", OFF="red"]

@@ -10,9 +10,14 @@
 // Ve skupině jsou schválně jen zařízení, která se používají. Několik jich je
 // trvale offline (sklep_temp, sklep_water, smoke_sensor, chicks_01) a hlásit
 // kvůli nim pořád "zhoršený stav" by ukazatel znehodnotilo.
+//
+// Bojler tu schválně není. Jeho zásuvka visí na HDO, takže při vypnutém proudu
+// zmizí ze zigbee sítě — a dostupnost je tím pádem signál HDO, ne poruchy.
+// Čte se ze stejného MQTT topicu jako wheater_status, takže "offline" nikdy
+// neznamená rozbité zařízení a hlásilo to zhoršený stav každý den. Stav
+// napájení bojleru je v sitemapu pod Bojler -> Napájení jako HDO.
 Group:Switch:AND(ON,OFF) system_health "Stav systému [MAP(health.map):%s]" <network>
 
-Switch bojler_online          "Bojler [MAP(online.map):%s]"            (system_health) { channel="mqtt:topic:bojler_switch:online" }
 Switch vysousec_online        "Odvlhčovač [MAP(online.map):%s]"        (system_health) { channel="mqtt:topic:fb0a76c816:0a3dfb2310:online" }
 Switch agama_online           "Seroušek [MAP(online.map):%s]"          (system_health) { channel="mqtt:topic:fb0a76c816:1f14915b91:online" }
 Switch chodba_temp_online     "Chodba čidlo [MAP(online.map):%s]"      (system_health) { channel="mqtt:topic:fb0a76c816:351ffa3b47:online" }

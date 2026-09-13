@@ -274,7 +274,6 @@ Thing mqtt:topic:bojler_switch "bojler_switch" (mqtt:broker:fb0a76c816) [
     transformationPattern="JSONPATH:$.state"
 ] {
     Channels:
-        Type switch : online "Dostupnost" [ stateTopic="zigbee2mqtt/w_heater_switch/availability", transformationPattern="JSONPATH:$.state", on="online", off="offline" ]
         Type switch : bojler_switch_switch "bojler_switch" [ commandTopic="zigbee2mqtt/w_heater_switch/set/state", stateTopic="zigbee2mqtt/w_heater_switch/state" ]
         // HDO detection. The boiler circuit is on the low-tariff (HDO)
         // contactor, so when HDO drops the switch itself loses power,

@@ -110,6 +110,13 @@ writes the literal command into the item, so a String item displays "REFRESH".
 produce rules that load fine and then throw on every trigger. Use
 `getThingStatusInfo(uid)` and the two-argument `sendCommand(item, "REFRESH")`.
 
+**The boiler's zigbee availability is the HDO signal, not a health signal.**
+Its socket hangs off the low-tariff contactor, so it leaves the zigbee network
+every time HDO drops. `wheater_status` and the old `bojler_online` read the same
+`zigbee2mqtt/w_heater_switch/availability` topic, so "offline" there never means
+a broken device. It was in `system_health` briefly and reported a degraded
+system once a day. Anything else on that circuit has the same property.
+
 **A sitemap condition compares in the item's display unit.** The battery items
 that arrive as `Number:Dimensionless` hold a ratio (`0.19`) but render `19 %`,
 and `valuecolor=[<20=...]` matches the rendered 19, not the stored 0.19 --
