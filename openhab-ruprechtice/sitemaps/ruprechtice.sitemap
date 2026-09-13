@@ -177,7 +177,7 @@ sitemap ruprechtice label="Ruprechtice" {
             }
         }
         Text item=Atmos_Water_Tank label="Teplota vody [%.1f °C]" icon="temperature"
-             valuecolor=[<40="blue", >60="orange"]
+             valuecolor=[<30="blue", <40="orange", >=40="red"]
         // Kotel na tuhá paliva. Spaliny + voda dohromady říkají, v jaké je fázi:
         // spaliny rostou a voda je studená = zatápí se; obojí vysoké = topí;
         // spaliny klesají a voda drží = dohořívá.
