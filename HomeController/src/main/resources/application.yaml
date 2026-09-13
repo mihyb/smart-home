@@ -73,6 +73,10 @@ app:
       runningWaterModeItem: "boiler_auto_running_water"
       idleHeatingModeItem: "boiler_auto_idle_heating"
       idleWaterModeItem: "boiler_auto_idle_water"
+      # Where the job records what it last set, so it can tell a mode somebody
+      # changed by hand from one it set itself.
+      lastHeatingModeItem: "boiler_auto_last_heating"
+      lastWaterModeItem: "boiler_auto_last_water"
 server:
   port: "${app.port}"
 logging:

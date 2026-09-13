@@ -47,6 +47,13 @@ String boiler_auto_running_heating "Topení když kotel hoří [%s]"
 String boiler_auto_running_water "Voda když kotel hoří [%s]"
 String boiler_auto_idle_heating "Topení když kotel nehoří [%s]"
 String boiler_auto_idle_water "Voda když kotel nehoří [%s]"
+
+// Kde automatika naposledy okruh nechala. Když ho příště najde jinde, přepnul
+// ho člověk — v sitemapu nebo na panelu regulátoru — a automatika se vypne
+// místo toho, aby mu to za pět minut vzala zpátky. Vnitřní záznam, v sitemapu
+// schválně není.
+String boiler_auto_last_heating
+String boiler_auto_last_water
 Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:controller:home:controller1:circuit1#target-temperature" }
 DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
 // autoupdate vypnuto: tlačítko Obnovit posílá téhle položce REFRESH a optimistický

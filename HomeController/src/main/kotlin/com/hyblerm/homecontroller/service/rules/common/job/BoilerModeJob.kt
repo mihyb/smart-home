@@ -21,9 +21,12 @@ private const val STATE_OFF = "OFF"
  * Which mode each of those four cases means is read from openHAB rather than
  * from configuration, so it can be changed from the sitemap.
  *
- * This re-asserts the target mode on every cycle rather than only on a change,
- * which means a mode set by hand in the sitemap is taken back within one cycle.
- * [BoilerModeJobConfig.statusItem] is the way to turn that off.
+ * Changing a mode by hand turns the automation off. The job records the mode it
+ * left each circuit in; finding the circuit somewhere else means a person moved
+ * it -- from the sitemap, or from the controller's own panel, where they have no
+ * way of knowing an automation exists -- and quietly taking it back five minutes
+ * later is worse than stopping. Switching [BoilerModeJobConfig.statusItem] back
+ * on resumes control.
  */
 open class BoilerModeJob(
     repository: DataAccess,
@@ -32,46 +35,84 @@ open class BoilerModeJob(
 
     private val logger: Logger = LoggerFactory.getLogger("${BoilerModeJob::class.java.name}#${config.runningItem}")
 
+    private class Circuit(val modeItem: String, val targetItem: String, val lastItem: String)
+
     fun checkModes() {
-        if (!item(config.statusItem).isOn()) {
-            logger.debug("automatic boiler control is off")
-            return
-        }
+        var auto = item(config.statusItem).isOn()
         // NULL whenever the gateway is unreachable. Reading that as "not burning"
-        // would drop the house into AUTO in the middle of a burn, so wait for the
-        // next cycle instead.
+        // would drop the house into AUTO in the middle of a burn, so the job does
+        // not command this cycle -- but it still watches for a manual change.
         val running = item(config.runningItem).state
-        if (running != STATE_ON && running != STATE_OFF) {
-            logger.warn("skipping: {} reads {}", config.runningItem, running)
-            return
+        val known = running == STATE_ON || running == STATE_OFF
+        if (auto && !known) {
+            logger.warn("not commanding: {} reads {}", config.runningItem, running)
         }
         val burning = running == STATE_ON
-        apply(
-            config.heatingModeItem,
-            if (burning) config.runningHeatingModeItem else config.idleHeatingModeItem
+
+        val circuits = listOf(
+            Circuit(
+                config.heatingModeItem,
+                if (burning) config.runningHeatingModeItem else config.idleHeatingModeItem,
+                config.lastHeatingModeItem
+            ),
+            Circuit(
+                config.waterModeItem,
+                if (burning) config.runningWaterModeItem else config.idleWaterModeItem,
+                config.lastWaterModeItem
+            )
         )
-        apply(
-            config.waterModeItem,
-            if (burning) config.runningWaterModeItem else config.idleWaterModeItem
-        )
+
+        for (circuit in circuits) {
+            val current = item(circuit.modeItem).state
+            val last = item(circuit.lastItem).state
+
+            if (auto && movedByHand(last, current)) {
+                logger.info(
+                    "{} went from {} to {} outside this job - handing control back",
+                    circuit.modeItem, last, current
+                )
+                repository.commandItem(config.statusItem, STATE_OFF)
+                auto = false
+            }
+            if (!auto || !known) {
+                remember(circuit.lastItem, last, current)
+                continue
+            }
+            val target = target(circuit.targetItem)
+            if (target == null || current == target.name) {
+                if (target != null) logger.debug("{} already {}", circuit.modeItem, target)
+                remember(circuit.lastItem, last, current)
+                continue
+            }
+            // The gateway has very few sockets and commanding one that is not
+            // answering achieves nothing. An unreadable mode means it is not
+            // answering.
+            if (mode(current) == null) {
+                logger.warn("skipping {}: reads {}", circuit.modeItem, current)
+                continue
+            }
+            logger.info("{}: {} -> {}", circuit.modeItem, current, target)
+            repository.commandItem(circuit.modeItem, target.name)
+            remember(circuit.lastItem, last, target.name)
+        }
     }
 
-    private fun apply(modeItem: String, targetItem: String) {
-        val target = target(targetItem) ?: return
-        val current = item(modeItem).state
-        if (current == target.name) {
-            logger.debug("{} already {}", modeItem, target)
+    /**
+     * True when the circuit is not where this job left it.
+     *
+     * Both states have to be real modes: no record yet means the job has never
+     * run, and an unreadable mode means the gateway is down, neither of which is
+     * somebody reaching for the panel.
+     */
+    private fun movedByHand(last: String, current: String): Boolean =
+        mode(last) != null && mode(current) != null && last != current
+
+    /** Records where the circuit stands, so the next cycle can tell what moved it. */
+    private fun remember(lastItem: String, last: String, value: String) {
+        if (mode(value) == null || last == value) {
             return
         }
-        // The gateway has very few sockets and commanding one that is not
-        // answering achieves nothing. An unreadable mode means it is not
-        // answering.
-        if (mode(current) == null) {
-            logger.warn("skipping {}: reads {}", modeItem, current)
-            return
-        }
-        logger.info("{}: {} -> {}", modeItem, current, target)
-        repository.commandItem(modeItem, target.name)
+        repository.commandItem(lastItem, value)
     }
 
     /** The mode chosen in the sitemap, or null when it cannot be used as one. */

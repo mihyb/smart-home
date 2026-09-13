@@ -89,5 +89,11 @@ class ConfigurationProperties {
         var runningWaterModeItem: String = ""
         var idleHeatingModeItem: String = ""
         var idleWaterModeItem: String = ""
+
+        // Where the job records the mode it last left each circuit in. If a
+        // circuit is somewhere else on the next cycle, somebody moved it by hand
+        // and the job switches itself off rather than taking it back.
+        var lastHeatingModeItem: String = ""
+        var lastWaterModeItem: String = ""
     }
 }

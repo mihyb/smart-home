@@ -150,8 +150,12 @@ skip the cycle rather than die.
   `boiler_auto_idle_water`, so it is chosen from the sitemap. Like every other
   setpoint here they are **item state only** — `scripts/sync-item-states.sh`
   captures them.
-  It **re-asserts** the target every cycle, so a mode set by hand is taken back
-  within five minutes; `boiler_auto_control` is the way to stop that. It never
+  It re-asserts the target every cycle, but **a mode changed by hand switches
+  the automation off** rather than being taken back: the job records where it
+  left each circuit in `boiler_auto_last_heating` / `boiler_auto_last_water`,
+  and a circuit that has moved since means a person did it — possibly at the
+  controller's own panel, where they cannot know an automation exists. Switch
+  `boiler_auto_control` back on to resume. It never
   commands a mode the circuit already holds, which is what keeps the gateway's
   socket table intact. AWAY and VISIT are refused as targets — they end at a
   time of day and fall back to AUTO, so the job would re-send them every five
