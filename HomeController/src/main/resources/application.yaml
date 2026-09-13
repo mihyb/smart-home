@@ -1,7 +1,9 @@
 app:
   port: 8181
   openhab:
-    baseUrl: "http://${OPENHAB_HOST:192.168.1.109}:${OPENHAB_PORT:8080}/rest/"
+    # Default is loopback because openHAB runs on the same host as this app.
+    # The old default pointed at 192.168.1.109, which no longer runs openHAB.
+    baseUrl: "http://${OPENHAB_HOST:127.0.0.1}:${OPENHAB_PORT:8080}/rest/"
   electricity:
     oteUrl: "https://www.ote-cr.cz/cs/kratkodobe-trhy/elektrina/denni-trh?date="
   currency:

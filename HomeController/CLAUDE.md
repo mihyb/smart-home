@@ -11,7 +11,7 @@ Spring Boot 2.6 / Kotlin 1.9 / Gradle. Source level is Java 11, but the Gradle p
 - Single test class: `./gradlew test --tests "com.hyblerm.homecontroller.service.rules.TimerJobTest"`.
 - Single test method: append `.methodName` to the `--tests` filter (use backticked Kotlin names verbatim).
 - Lint: `./gradlew ktlintCheck` / `./gradlew ktlintFormat` (ktlint is part of the standard build).
-- Run locally: `./gradlew bootRun`. **Warning:** without `spring.profiles.active=test-mode` this commands the live OpenHAB instance at `${OPENHAB_HOST:192.168.1.109}` — note that default in `application.yaml` is now stale; the live instance is on `192.168.1.132` and the systemd unit overrides it to `127.0.0.1`. The `test-mode` profile swaps in `OpenHabReadOnlyRepository`, which logs `commandItem` calls instead of executing them.
+- Run locally: `./gradlew bootRun`. **Warning:** without `spring.profiles.active=test-mode` this commands the live OpenHAB instance at `${OPENHAB_HOST:127.0.0.1}` — which on the server is openHAB on the same host, but from a laptop is nothing, so set `OPENHAB_HOST` explicitly if you mean to reach the real one. The `test-mode` profile swaps in `OpenHabReadOnlyRepository`, which logs `commandItem` calls instead of executing them.
 - Deploy: `./deploy.sh` scps the boot jar to `ruprecht@192.168.1.132` and restarts `homecontroller.service` over SSH. Override with `HOST=... ./deploy.sh`. This is a real deployment to the home server — confirm before running. `deploy/MIGRATION.md` describes the older .109 → .124 move and is historical; the current topology is in the repo-root CLAUDE.md.
 
 ## Architecture
@@ -39,6 +39,7 @@ The app is a Spring Boot rules engine that polls and commands an **OpenHAB** sma
 
 - Mockito + `mockito-kotlin` + AssertJ + JUnit 5. Inline mock-maker is enabled via `src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker`.
 - Rule tests follow the pattern in `TimerJobTest`: mock `DataAccess` and `Time`, stub `time.clock()` with `Clock.fixed`, stub item lookups with `OpenHabModel.Item("link", name, value)`, then assert against `verify(dataAccess).commandItem(...)`. Reuse this shape for new rules.
+
 ## Items without a value
 
 openHAB reports `NULL` for an item whose thing is offline, and for virtual items
