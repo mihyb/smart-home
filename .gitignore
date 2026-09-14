@@ -23,5 +23,6 @@ openhab-ruprechtice/things/fenceecloud.things
 __pycache__/
 *.pyc
 
-# Password files kept next to the repo for the fencee probe — never commit
+# Cloud account passwords, kept next to the repo and read file-to-file by the
+# scripts that need them (fencee Cloud, myopenhab.org) — never commit
 *.pass
