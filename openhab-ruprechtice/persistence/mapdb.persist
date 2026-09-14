@@ -1,0 +1,29 @@
+// mapdb keeps only the last value of each item, which is all restoreOnStartup
+// needs -- and unlike rrd4j it can store non-numeric types.
+//
+// Why this file exists: rrd4j persists Number and Switch items only, so the
+// four String items holding the boiler automation's target modes were never
+// restored. openHAB came back with boiler_auto_control ON and all four targets
+// NULL, and BoilerModeJob then logged "reads NULL" and commanded nothing every
+// five minutes while the sitemap showed the automation enabled. Verified by
+// the absence of boiler_auto_running_heating.rrd in the rrd4j store, where
+// boiler_auto_control.rrd (a Switch) is present.
+//
+// Only those four are listed. Everything else whose state is configuration
+// (timer_job_*, chick_01_*) is a Number or a Switch, rrd4j already restores it,
+// and having both services restore the same item would put two sources on the
+// same state at startup.
+//
+// boiler_auto_last_heating and boiler_auto_last_water are deliberately absent.
+// They record where the automation last left each circuit; restoring a stale
+// record would look like a change somebody made by hand and switch the
+// automation off. scripts/sync-item-states.sh excludes them for the same
+// reason.
+//
+// No Strategies block on purpose: everyChange and restoreOnStartup are built
+// in, and a "default =" line inside Strategies is rejected by this openHAB and
+// silently disables the whole file.
+
+Items {
+    boiler_auto_running_heating, boiler_auto_running_water, boiler_auto_idle_heating, boiler_auto_idle_water : strategy = everyChange, restoreOnStartup
+}

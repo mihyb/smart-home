@@ -1,6 +1,11 @@
-# openHAB item states captured from 192.168.1.132 on 2026-09-12T18:34:43Z
+# openHAB item states captured from 192.168.1.132 on 2026-09-14T05:10:22Z
 # These are setpoints set from the sitemap, not device readings.
 # Restore with: ./scripts/sync-item-states.sh apply --write
+boiler_auto_control	OFF
+boiler_auto_idle_heating	STANDBY
+boiler_auto_idle_water	STANDBY
+boiler_auto_running_heating	COMFORT
+boiler_auto_running_water	COMFORT
 chick_01_max_temp	28.0
 chick_01_min_temp	26.0
 chick_01_power	ON
