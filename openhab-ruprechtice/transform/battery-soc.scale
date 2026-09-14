@@ -1,0 +1,27 @@
+# State of charge of a 12 V lead-acid battery, read from its resting voltage.
+#
+# Applied as a transform profile on the channel link, so fence_battery_soc
+# actually holds the percentage rather than displaying one. That is what makes
+# the battery icon right: Basic UI asks for the icon with the item's state, and
+# a raw 13.1 V was read as 13 % and drew an almost flat battery on a full one.
+#
+# This is the standard open-circuit table for a 12 V lead-acid battery. It
+# assumes the battery is at rest, and the fence battery is not: a solar panel
+# feeds it, and any charge current lifts the terminal voltage above what the
+# cells actually hold. So a reading over 12.62 V reports 100 % whether the
+# battery is genuinely full or merely being charged -- which is why the volts
+# stay one click away rather than being replaced by this.
+#
+# A battery under load reads the other way, lower than its true charge, so
+# treat a dip during a cold night as a reading rather than as capacity lost.
+[..11.40]=0
+]11.40..11.58]=10
+]11.58..11.75]=20
+]11.75..11.90]=30
+]11.90..12.06]=40
+]12.06..12.20]=50
+]12.20..12.32]=60
+]12.32..12.42]=70
+]12.42..12.50]=80
+]12.50..12.62]=90
+]12.62..]=100

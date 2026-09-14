@@ -40,7 +40,22 @@ DateTime                 fence_lower_updated "Spodní data z [%1$td.%1$tm. %1$tH
 Switch                   fence_gateway_online "Brána [MAP(online.map):%s]"        <network>  { channel="fenceecloud:gateway:home:gw:online" }
 
 // One battery, two channels -- see the note above.
-Number:ElectricPotential fence_battery "Baterie [%.1f V]" <batterylevel> {
+Number:ElectricPotential fence_battery "Napětí baterie [%.1f V]" <batterylevel> {
     channel="fenceecloud:energizer:home:upper:battery-voltage",
     channel="fenceecloud:energizer:home:lower:battery-voltage"
+}
+
+// The same battery as a state of charge, for the front page. The conversion is
+// a transform profile on the link rather than a label pattern or a rule,
+// because the icon follows the item's state and not the way a sitemap chooses
+// to render it -- with volts in the state, batterylevel read 13.1 as 13 % and
+// drew a nearly flat battery on a full one.
+//
+// A plain Number, not Number:Dimensionless: the dimensionless items in this
+// installation hold a ratio (0.19) and render 19 %, which is the trap written
+// up in CLAUDE.md. There is nothing to convert here, so there is no reason to
+// invite it.
+Number fence_battery_soc "Baterie [%.0f %%]" <batterylevel> {
+    channel="fenceecloud:energizer:home:upper:battery-voltage" [profile="transform:SCALE", function="battery-soc.scale", sourceFormat="%s"],
+    channel="fenceecloud:energizer:home:lower:battery-voltage" [profile="transform:SCALE", function="battery-soc.scale", sourceFormat="%s"]
 }

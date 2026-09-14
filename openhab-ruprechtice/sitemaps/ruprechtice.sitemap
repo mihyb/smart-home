@@ -288,9 +288,10 @@ sitemap ruprechtice label="Ruprechtice" {
                 Text item=fence_upper_signal label="Signál z brány [%.0f %%]" icon="network"
                      valuecolor=[<30="red", <60="orange", >=60="green"]
                 Text item=fence_upper_updated label="Data z [%1$td.%1$tm. %1$tH:%1$tM]" icon="time"
-                // One battery feeds both energizers, so it is the same row under
-                // each of them rather than two readings.
-                Text item=fence_battery label="Baterie [%.1f V]" icon="batterylevel"
+                // The same battery as on the front page, in volts: the
+                // percentage there is derived from this and hides the
+                // difference between a full battery and one being charged.
+                Text item=fence_battery label="Napětí baterie [%.1f V]" icon="batterylevel"
                      valuecolor=[<11.9="red", <12.4="orange", >=12.4="green"]
                 // Here to tell "the gateway is down" apart from "this one
                 // energizer has not reported over RF".
@@ -310,9 +311,10 @@ sitemap ruprechtice label="Ruprechtice" {
                 Text item=fence_lower_signal label="Signál z brány [%.0f %%]" icon="network"
                      valuecolor=[<30="red", <60="orange", >=60="green"]
                 Text item=fence_lower_updated label="Data z [%1$td.%1$tm. %1$tH:%1$tM]" icon="time"
-                // One battery feeds both energizers, so it is the same row under
-                // each of them rather than two readings.
-                Text item=fence_battery label="Baterie [%.1f V]" icon="batterylevel"
+                // The same battery as on the front page, in volts: the
+                // percentage there is derived from this and hides the
+                // difference between a full battery and one being charged.
+                Text item=fence_battery label="Napětí baterie [%.1f V]" icon="batterylevel"
                      valuecolor=[<11.9="red", <12.4="orange", >=12.4="green"]
                 // Here to tell "the gateway is down" apart from "this one
                 // energizer has not reported over RF".
@@ -320,6 +322,12 @@ sitemap ruprechtice label="Ruprechtice" {
                      valuecolor=[ON="green", OFF="red"]
             }
         }
+        // One battery feeds both energizers, so it is one row rather than two.
+        // SCALE turns the volts into a state of charge; the thresholds below
+        // still compare the item's own state, which is volts, not the percent
+        // the label shows.
+        Text item=fence_battery_soc label="Baterie [%.0f %%]" icon="batterylevel"
+             valuecolor=[<30="red", <60="orange", >=60="green"]
     }
     Frame label="Admin" {
         Frame label="Statistiky" {
