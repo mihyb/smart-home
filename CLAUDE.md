@@ -13,11 +13,12 @@ and the code that consumes it belongs in a single commit.
 | `openhab-ruprechtice/` | openHAB config. **This directory's root maps to the server's `/etc/openhab`** |
 | `HomeController/` | Spring Boot / Kotlin rules engine that polls and commands openHAB over REST |
 | `atmos-connector/` | **Submodule** — the custom `atmoswg1000` binding for the Atmos boiler. Standalone reusable component, own repo and release cycle |
+| `fencee-connector/` | The `fenceecloud` binding for the electric fence (GW100 gateway, two PDX70 energizers). Same shape as `atmos-connector` and **will be a submodule**, but its repo does not exist yet — until it is created and pushed the directory is a separate local clone, untracked here |
 | `scripts/` | Build, deploy, cutover, status and log helpers |
 | `config/` | `item-states.tsv` — captured setpoints, see *Item state* below |
 
-`atmos-connector` is a submodule while the other two are subtrees, and that is
-deliberate. openHAB config and HomeController are co-developed — an item rename
+`atmos-connector` is a submodule while the other two directories are subtrees,
+and that is deliberate (`fencee-connector` is headed the same way). openHAB config and HomeController are co-developed — an item rename
 touches both, so they need to land in one commit. The binding is a standalone
 library consumed as a built JAR. The cost is the usual submodule one: `git pull`
 leaves it at the old pin unless you pass `--recurse-submodules`.
@@ -132,6 +133,14 @@ happily measured the config already on the server. It runs the receiver under
 `sudo` now. If a config change ever seems not to take, check the file on the
 server before believing the deploy.
 
+**The electric fence has no local path at all.** The GW100 gateway answers
+ping and nothing else — 1039 TCP ports closed, no UDP, no mDNS — and holds one
+outbound connection to fencee Cloud. Every reading and every command crosses
+that, so the binding signs in with the phone app's account and the fence is
+blind whenever the internet or the cloud is down. A stale fence voltage
+therefore does not mean a live fence, which is why the sitemap shows the time
+of the last message next to each energizer.
+
 **Items read `NULL` when their thing is offline.** `getDouble()` throws on that;
 `getDoubleOrNull()` exists for rules that read sensors. MinMaxJob and TimerJob
 skip the cycle rather than die.
@@ -199,7 +208,14 @@ a `.example` alongside it with `<<SET_ME>>` placeholders:
 |---|---|
 | `things/tuya.things` | Tuya cloud accessId/accessSecret/username/password, plus a localKey per device |
 | `things/atmoswg1000.things` | Atmos gateway login — account `WG1000`, password was in `atmos-connector/tools/.wg1000-password` |
+| `things/fenceecloud.things` | fencee Cloud account e-mail and password, plus the gateway's cloud pairing id |
 | `.claude/settings.local.json` | per-machine permissions |
+
+**This repository is public.** `mihyb/smart-home` is public on GitHub while both
+connector submodules are private, so anything committed here is published:
+account ids, cloud pairing ids and device ids belong in the gitignored file and
+in the private submodule, not in the `.example` next to it. LAN addresses and
+zigbee topics are already here and are harmless.
 
 ## Git accounts
 

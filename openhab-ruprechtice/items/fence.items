@@ -1,0 +1,46 @@
+// Electric fence on the pasture -- two PDX70 energizers ("Horní", "Spodní")
+// behind a GW100 gateway. Readings come from fencee Cloud, not from the LAN;
+// things/fenceecloud.things.example says why.
+//
+// The binding keeps fence voltage in volts, as it arrives on the wire (6800),
+// and the item displays it in kV because that is what the app and the
+// energizer's own display show. Mind the trap this repository has written up
+// in CLAUDE.md: a sitemap condition compares in the unit from the state
+// description, and here that description is this item's own pattern -- so
+// valuecolor=[<3=...] on these means three kilovolts, not three volts.
+//
+// State is a String, not a Switch, and that is the binding's decision rather
+// than an oversight: 2 is known to mean running, nothing is known to mean off.
+// It reads RUNNING or UNKNOWN (<n>), so a value nobody has seen before shows
+// up as unrecognised instead of being rendered as a safe-looking OFF.
+//
+// There is one battery and it feeds both energizers, so there is one item and
+// it is linked to both channels. Both report the same value, and when one
+// energizer goes quiet the other keeps the reading alive.
+//
+// When the cloud is unreachable the binding sets these to UNDEF and leaves
+// only the update time standing. So an empty row means "we cannot see the
+// fence", never "the fence is fine".
+
+String                   fence_upper_state   "Horní zdroj [%s]"                   <energy>   { channel="fenceecloud:energizer:home:upper:state" }
+Number:ElectricPotential fence_upper_voltage "Horní ohradník [%.1f kV]"           <energy>   { channel="fenceecloud:energizer:home:upper:fence-voltage" }
+Switch                   fence_upper_fault   "Horní porucha [%s]"                 <error>    { channel="fenceecloud:energizer:home:upper:has-faults" }
+Number                   fence_upper_signal  "Horní signál [%.0f %%]"             <network>  { channel="fenceecloud:energizer:home:upper:signal" }
+DateTime                 fence_upper_updated "Horní data z [%1$td.%1$tm. %1$tH:%1$tM]" <time> { channel="fenceecloud:energizer:home:upper:last-update" }
+
+String                   fence_lower_state   "Spodní zdroj [%s]"                  <energy>   { channel="fenceecloud:energizer:home:lower:state" }
+Number:ElectricPotential fence_lower_voltage "Spodní ohradník [%.1f kV]"          <energy>   { channel="fenceecloud:energizer:home:lower:fence-voltage" }
+Switch                   fence_lower_fault   "Spodní porucha [%s]"                <error>    { channel="fenceecloud:energizer:home:lower:has-faults" }
+Number                   fence_lower_signal  "Spodní signál [%.0f %%]"            <network>  { channel="fenceecloud:energizer:home:lower:signal" }
+DateTime                 fence_lower_updated "Spodní data z [%1$td.%1$tm. %1$tH:%1$tM]" <time> { channel="fenceecloud:energizer:home:lower:last-update" }
+
+// Whether the gateway itself is reachable through the cloud. UNDEF here means
+// the cloud could not be reached at all, which is not the same as the gateway
+// being down -- the binding keeps those apart on purpose.
+Switch                   fence_gateway_online "Brána [MAP(online.map):%s]"        <network>  { channel="fenceecloud:gateway:home:gw:online" }
+
+// One battery, two channels -- see the note above.
+Number:ElectricPotential fence_battery "Baterie [%.1f V]" <batterylevel> {
+    channel="fenceecloud:energizer:home:upper:battery-voltage",
+    channel="fenceecloud:energizer:home:lower:battery-voltage"
+}

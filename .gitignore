@@ -15,6 +15,13 @@ openhab-ruprechtice/things/tuya.things
 # Real ATMOS gateway credentials — generate from things/atmoswg1000.things.example
 openhab-ruprechtice/things/atmoswg1000.things
 
+# Real fencee Cloud account -- generate from things/fenceecloud.things.example.
+# This one also carries the gateway's pairing id, and this repository is public.
+openhab-ruprechtice/things/fenceecloud.things
+
 # Python bytecode from the generator scripts
 __pycache__/
 *.pyc
+
+# Password files kept next to the repo for the fencee probe — never commit
+*.pass

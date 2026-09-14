@@ -259,6 +259,68 @@ sitemap ruprechtice label="Ruprechtice" {
         Text item=sklep_temp_temperature label="Teplota [%.1f °C]" labelcolor=[<10="blue"]
         Text item=sklep_water_water_leak label=Voda labelcolor=[ON="red"]
     }
+    // Electric fence on the pasture: two PDX70 energizers, one shared battery.
+    // The front page carries only the fence voltage, because it already says
+    // everything -- 0 kV is an energizer that is off, and a low reading is a
+    // fence that will not hold an animal. Source state, faults, signal, battery
+    // and the age of the reading are one click in.
+    //
+    // Thresholds are in kilovolts, the unit these items are displayed in --
+    // openHAB reads a bare number in a condition in the display unit, not in
+    // the volts the binding stores. Green from 9 kV, orange from 5, red below:
+    // stricter than the energizer's own alarm point of 3 kV, which is the level
+    // where it complains rather than the level worth keeping.
+    //
+    // Readings come from fencee Cloud rather than the LAN, so when the internet
+    // is down the binding blanks these rather than leaving a live-looking
+    // voltage standing. An empty row means the fence cannot be seen, not that
+    // it is fine -- "Data z" inside says how old the reading is.
+    Frame label="Ohradník" {
+        Text item=fence_upper_voltage label="Horní [%.1f kV]" icon="energy"
+             valuecolor=[<5="red", <9="orange", >=9="green"] {
+            Frame label="Horní" {
+                // RUNNING is the only value known to mean running; anything else
+                // the energizer reports shows as UNKNOWN (<n>) rather than as an
+                // OFF the capture cannot support.
+                Text item=fence_upper_state label="Zdroj [%s]" icon="energy"
+                     valuecolor=["RUNNING"="green", "UNDEF"="gray"]
+                Text item=fence_upper_fault label="Porucha [%s]" valuecolor=[ON="red", OFF="green"]
+                Text item=fence_upper_signal label="Signál z brány [%.0f %%]" icon="network"
+                     valuecolor=[<30="red", <60="orange", >=60="green"]
+                Text item=fence_upper_updated label="Data z [%1$td.%1$tm. %1$tH:%1$tM]" icon="time"
+                // One battery feeds both energizers, so it is the same row under
+                // each of them rather than two readings.
+                Text item=fence_battery label="Baterie [%.1f V]" icon="batterylevel"
+                     valuecolor=[<11.9="red", <12.4="orange", >=12.4="green"]
+                // Here to tell "the gateway is down" apart from "this one
+                // energizer has not reported over RF".
+                Text item=fence_gateway_online label="Brána [MAP(online.map):%s]" icon="network"
+                     valuecolor=[ON="green", OFF="red"]
+            }
+        }
+        Text item=fence_lower_voltage label="Spodní [%.1f kV]" icon="energy"
+             valuecolor=[<5="red", <9="orange", >=9="green"] {
+            Frame label="Spodní" {
+                // RUNNING is the only value known to mean running; anything else
+                // the energizer reports shows as UNKNOWN (<n>) rather than as an
+                // OFF the capture cannot support.
+                Text item=fence_lower_state label="Zdroj [%s]" icon="energy"
+                     valuecolor=["RUNNING"="green", "UNDEF"="gray"]
+                Text item=fence_lower_fault label="Porucha [%s]" valuecolor=[ON="red", OFF="green"]
+                Text item=fence_lower_signal label="Signál z brány [%.0f %%]" icon="network"
+                     valuecolor=[<30="red", <60="orange", >=60="green"]
+                Text item=fence_lower_updated label="Data z [%1$td.%1$tm. %1$tH:%1$tM]" icon="time"
+                // One battery feeds both energizers, so it is the same row under
+                // each of them rather than two readings.
+                Text item=fence_battery label="Baterie [%.1f V]" icon="batterylevel"
+                     valuecolor=[<11.9="red", <12.4="orange", >=12.4="green"]
+                // Here to tell "the gateway is down" apart from "this one
+                // energizer has not reported over RF".
+                Text item=fence_gateway_online label="Brána [MAP(online.map):%s]" icon="network"
+                     valuecolor=[ON="green", OFF="red"]
+            }
+        }
+    }
     Frame label="Admin" {
         Frame label="Statistiky" {
             Chart item=humidity_sensors label="Vlhkost" period=W refresh=300

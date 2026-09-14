@@ -1,0 +1,56 @@
+// Electric fence -- a FENCE WiFi GATEWAY GW100 and two PDX70 energizers.
+//
+// Unlike ATMOS this is not read over the LAN. The gateway has no local
+// service at all: 1039 TCP ports closed, no UDP, no mDNS. It holds one
+// outbound connection to fencee Cloud and every reading and command goes
+// through there. So the binding signs in with the phone app's account and
+// addresses devices by their cloud id -- no IP, nothing DHCP can break.
+//
+// That has one consequence for rules and for the sitemap: when the internet
+// or the cloud is down the binding sees nothing. It sets the channels to
+// UNDEF rather than leaving the last reading in place, because a stale
+// voltage would look exactly like a live fence. last-update is the one
+// channel it leaves alone, so staleness stays renderable.
+//
+// Copy to fenceecloud.things and fill in. That file is gitignored because it
+// carries the account password. The ids are placeholders too: mihyb/smart-home
+// is a public repository and the gateway id is the pairing identifier fencee's
+// cloud knows it by. The real values are in captured/gateways.json in the
+// fencee-connector submodule, which is private.
+//
+// Config keys come from org.openhab.binding.fenceecloud (the fencee-connector
+// submodule). clientId is left at its default on purpose: it registers this
+// binding in the account's own device list, so a changing value would add a
+// row there on every restart.
+//
+// The Things are nested inside the account Bridge on purpose. openHAB derives
+// a nested Thing's UID from its bridge, so nesting is what produces
+// fenceecloud:energizer:home:upper -- the same shape discovery would create.
+// Declared standalone with a (bridge) reference they would come out as
+// fenceecloud:energizer:upper instead, and every item link would resolve to
+// nothing while the Thing still showed ONLINE. That failure has happened here
+// before with mqtt:topic:bojler_switch, in the opposite direction.
+//
+// Discovery also finds both energizers from the account alone, but it names
+// them by device id. Do not accept them from the inbox as well -- they would
+// be second Things with different UIDs, and the item links point here.
+
+Bridge fenceecloud:account:home "fencee Cloud" [
+    email="<<SET_ME>>",
+    password="<<SET_ME>>",
+    refreshInterval=300
+] {
+    Thing gateway gw "Ohradník brána" [
+        gatewayId="<<SET_ME>>"
+    ]
+
+    Thing energizer upper "Ohradník horní" [
+        deviceId="<<SET_ME>>",
+        gatewayId="<<SET_ME>>"
+    ]
+
+    Thing energizer lower "Ohradník spodní" [
+        deviceId="<<SET_ME>>",
+        gatewayId="<<SET_ME>>"
+    ]
+}
