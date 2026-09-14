@@ -14,9 +14,15 @@
 // It reads RUNNING or UNKNOWN (<n>), so a value nobody has seen before shows
 // up as unrecognised instead of being rendered as a safe-looking OFF.
 //
-// There is one battery and it feeds both energizers, so there is one item and
-// it is linked to both channels. Both report the same value, and when one
-// energizer goes quiet the other keeps the reading alive.
+// There is one battery and it feeds both energizers, so there is one item --
+// read from the upper energizer only. Linking both channels looked like free
+// redundancy and is not: the binding sets a channel to UNDEF when its own
+// device cannot be seen, and openHAB passes every channel update to the item,
+// so an energizer dropping off RF would blank the battery row and the other one
+// would fill it back in a minute later, over and over. One source cannot flap
+// against itself, and there is nothing to cross-check anyway -- it is one
+// battery, and the two readings only ever differ by when they were sampled.
+// The upper energizer is the one with the stronger signal (60 against 48).
 //
 // When the cloud is unreachable the binding sets these to UNDEF and leaves
 // only the update time standing. So an empty row means "we cannot see the
@@ -39,10 +45,9 @@ DateTime                 fence_lower_updated "Spodní data z [%1$td.%1$tm. %1$tH
 // being down -- the binding keeps those apart on purpose.
 Switch                   fence_gateway_online "Brána [MAP(online.map):%s]"        <network>  { channel="fenceecloud:gateway:home:gw:online" }
 
-// One battery, two channels -- see the note above.
+// One battery, read from one energizer -- see the note above.
 Number:ElectricPotential fence_battery "Napětí baterie [%.1f V]" <batterylevel> {
-    channel="fenceecloud:energizer:home:upper:battery-voltage",
-    channel="fenceecloud:energizer:home:lower:battery-voltage"
+    channel="fenceecloud:energizer:home:upper:battery-voltage"
 }
 
 // The same battery as a state of charge, for the front page. The conversion is
@@ -56,6 +61,5 @@ Number:ElectricPotential fence_battery "Napětí baterie [%.1f V]" <batterylevel
 // up in CLAUDE.md. There is nothing to convert here, so there is no reason to
 // invite it.
 Number fence_battery_soc "Baterie [%.0f %%]" <batterylevel> {
-    channel="fenceecloud:energizer:home:upper:battery-voltage" [profile="transform:SCALE", function="battery-soc.scale", sourceFormat="%s"],
-    channel="fenceecloud:energizer:home:lower:battery-voltage" [profile="transform:SCALE", function="battery-soc.scale", sourceFormat="%s"]
+    channel="fenceecloud:energizer:home:upper:battery-voltage" [profile="transform:SCALE", function="battery-soc.scale", sourceFormat="%s"]
 }
