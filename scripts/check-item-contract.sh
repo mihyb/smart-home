@@ -11,10 +11,17 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 YAML="${ROOT}/HomeController/src/main/resources/application.yaml"
 ITEMS="${ROOT}/openhab-ruprechtice/items"
 
-# Any key ending in Item holds an item name -- matching the convention rather
-# than a list means a new job type is covered without touching this script.
-referenced=$(grep -oE '[A-Za-z]+Item:[[:space:]]*"[^"]+"' "${YAML}" \
-  | sed 's/.*"\(.*\)"/\1/' | sort -u)
+# Three shapes carry an item name:
+#   switchItem: "x"   any key ending in Item -- matching the convention rather
+#                     than a list means a new job type needs no change here
+#   item: "x"         inside a condition, on jobs and alarms alike
+#   {x}               a placeholder in an alarm message, replaced with the
+#                     item's state when the notification is written
+referenced=$( {
+  grep -oE '[A-Za-z]+Item:[[:space:]]*"[^"]+"' "${YAML}" | sed 's/.*"\(.*\)"/\1/'
+  grep -oE '(^|[[:space:]]|-[[:space:]])item:[[:space:]]*"[^"]+"' "${YAML}" | sed 's/.*"\(.*\)"/\1/'
+  grep -oE '\{[A-Za-z0-9_]+\}' "${YAML}" | tr -d '{}'
+} | sort -u)
 
 defined=$(grep -rhoE '^[[:space:]]*(Switch|Number[^[:space:]]*|String|Contact|Dimmer|Rollershutter|Color|DateTime|Location|Group[^[:space:]]*)[[:space:]]+[A-Za-z0-9_]+' "${ITEMS}"/*.items \
   | awk '{print $NF}' | sort -u)

@@ -77,6 +77,97 @@ app:
       # changed by hand from one it set itself.
       lastHeatingModeItem: "boiler_auto_last_heating"
       lastWaterModeItem: "boiler_auto_last_water"
+  alarms:
+    # Where a notification is handed over. Nothing in this app can push a
+    # message -- sendNotification exists only inside openHAB -- so an alarm
+    # commands this item and rules/notifications.rules turns it into a push.
+    messageItem: "notify_message"
+    # INFO is held between these hours and sent when they end. ALARM ignores them.
+    quietFromHour: 22
+    quietToHour: 7
+  alarmJobs:
+    # The energizers report volts, so the thresholds are volts even though the
+    # sitemap shows kilovolts: 5000 = 5 kV, 11000 = 11 kV.
+    #
+    # Low means something is loading the fence down -- wet growth on the wire, a
+    # cracked insulator, a broken line on the ground. High means the opposite:
+    # nothing is drawing from it at all, so the wire is cut or a gate handle is
+    # off. Both say the fence is not holding an animal, so both are ALARM and
+    # neither waits for morning.
+    #
+    # Each one also hangs off the energizer's own state item, because a source
+    # that is switched off reads 0 V and that is not a fault.
+    - id: "fence-upper-low"
+      severity: ALARM
+      message: "Horní ohradník má jen {fence_upper_voltage}"
+      clearMessage: "Horní ohradník je zpátky na {fence_upper_voltage}"
+      conditions:
+        - item: "fence_upper_state"
+          value: "RUNNING"
+        - item: "fence_upper_voltage"
+          op: LT
+          value: "5000"
+      delayMinutes: 2
+      repeat: 3
+      intervalMinutes: 20
+      clearMinutes: 10
+    - id: "fence-upper-high"
+      severity: ALARM
+      message: "Horní ohradník {fence_upper_voltage}, nejspíš přerušený drát"
+      clearMessage: "Horní ohradník zase v pořádku, {fence_upper_voltage}"
+      conditions:
+        - item: "fence_upper_state"
+          value: "RUNNING"
+        - item: "fence_upper_voltage"
+          op: GT
+          value: "11000"
+      delayMinutes: 2
+      repeat: 3
+      intervalMinutes: 20
+      clearMinutes: 10
+    - id: "fence-lower-low"
+      severity: ALARM
+      message: "Spodní ohradník má jen {fence_lower_voltage}"
+      clearMessage: "Spodní ohradník je zpátky na {fence_lower_voltage}"
+      conditions:
+        - item: "fence_lower_state"
+          value: "RUNNING"
+        - item: "fence_lower_voltage"
+          op: LT
+          value: "5000"
+      delayMinutes: 2
+      repeat: 3
+      intervalMinutes: 20
+      clearMinutes: 10
+    - id: "fence-lower-high"
+      severity: ALARM
+      message: "Spodní ohradník {fence_lower_voltage}, nejspíš přerušený drát"
+      clearMessage: "Spodní ohradník zase v pořádku, {fence_lower_voltage}"
+      conditions:
+        - item: "fence_lower_state"
+          value: "RUNNING"
+        - item: "fence_lower_voltage"
+          op: GT
+          value: "11000"
+      delayMinutes: 2
+      repeat: 3
+      intervalMinutes: 20
+      clearMinutes: 10
+    # Without this one the two alarms above go quiet exactly when they matter:
+    # the fence is only visible through fencee Cloud, and when that is down the
+    # binding sets every channel to UNDEF, which no threshold can see. Half an
+    # hour of silence is a cloud hiccup; longer than that and the fence could be
+    # dead without anyone knowing.
+    - id: "fence-unreachable"
+      severity: INFO
+      message: "Ohradník se neozývá, fencee Cloud je nedostupný"
+      clearMessage: "Ohradník zase hlásí, horní {fence_upper_voltage}"
+      conditions:
+        - item: "fence_upper_voltage"
+          op: UNDEF
+      delayMinutes: 30
+      repeat: 1
+      clearMinutes: 5
 server:
   port: "${app.port}"
 logging:
