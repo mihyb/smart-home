@@ -1,13 +1,21 @@
-// Nabití akumulační nádrže.
+// Buffer tank charge.
 //
-// Nádrž má čtyři čidla po výšce (1 nahoře, 4 dole) a nabíjí se shora dolů.
-// Počet čidel, která dosáhla BUFFER_HOT_C, proto říká, jak hluboko je nádrž
-// nabitá — 4 znamená nabitou celou.
+// The tank has four probes down its height (1 at the top, 4 at the bottom) and
+// charges from the top down, so the number of probes that have reached
+// BUFFER_HOT_C says how deep the charge goes -- 4 means hot all the way down.
 //
-// BUFFER_HOT_C je hranice "nahřáto" a BUFFER_MAX_C je teplota, přes kterou
-// nádrž nejde. Obě jsou vlastnost nádrže, ne odhad, takže jsou tu pojmenované
-// a ne zadrátované v podmínce.
+// The charge percentage used to be that same count expressed as a percentage,
+// which answers a different question: everything below 70 °C counted as an
+// empty tank. A tank reading 47/36/35/34 still has heat worth taking, and it
+// showed 0 %. It is now the heat actually stored -- how far each probe sits
+// between an empty tank and a full one, averaged over the four.
+//
+// BUFFER_COLD_C is the temperature at which the water is no longer worth
+// drawing on and BUFFER_MAX_C is a fully charged tank. Both are properties of
+// the tank rather than estimates, so they are named here and not buried in the
+// arithmetic; BUFFER_HOT_C is what "a hot probe" means for the zone count.
 
+val Number BUFFER_COLD_C = 30
 val Number BUFFER_HOT_C = 70
 val Number BUFFER_MAX_C = 80
 
@@ -20,15 +28,28 @@ rule "Akumulace - nabiti"
  then
      val probes = newArrayList(Atmos_Buffer_1, Atmos_Buffer_2, Atmos_Buffer_3, Atmos_Buffer_4)
 
-     // Čidlo, které ještě neposlalo hodnotu, se nepočítá jako nahřáté ani
-     // nenahřáté — dokud nejsou známá všechna, nabití nemá smysl hlásit.
+     // A probe that has not reported yet counts as neither hot nor cold: until
+     // all four are known there is no honest number to publish.
      if (probes.exists[ p | !(p.state instanceof Number) ]) {
-         logWarn("atmos_buffer.rules", "Akumulace: ne vsechna cidla maji hodnotu, nabiti se nepocita")
+         logWarn("atmos_buffer.rules", "buffer: not every probe has a value, charge not computed")
          return;
+     }
+
+     val cold = BUFFER_COLD_C.doubleValue
+     val span = BUFFER_MAX_C.doubleValue - cold
+
+     // A plain for loop, not forEach: a lambda cannot write to a local.
+     var double stored = 0
+     for (p : probes) {
+         val t = (p.state as Number).doubleValue
+         // Clamped, so a probe below empty does not subtract from the rest and
+         // an overshoot above 80 does not read as more than a full tank.
+         val within = Math::max(cold, Math::min(BUFFER_MAX_C.doubleValue, t))
+         stored = stored + (within - cold) / span
      }
 
      val hot = probes.filter[ p | (p.state as Number).doubleValue >= BUFFER_HOT_C.doubleValue ].size
 
      Atmos_Buffer_Zones.postUpdate(hot)
-     Atmos_Buffer_Charge.postUpdate(hot * 100 / probes.size)
+     Atmos_Buffer_Charge.postUpdate(Math::round(stored * 100 / probes.size))
  end
