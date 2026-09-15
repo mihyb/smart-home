@@ -67,7 +67,12 @@ open class TimerJob(
     }
 
     private fun allConditionsMet(): Boolean {
-        return config.conditions.all { condition -> item(condition.item).state.lowercase() == condition.value.lowercase() }
+        // Through the shared evaluator so that a condition means the same thing
+        // here as in an alarm -- including its operator, which used to be an
+        // implicit equality. An item with no state is not a match.
+        return config.conditions.all { condition ->
+            ConditionEvaluator.matches(item(condition.item).state, condition) == true
+        }
     }
 
     private fun isWeekend(date: LocalDate): Boolean {
