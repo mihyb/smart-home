@@ -1,0 +1,17 @@
+// The notification bus.
+//
+// Everything that wants to reach the phone commands this one item, and
+// rules/notifications.rules is the only place that knows how a push is sent.
+// HomeController holds the alarm table (app.alarmJobs in application.yaml) and
+// talks only to openHAB items, so this is how it notifies; a rule that wants to
+// notify does the same rather than calling the cloud action itself.
+//
+// Payload is SEVERITY|id|text:
+//   ALARM|fence-upper-low|Horní ohradník má jen 4200 V
+//   INFO|window-open-cold|Otevřené okno, venku 3 °C
+//   CLEAR|fence-upper-low|              withdraws that notification again
+//
+// The id travels as the notification's reference id, which is what lets a
+// notification be taken off the phone once the fault is over instead of
+// sitting in the list looking current.
+String notify_message "Notifikace [%s]" <text>
