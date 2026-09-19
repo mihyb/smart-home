@@ -13,13 +13,13 @@ and the code that consumes it belongs in a single commit.
 | `openhab-ruprechtice/` | openHAB config. **This directory's root maps to the server's `/etc/openhab`** |
 | `HomeController/` | Spring Boot / Kotlin rules engine that polls and commands openHAB over REST |
 | `atmos-connector/` | **Submodule** — the custom `atmoswg1000` binding for the Atmos boiler. Standalone reusable component, own repo and release cycle |
-| `fencee-connector/` | The `fenceecloud` binding for the electric fence (GW100 gateway, two PDX70 energizers). Same shape as `atmos-connector` and **will be a submodule**, but its repo does not exist yet — until it is created and pushed the directory is a separate local clone, untracked here |
+| `fencee-connector/` | **Submodule** — the custom `fenceecloud` binding for the electric fence (GW100 gateway, two PDX70 energizers). Same shape as `atmos-connector`: own repo, own release cycle, consumed as a built JAR |
 | `scripts/` | Build, deploy, cutover, status and log helpers |
 | `config/` | `item-states.tsv` — captured setpoints, see *Item state* below |
 
-`atmos-connector` is a submodule while the other two directories are subtrees,
-and that is deliberate (`fencee-connector` is headed the same way). openHAB config and HomeController are co-developed — an item rename
-touches both, so they need to land in one commit. The binding is a standalone
+The two bindings are submodules while the other two directories are subtrees,
+and that is deliberate. openHAB config and HomeController are co-developed — an item rename
+touches both, so they need to land in one commit. Each binding is a standalone
 library consumed as a built JAR. The cost is the usual submodule one: `git pull`
 leaves it at the old pin unless you pass `--recurse-submodules`.
 

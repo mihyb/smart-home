@@ -1,3 +1,6 @@
 [submodule "atmos-connector"]
 	path = atmos-connector
 	url = git@github-personal:mihyb/atmos-connector.git
+[submodule "fencee-connector"]
+	path = fencee-connector
+	url = git@github-personal:mihyb/fencee-connector.git
