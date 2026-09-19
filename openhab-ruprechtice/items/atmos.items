@@ -86,6 +86,15 @@ String Atmos_Water_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:c
 DateTime Atmos_Water_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:water#deadline" }
 Number Atmos_Water_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:water#mode-duration" }
 
+// Který ze tří týdenních kalendářů regulátoru topný okruh jede. Časy jsou
+// uložené v regulátoru, ne tady — mění se na jeho panelu:
+//   A  po-čt 5:30-20:30, pá-so 6:30-21:00, ne 5:30-20:30 na 25 °C
+//   B  každý den 5:00-8:30 na 25 °C
+//   C  každý den 17:00-20:00 na 25 °C
+// Platí jen v režimu AUTO a LÉTO — v ostatních režimech se volba jen zapamatuje
+// a zapíše se, až nějaký takový režim přijde. Teplá voda má vlastní kalendář,
+// ale v B a C nemá nic, takže pro ni položka schválně není.
+String Atmos_C1_Program "Kalendář [%s]" { channel="atmoswg1000:controller:home:controller1:circuit1#program" }
 String Atmos_C1_Permanent_Mode "Trvalý režim [%s]" { channel="atmoswg1000:controller:home:controller1:circuit1#permanent-mode" }
 DateTime Atmos_C1_Deadline "Končí [%1$tH:%1$tM]" { channel="atmoswg1000:controller:home:controller1:circuit1#deadline" }
 Number Atmos_C1_Mode_Duration "Na jak dlouho [%d min]" { channel="atmoswg1000:controller:home:controller1:circuit1#mode-duration" }
