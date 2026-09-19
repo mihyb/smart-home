@@ -1,0 +1,39 @@
+// Stav bojleru: Zapnuto, Vypnuto, nebo Bez proudu když je HDO dole.
+//
+// bojler_switch není měření. Zásuvka posílá svůj stav na
+// zigbee2mqtt/w_heater_switch/state jen dokud je online, a openHAB k tomu
+// zapisuje povely optimisticky (autoupdate), takže hodnota drží poslední
+// povel. Zásuvka visí na HDO stykači, takže při nízkém tarifu zmizí ze
+// zigbee sítě a položka zůstane stát na ON — na sitemapu to vypadá, že
+// bojler hřeje, i když nemá proud.
+//
+// Napájení má přednost před spínačem: bez proudu se nehřeje, ať je spínač
+// kdekoli. Vlastní bojler_switch se schválně nepřepisuje — ovládá ho TimerJob
+// v HomeControlleru a UNDEF by mu rozbil čtení stavu.
+
+val String BOILER_ON = "Zapnuto"
+val String BOILER_OFF = "Vypnuto"
+val String BOILER_NO_POWER = "Bez proudu"
+val String BOILER_UNKNOWN = "?"
+val String POWER_OFFLINE = "offline"
+
+rule "Stav bojleru"
+ when
+     Item bojler_switch changed or
+     Item wheater_status changed or
+     System started
+ then
+     val power = wheater_status.state
+     val on = bojler_switch.state
+
+     if (power instanceof StringType && power.toString == POWER_OFFLINE) {
+         bojler_state.postUpdate(BOILER_NO_POWER)
+     } else if (on == ON) {
+         bojler_state.postUpdate(BOILER_ON)
+     } else if (on == OFF) {
+         bojler_state.postUpdate(BOILER_OFF)
+     } else {
+         // Po restartu, než dorazí první zpráva z MQTT.
+         bojler_state.postUpdate(BOILER_UNKNOWN)
+     }
+ end

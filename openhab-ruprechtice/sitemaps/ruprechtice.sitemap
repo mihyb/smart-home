@@ -161,8 +161,10 @@ sitemap ruprechtice label="Ruprechtice" {
         // Bojler: stav a teplota vody na hlavní stránce, zbytek o klik dál.
         // Switch nesmí mít vnořené widgety (openHAB by celý sitemap zahodil),
         // takže rozklikávací řádek je Text — a nese rovnou stav časovače.
-        Text item=bojler_switch label="Bojler [%s]" icon="water"
-             valuecolor=[ON="green", OFF="gray"] {
+        // Hlavní řádek ukazuje odvozený stav, ne spínač: bez proudu z HDO drží
+        // bojler_switch poslední povel a tvrdil by ON i u bojleru bez napájení.
+        Text item=bojler_state label="Bojler [%s]" icon="water"
+             valuecolor=["Zapnuto"="green", "Bez proudu"="orange", "Vypnuto"="gray"] {
             Frame label="Bojler" {
                 Switch item=bojler_switch label="Stav"
                 Switch item=timer_job_wheater_status label="Časovač"

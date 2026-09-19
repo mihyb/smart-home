@@ -10,3 +10,12 @@
 // zigbee dropout look identical. Treat it as "no power to the switch", not as a
 // direct reading of the HDO relay.
 String wheater_status "HDO [MAP(hdo.map):%s]" { channel="mqtt:topic:bojler_switch:availability" }
+
+// Co bojler doopravdy dělá, dohromady ze spínače a z napájení.
+//
+// bojler_switch sám o sobě říká "naposledy zapnuto", ne "zrovna hřeje".
+// Zásuvka hlásí stav jen dokud je online, a openHAB navíc zapisuje povel
+// optimisticky (autoupdate), takže když HDO odpadne, položka zamrzne na ON a
+// vypadá to, že bojler hřeje bez proudu. Odvozuje to rules/boiler_state.rules;
+// vlastní spínač zůstává beze změny, protože ho ovládá TimerJob.
+String bojler_state "Bojler [%s]"
