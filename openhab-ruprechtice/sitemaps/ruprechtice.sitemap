@@ -230,7 +230,7 @@ sitemap ruprechtice label="Ruprechtice" {
             }
         }
         Text item=Atmos_Buffer_Charge label="Akumulace [%d %%]" icon="batterylevel"
-             valuecolor=[<25="gray", <75="orange", >=75="green"] {
+             valuecolor=[<30="gray", <50="orange", >=50="red"] {
             Frame label="Čidla po výšce nádrže" {
                 Text item=Atmos_Buffer_Zones label="Nahřátá čidla [%d ze 4]" icon="heating"
                 Text item=Atmos_Buffer_1 label="1 nahoře [%.1f °C]" valuecolor=[>=70="red", <40="blue"]
