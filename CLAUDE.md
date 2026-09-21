@@ -133,6 +133,17 @@ happily measured the config already on the server. It runs the receiver under
 `sudo` now. If a config change ever seems not to take, check the file on the
 server before believing the deploy.
 
+**fencee Cloud times out on itself, several times a day.** `GET
+/client/v2/devices` answers `HTTP 504 Endpoint request timed out` — their API
+gateway giving up on their own backend, not a timeout of ours — around eight
+times a day, and the next attempt always works. One failed request used to blank
+every fence item for a full poll interval, because the binding only retried on
+the next tick 300 s later. It now retries once inside the same tick after 15 s,
+keeps its session and its push socket across a transport failure, and treats an
+expired session as something to sign in again for rather than as a refused
+password. `grep fenceecloud:account /var/log/openhab/events.log` on the server
+shows the windows.
+
 **The electric fence has no local path at all.** The GW100 gateway answers
 ping and nothing else — 1039 TCP ports closed, no UDP, no mDNS — and holds one
 outbound connection to fencee Cloud. Every reading and every command crosses
