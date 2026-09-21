@@ -141,6 +141,27 @@ blind whenever the internet or the cloud is down. A stale fence voltage
 therefore does not mean a live fence, which is why the sitemap shows the time
 of the last message next to each energizer.
 
+**A boiler that has stopped its fan is the hottest one there is.** The mode
+job used to read `Atmos_Exhaust_Fan` alone as "is it burning", which is true
+right up to the moment it matters: on an overheat the boiler shuts its own fan
+down while the water is at its hottest, so the automation read "out", put the
+heating back on its schedule and the hot water into STANDBY — taking both
+circuits off the boiler at the one moment the heat had nowhere to go. Burning is
+now either signal: the fan running, **or** `Atmos_Boiler_Water` above
+`burningAboveCelsius` (85). Both are needed to call it out, and both have to be
+readable — one that reads `NULL` is not a "no", so the job holds. 85 is above
+the residual heat a boiler that has gone out coasts down through, which is why a
+plain temperature threshold could not do this job on its own: set low enough to
+catch the overheat it also read residual heat as a burn, and the water circuit
+kept draining a tank with nothing refilling it.
+
+**A `Number:Temperature` item is not a number to HomeController.** The REST API
+renders a QuantityType with its unit, so `Atmos_Boiler_Water` arrives as
+`86.5 °C` and `getDoubleOrNull()` returns null for every reading it will ever
+have — silently, which in a rule means "no value, skip the cycle" forever.
+`getQuantityOrNull()` takes the number and drops the unit. It converts nothing,
+so it is only safe where the item's unit is fixed and known.
+
 **Items read `NULL` when their thing is offline.** `getDouble()` throws on that;
 `getDoubleOrNull()` exists for rules that read sensors. MinMaxJob and TimerJob
 skip the cycle rather than die.
@@ -152,9 +173,11 @@ skip the cycle rather than die.
   device is switched off and the window skipped).
 - `app.minMaxJobs` — thermostat-style. On below `minValueItem`, off above
   `maxValueItem`. Used for the chick brooder.
-- `app.boilerModeJobs` — follows the solid-fuel boiler. `runningItem` (the
-  exhaust fan) ON means burning. Which mode each of the four cases means is not
-  in this file: it is read from `boiler_auto_running_heating`,
+- `app.boilerModeJobs` — follows the solid-fuel boiler. Burning means
+  `runningItem` (the exhaust fan) ON **or** `temperatureItem` (the boiler's own
+  water) above `burningAboveCelsius` — see *A boiler that has stopped its fan*
+  above. Which mode each of the four cases means is not in this file: it is read
+  from `boiler_auto_running_heating`,
   `boiler_auto_running_water`, `boiler_auto_idle_heating` and
   `boiler_auto_idle_water`, so it is chosen from the sitemap. Like every other
   setpoint here they are **item state only** — `scripts/sync-item-states.sh`

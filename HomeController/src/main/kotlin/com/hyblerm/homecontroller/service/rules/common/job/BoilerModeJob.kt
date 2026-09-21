@@ -18,6 +18,18 @@ private const val STATE_OFF = "OFF"
  * tank that has nothing refilling it, so it stops and the heating goes back to
  * its own schedule.
  *
+ * "Burning" is either signal, not just the exhaust fan. The fan is the direct
+ * one and carries the whole burn, but on an overheat the boiler shuts it down
+ * while the water is at its hottest, and reading that alone as "out" moved both
+ * circuits off the boiler at the one moment the heat most needed somewhere to
+ * go. So water above [BoilerModeJobConfig.burningAboveCelsius] counts too: that
+ * is more than the residual heat a boiler that has gone out coasts down through,
+ * and it wants taking away whatever the fan is doing.
+ *
+ * Calling the boiler *out* takes both of them, and both have to be readable. A
+ * signal that cannot be read is not a "no": the job holds and commands nothing
+ * rather than guessing, the same as when the gateway is down.
+ *
  * Which mode each of those four cases means is read from openHAB rather than
  * from configuration, so it can be changed from the sitemap.
  *
@@ -33,21 +45,29 @@ open class BoilerModeJob(
     private val config: BoilerModeJobConfig
 ) : JobBase(repository) {
 
-    private val logger: Logger = LoggerFactory.getLogger("${BoilerModeJob::class.java.name}#${config.runningItem}")
+    private val logger: Logger = LoggerFactory.getLogger("${BoilerModeJob::class.java.name}#${config.temperatureItem}")
 
     private class Circuit(val modeItem: String, val targetItem: String, val lastItem: String)
 
     fun checkModes() {
         var auto = item(config.statusItem).isOn()
-        // NULL whenever the gateway is unreachable. Reading that as "not burning"
-        // would drop the house into AUTO in the middle of a burn, so the job does
-        // not command this cycle -- but it still watches for a manual change.
-        val running = item(config.runningItem).state
-        val known = running == STATE_ON || running == STATE_OFF
+        val fan = item(config.runningItem).state
+        val boilerWater = item(config.temperatureItem)
+        val temperature = boilerWater.getQuantityOrNull()
+
+        val burning = fan == STATE_ON || (temperature != null && temperature > config.burningAboveCelsius)
+        // Either signal on its own is enough to say it burns. Saying it is out
+        // needs both, and needs both readable -- they read NULL whenever the
+        // gateway is unreachable, and calling that "out" would drop the house
+        // into AUTO in the middle of a burn. The job still watches for a manual
+        // change on a cycle it does not command.
+        val known = burning || ((fan == STATE_ON || fan == STATE_OFF) && temperature != null)
         if (auto && !known) {
-            logger.warn("not commanding: {} reads {}", config.runningItem, running)
+            logger.warn(
+                "not commanding: {} reads {}, {} reads {}",
+                config.runningItem, fan, config.temperatureItem, boilerWater.state
+            )
         }
-        val burning = running == STATE_ON
 
         val circuits = listOf(
             Circuit(

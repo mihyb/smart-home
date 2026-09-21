@@ -63,8 +63,18 @@ app:
     # While the solid-fuel boiler burns, take the heat on both circuits. Once it
     # is out, the hot water circuit would drain a tank with nothing refilling it,
     # so it stops and the heating goes back to its own schedule.
+    #
+    # "Burning" is either signal. Atmos_Exhaust_Fan ON is the direct one and
+    # carries the whole burn; it is not enough on its own, because on an overheat
+    # the boiler shuts the fan down while the water is at its hottest, and
+    # reading that as "out" took both circuits off the boiler at the one moment
+    # the heat most needed somewhere to go. So the boiler's own water above 85 C
+    # counts as burning too -- that is more than the residual heat one that has
+    # gone out coasts down through. It takes both signals to call it out.
     - statusItem: "boiler_auto_control"
       runningItem: "Atmos_Exhaust_Fan"
+      temperatureItem: "Atmos_Boiler_Water"
+      burningAboveCelsius: 85
       heatingModeItem: "Atmos_C1_Mode"
       waterModeItem: "Atmos_Water_Mode"
       # Which mode each case means is chosen from the sitemap, not here, so it

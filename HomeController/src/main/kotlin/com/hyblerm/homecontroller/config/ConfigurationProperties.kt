@@ -2,6 +2,9 @@ package com.hyblerm.homecontroller.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
+/** Hotter than residual heat in a boiler that has gone out, whatever the fan says. */
+private const val DEFAULT_BURNING_ABOVE_CELSIUS = 85.0
+
 @ConfigurationProperties(prefix = "app")
 class ConfigurationProperties {
 
@@ -144,7 +147,21 @@ class ConfigurationProperties {
      */
     class BoilerModeJobConfig {
         var statusItem: String = ""
+
+        // Two signals, either of which means burning. The exhaust fan is the
+        // direct "is there a fire" one and carries the whole burn -- but on an
+        // overheat the boiler stops the fan while the water is at its hottest,
+        // and reading that alone as "out" took both circuits off the boiler
+        // exactly when the heat had nowhere else to go. Above
+        // burningAboveCelsius the boiler has more than residual heat in it and
+        // wants taking down whatever the fan is doing.
+        //
+        // It takes both of them to call the boiler out. One that cannot be read
+        // is not a "no" -- the job holds and commands nothing.
         var runningItem: String = ""
+        var temperatureItem: String = ""
+        var burningAboveCelsius: Double = DEFAULT_BURNING_ABOVE_CELSIUS
+
         var heatingModeItem: String = ""
         var waterModeItem: String = ""
 

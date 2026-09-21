@@ -71,6 +71,12 @@ Number:Temperature Atmos_Water_Tank "Atmos_Water_Tank" { channel="atmoswg1000:co
 // The exhaust fan runs while the boiler is burning, so it is the most direct
 // "is it firing" signal — more reliable than the pump, which also runs while
 // circulating residual heat after the fire is out.
+//
+// It is not enough on its own, though, and HomeController's boiler mode job no
+// longer treats it that way: on an overheat the boiler shuts the fan down while
+// the water is at its hottest, and "fan off" read as "no heat to take" at the
+// one moment the heat had nowhere to go. That job now takes this item ON *or*
+// Atmos_Boiler_Water above 85 C as burning.
 Switch Atmos_Exhaust_Fan "Atmos_Exhaust_Fan" { channel="atmoswg1000:controller:home:controller1:boiler#exhaust-fan" }
 
 // Stav brány ATMOS. openHAB nemá kanál, kterým by šel stav Thingu přečíst jako

@@ -25,7 +25,7 @@ The app is a Spring Boot rules engine that polls and commands an **OpenHAB** sma
 - `repository/` — concrete Spring repositories. `OpenHabRepository` is the primary `DataAccess` impl (WebClient against `app.openhab.baseUrl`). `OpenHabReadOnlyRepository` is `@Primary @Profile("test-mode")` and overrides `commandItem` to a no-op log. `BuyElectricityDailyRateLoader` scrapes `ote-cr.cz` HTML for hourly spot prices and caches them to H2 via `ElectricityRepository` (Spring Data JPA).
 - `config/` — `ConfigurationProperties` binds `app.*` from `application.yaml` (notably `app.timerJobs`, the list of scheduled switch rules). `CacheConfig` defines a custom `CacheWithExpiration` (TTL 20s) used to cache OpenHAB item GETs (`@Cacheable("item")` on `OpenHabRepository.getItem`). `ScheduleConfig` enables `@EnableScheduling` outside the `test` profile.
 
-**Scheduled execution.** `TimerJobRunner` is the entry point — `@Scheduled(fixedRate = 5, MINUTES)` iterates every entry in `config.timerJobs` and invokes a fresh `TimerJob(...).checkSwitch()`. `MinMaxJobRunner` does the same for `config.minMaxJobs`, a thermostat-style rule that switches on below `minValueItem` and off above `maxValueItem`. `BoilerModeJobRunner` does the same for `config.boilerModeJobs`, which sets the Atmos heating and hot-water modes from whether the boiler is burning; its five-minute period is also its debounce, since the exhaust fan can blip during ignition. Adding a new timer-driven switch is a YAML edit (see `application.yaml` `app.timerJobs`), not a code change. Each entry references OpenHAB items by name for `switchItem`, `statusItem`, `startHourItem`, `endHourItem`; `mode` (`ALL`/`WEEKDAY`/`WEEKEND`) and `conditions` (additional item-state preconditions) are optional.
+**Scheduled execution.** `TimerJobRunner` is the entry point — `@Scheduled(fixedRate = 5, MINUTES)` iterates every entry in `config.timerJobs` and invokes a fresh `TimerJob(...).checkSwitch()`. `MinMaxJobRunner` does the same for `config.minMaxJobs`, a thermostat-style rule that switches on below `minValueItem` and off above `maxValueItem`. `BoilerModeJobRunner` does the same for `config.boilerModeJobs`, which sets the Atmos heating and hot-water modes from whether the boiler is burning — the exhaust fan running *or* the boiler's own water above `burningAboveCelsius`, because the fan stops on an overheat exactly when the heat needs taking away, and residual heat with the fan off is not a burn. Adding a new timer-driven switch is a YAML edit (see `application.yaml` `app.timerJobs`), not a code change. Each entry references OpenHAB items by name for `switchItem`, `statusItem`, `startHourItem`, `endHourItem`; `mode` (`ALL`/`WEEKDAY`/`WEEKEND`) and `conditions` (additional item-state preconditions) are optional.
 
 **TimerJob semantics.** `TimerJob.checkSwitch` reads start/end hours dynamically from OpenHAB items each tick, and handles cross-midnight ranges (`startHour > endHour`) via a separate code path. Conditions short-circuit to "off"; mode gating short-circuits to "skip".
 
@@ -47,6 +47,16 @@ until persistence restores them after a restart. `getDouble()` throws on that �
 it killed the scheduled task every five minutes when the chick brooder's sensor
 went offline. Rules that read sensors or setpoints use `getDoubleOrNull()` and
 skip the cycle instead. Both cases have regression tests in `MinMaxJobTest`.
+
+## Items whose state carries a unit
+
+A `Number:Temperature` item comes back from the REST API as a rendered
+QuantityType — `Atmos_Boiler_Water` is the string `86.5 °C`, not `86.5`. So
+`getDoubleOrNull()` returns null for every reading one of them ever produces,
+and a rule that guards on null quietly stops acting instead of failing.
+`getQuantityOrNull()` reads the number and ignores the unit; it converts
+nothing, so use it only where the item's unit is fixed. `OpenHabModelTest`
+covers both.
 
 ## The item-name contract
 

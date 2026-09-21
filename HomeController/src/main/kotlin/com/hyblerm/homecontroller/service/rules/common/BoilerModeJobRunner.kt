@@ -18,13 +18,14 @@ class BoilerModeJobRunner(
     private val logger: Logger = LoggerFactory.getLogger(BoilerModeJobRunner::class.java)
 
     /**
-     * Five minutes is also the debounce: the exhaust fan can stop and restart
-     * during ignition, and a poll this slow simply never sees the blip.
+     * Five minutes is also the debounce: the boiler's water moves slowly enough
+     * that a poll this slow cannot chase it, and neither the pump cycling nor a
+     * fresh load going on shows up as anything but a trend.
      */
     @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES)
     fun runBoilerModeJobs() {
         config.boilerModeJobs.forEach {
-            logger.debug("Checking boiler modes against {}", it.runningItem)
+            logger.debug("Checking boiler modes against {}", it.temperatureItem)
             BoilerModeJob(repository, it).checkModes()
         }
     }
