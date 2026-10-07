@@ -1,0 +1,62 @@
+// Heating advice. Nothing here switches anything.
+//
+// HomeController works out what it would do and writes it into these items;
+// rules/notifications.rules turns the *_alert switches into a push through the
+// alarm table in application.yaml. The panels stay switched by hand, so the whole
+// point of this layer is to find out whether the advice would have been right
+// before it is ever allowed to act.
+//
+// Three questions, three answers:
+//   heating_house_alert   the house is cold and the boiler is the only thing that
+//                         can fix it -- one message instead of one per room
+//   boiler_advice         will the tank cover tomorrow, so wood can be carried in
+//                         while there is still time
+//   panel_advice_<room>   what that room's own panel should be doing
+//
+// The bands are the comfort setting per room, and they are item state like every
+// other setpoint here -- set from the sitemap, kept by rrd4j's restoreOnStartup,
+// captured by scripts/sync-item-states.sh. A room with no band set takes no part
+// in any of this, which is how the rooms that are only monitored stay out of it
+// without being listed as exceptions.
+
+// The whole advisory, off in one place.
+Switch heating_advice_control "Doporučení topení"
+
+// Comfort bands. Below the minimum something should heat, above the maximum it
+// should stop, and in between there is nothing to say -- the same shape the chick
+// brooder already uses. Only these three rooms have one; chodba, koupelna, zadveri
+// and sklep are watched and nothing more.
+Number room_min_obyvak    "Obyvák od [%.1f °C]"
+Number room_max_obyvak    "Obyvák do [%.1f °C]"
+Number room_min_pokojicek "Pokojíček od [%.1f °C]"
+Number room_max_pokojicek "Pokojíček do [%.1f °C]"
+Number room_min_pracovna  "Pracovna od [%.1f °C]"
+Number room_max_pracovna  "Pracovna do [%.1f °C]"
+
+// How much of the house is under its band, and which room worst. Computed every
+// five minutes, so nothing restores them.
+Number heating_cold_rooms   "Pokojů pod pásmem [%d]" <heating>
+String heating_coldest_room "Nejchladnější [%s]" <temperature>
+Number heating_coldest_gap  "Chybí mu [%.1f °C]" <temperature>
+
+// The escalation: two cold rooms, or one that has no heating of its own, with a
+// flat tank and no fire going.
+//
+// These four read yes/no, not online/offline. They borrowed online.map at first
+// and rendered "Zatopit — Offline", which says nothing about heating.
+Switch heating_house_alert "Zatopit teď [MAP(advice-alert.map):%s]"
+
+// Tomorrow against the tank. boiler_advice_needed is what tomorrow's degree-days
+// want out of the tank, shortfall is that less what is in it -- positive means
+// short.
+String boiler_advice           "Na zítřek [MAP(boiler-advice.map):%s]" <fire>
+Number boiler_advice_needed    "Zítřek chce [%.0f %%]" <batterylevel>
+Number boiler_advice_shortfall "Chybí [%.0f %%]" <batterylevel>
+Switch boiler_advice_alert     "Zatopit na zítřek [MAP(advice-alert.map):%s]"
+
+// Per room with a panel. BOILER means the room is cold but so is the house, so the
+// answer is a fire rather than this panel.
+String panel_advice_pracovna       "Pracovna panel [MAP(panel-advice.map):%s]" <heating>
+Switch panel_advice_pracovna_alert "Pracovna přepnout panel [MAP(advice-alert.map):%s]"
+String panel_advice_obyvak         "Obyvák panel [MAP(panel-advice.map):%s]" <heating>
+Switch panel_advice_obyvak_alert   "Obyvák přepnout panel [MAP(advice-alert.map):%s]"

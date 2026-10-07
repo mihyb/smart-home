@@ -87,6 +87,131 @@ app:
       # changed by hand from one it set itself.
       lastHeatingModeItem: "boiler_auto_last_heating"
       lastWaterModeItem: "boiler_auto_last_water"
+  # Heating advisories. None of these switches anything: each writes what it thinks
+  # into an item and the alarm table below turns that into a message. The panels are
+  # switched by hand, and the point of running this first is to see whether the
+  # advice would have been right before it is ever allowed to act.
+  houseDemand:
+    statusItem: "heating_advice_control"
+    # Whether the boiler is already answering. Heat still in the tank is on its way
+    # into the rooms, and a fire already lit has not charged it yet -- neither is a
+    # house nobody has done anything about.
+    chargeItem: "Atmos_Buffer_Charge"
+    burningItem: "Atmos_Exhaust_Fan"
+    tankCoversAbovePercent: 40
+    # One cold room is local work for that room's own panel. Two at once are not:
+    # electricity costs more than wood, and the boiler takes hours to bring the whole
+    # system up, so it is worth asking for early rather than often.
+    fireAboveColdRooms: 2
+    toleranceKelvin: 0.3
+    # The whole house is empty overnight, so it is said once here rather than copied into
+    # every room. A house left to coast from nine until six is the setback working.
+    nightFromHour: 21
+    nightToHour: 6
+    coldRoomsItem: "heating_cold_rooms"
+    coldestRoomItem: "heating_coldest_room"
+    coldestGapItem: "heating_coldest_gap"
+    alertItem: "heating_house_alert"
+    # Only the three rooms that are setpoints. The hallway, bathroom, entry hall and
+    # cellar are monitored and nothing more, and they stay out of this by having no
+    # band set rather than by being listed as exceptions.
+    rooms:
+      # The living room is in use all day, so the night is the only thing that takes it
+      # out of the count.
+      - name: "obyvak"
+        temperatureItem: "obyvak_temp_temperature"
+        minItem: "room_min_obyvak"
+        maxItem: "room_max_obyvak"
+        localHeaterItem: "obyvak_topeni_switch"
+      # No localHeaterItem: the kids' room has a dehumidifier and no heating of its
+      # own, so it being cold is something only the boiler can answer -- which is why
+      # one cold room here escalates without waiting for a second.
+      - name: "pokojicek"
+        temperatureItem: "pokojicek_temp_temperature"
+        minItem: "room_min_pokojicek"
+        maxItem: "room_max_pokojicek"
+        windowItem: "pokoj_okno_pokoj_okno_switch"
+        # At school on weekdays. At the weekend only the night applies.
+        offWindows:
+          - fromHour: 7
+            toHour: 14
+            mode: weekday
+      - name: "pracovna"
+        temperatureItem: "pracovna_teplota_temp"
+        minItem: "room_min_pracovna"
+        maxItem: "room_max_pracovna"
+        localHeaterItem: "Infrared_heating_panel_switch"
+        windowItem: "pracovna_okno_OnOff_Switch"
+        # Empty from mid-afternoon, so it is in use roughly six until three.
+        offWindows:
+          - fromHour: 15
+            toHour: 22
+  panelAdviceJobs:
+    # The two rooms that have a panel. switchItem is read and never commanded.
+    - statusItem: "heating_advice_control"
+      # roomName ties this panel to the room above, so the band and the hours it is in
+      # use are stated once and cannot drift apart.
+      roomName: "pracovna"
+      # Switching a panel on shortly before the room empties buys nothing. There is no
+      # equivalent rule on the boiler: a late fire still charges the tank for tomorrow.
+      minimumRunMinutes: 45
+      switchItem: "Infrared_heating_panel_switch"
+      temperatureItem: "pracovna_teplota_temp"
+      minItem: "room_min_pracovna"
+      maxItem: "room_max_pracovna"
+      windowItem: "pracovna_okno_OnOff_Switch"
+      circuitPumpItem: "Atmos_C1_Pump"
+      chargeItem: "Atmos_Buffer_Charge"
+      tankCoversAbovePercent: 40
+      adviceItem: "panel_advice_pracovna"
+      alertItem: "panel_advice_pracovna_alert"
+    - statusItem: "heating_advice_control"
+      roomName: "obyvak"
+      minimumRunMinutes: 45
+      switchItem: "obyvak_topeni_switch"
+      temperatureItem: "obyvak_temp_temperature"
+      minItem: "room_min_obyvak"
+      maxItem: "room_max_obyvak"
+      circuitPumpItem: "Atmos_C1_Pump"
+      chargeItem: "Atmos_Buffer_Charge"
+      tankCoversAbovePercent: 40
+      adviceItem: "panel_advice_obyvak"
+      alertItem: "panel_advice_obyvak_alert"
+  boilerAdviceJobs:
+    # Will the tank cover tomorrow? A day's warning is what makes wood available in
+    # time; without it the house falls back on the panels, which cost more.
+    #
+    # chargePercentPerDegreeDay and chargePercentPerMegajoule are calibration, not
+    # daily choices, which is why they are here rather than in item state. Start by
+    # watching what it says against what the tank actually did, and correct the first
+    # one; the sun credit stays at zero until there is a reason to believe a number,
+    # because a credit that is guessed asks for too little wood.
+    - statusItem: "heating_advice_control"
+      chargeItem: "Atmos_Buffer_Charge"
+      minTomorrowItem: "weather_temp_min_tomorrow"
+      maxTomorrowItem: "weather_temp_max_tomorrow"
+      solarTomorrowItem: "weather_solar_sum_tomorrow"
+      forecastUpdatedItem: "weather_updated"
+      adviceItem: "boiler_advice"
+      neededItem: "boiler_advice_needed"
+      shortfallItem: "boiler_advice_shortfall"
+      alertItem: "boiler_advice_alert"
+      baseTemperatureCelsius: 18
+      # Measured by scripts/fit-buffer-drain.py over eight days that began with a full
+      # tank: 33 % of it a day plus 0.7 % per degree-day, which is 2.6 days per full
+      # tank in the weather it was fitted in -- the two to three days this house
+      # actually gets. Almost all of the demand is the baseline, because the circuit
+      # runs the regulator's weekly programme rather than following the thermometer.
+      #
+      # Fitted over daily means of 8.5 to 14.2 C and nothing colder, so the slope is
+      # the weak part. Re-run the script after the first real cold spell: under-
+      # predicting asks for too little wood, which is the expensive direction.
+      baselinePercentPerDay: 33
+      chargePercentPerDegreeDay: 0.7
+      chargePercentPerMegajoule: 0
+      staleForecastHours: 3
+      adviseFromHour: 16
+      adviseToHour: 22
   alarms:
     # Where a notification is handed over. Nothing in this app can push a
     # message -- sendNotification exists only inside openHAB -- so an alarm
@@ -96,6 +221,72 @@ app:
     quietFromHour: 22
     quietToHour: 7
   alarmJobs:
+    # Heating advice. All INFO: quiet hours hold them until morning, which is right --
+    # nobody lights a boiler at three in the morning, and the condition is still true
+    # when they end, so the message is held rather than lost.
+    - id: "house-cold"
+      severity: INFO
+      message: "V domě je zima: {heating_cold_rooms} pokoje pod pásmem, nejvíc {heating_coldest_room} o {heating_coldest_gap} °C. Nádrž má {Atmos_Buffer_Charge} %, zatop."
+      clearMessage: "Dům je zpátky v pásmu."
+      conditions:
+        - item: "heating_house_alert"
+          value: "ON"
+      # Half an hour before saying anything and two hours between: a fire is a
+      # decision that takes an hour to act on and hours to undo, so this is the one
+      # alarm that must not be eager.
+      delayMinutes: 30
+      repeat: 2
+      intervalMinutes: 120
+      clearMinutes: 60
+    - id: "boiler-tomorrow"
+      severity: INFO
+      message: "Na zítřek bude potřeba {boiler_advice_needed} % nádrže, teď je {Atmos_Buffer_Charge} %. Zatop."
+      clearMessage: "Nádrž na zítřek stačí, {Atmos_Buffer_Charge} %."
+      conditions:
+        - item: "boiler_advice_alert"
+          value: "ON"
+      delayMinutes: 15
+      repeat: 1
+      intervalMinutes: 120
+      clearMinutes: 60
+    # One per room with a panel. The message says both states rather than an
+    # instruction, because the switch stays a person's decision for now.
+    - id: "panel-pracovna"
+      severity: INFO
+      message: "Pracovna {pracovna_teplota_temp}: topení je {Infrared_heating_panel_switch}, mělo by být {panel_advice_pracovna}."
+      clearMessage: ""
+      conditions:
+        - item: "panel_advice_pracovna_alert"
+          value: "ON"
+      delayMinutes: 20
+      repeat: 1
+      intervalMinutes: 60
+      clearMinutes: 30
+    - id: "panel-obyvak"
+      severity: INFO
+      message: "Obyvák {obyvak_temp_temperature}: topení je {obyvak_topeni_switch}, mělo by být {panel_advice_obyvak}."
+      clearMessage: ""
+      conditions:
+        - item: "panel_advice_obyvak_alert"
+          value: "ON"
+      delayMinutes: 20
+      repeat: 1
+      intervalMinutes: 60
+      clearMinutes: 30
+    # Without this the advice above goes quiet exactly when it stops working. Every
+    # one of them needs the forecast, and a forecast that stopped arriving leaves the
+    # last numbers standing in the items -- so the advisory reads UNKNOWN and says
+    # nothing, which looks the same as a house that is fine.
+    - id: "advice-blind"
+      severity: INFO
+      message: "Doporučení k topení neběží, předpověď nepřichází od {weather_updated}."
+      clearMessage: "Předpověď je zpátky, doporučení běží."
+      conditions:
+        - item: "boiler_advice"
+          value: "UNKNOWN"
+      delayMinutes: 180
+      repeat: 1
+      clearMinutes: 30
     # The energizers report volts, so the thresholds are volts even though the
     # sitemap shows kilovolts: 5000 = 5 kV, 11000 = 11 kV.
     #

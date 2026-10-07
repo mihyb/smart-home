@@ -1,0 +1,7 @@
+# The advisory's alert switches answer "is there something to do", so they read
+# yes/no. They used to borrow online.map and rendered "Zatopit — Offline", which
+# says nothing about heating at all.
+ON=Ano
+OFF=Ne
+NULL=?
+-=?

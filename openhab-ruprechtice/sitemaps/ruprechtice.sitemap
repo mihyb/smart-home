@@ -59,6 +59,50 @@ sitemap ruprechtice label="Ruprechtice" {
             }
         }
     }
+    // Doporučení k topení. Nic nepřepíná — HomeController spočítá, co by udělal, a
+    // pošle to jako notifikaci; panely se pořád zapínají ručně. Nahoře proto, že
+    // je to jediná část sitemapu, která po někom něco chce.
+    Frame label="Doporučení topení" {
+        Text item=heating_cold_rooms label="Pokojů pod pásmem [%d]" icon="heating"
+             valuecolor=[==0="green", >=2="red", >0="orange"] {
+            Frame label="Pásma" {
+                // Komfortní nastavení po pokojích. Pod minimem má něco topit, nad
+                // maximem přestat, mezi tím není co řešit. Pokoj bez nastaveného
+                // pásma se do doporučení nepočítá — tak z toho vypadávají chodba,
+                // koupelna, zádveří a sklep, aniž by byly výjimkou v kódu.
+                Switch item=heating_advice_control label="Doporučovat"
+                Setpoint item=room_min_obyvak    label="Obyvák od" minValue=5 maxValue=25 step=0.5
+                Setpoint item=room_max_obyvak    label="Obyvák do" minValue=5 maxValue=25 step=0.5
+                Setpoint item=room_min_pokojicek label="Pokojíček od" minValue=5 maxValue=25 step=0.5
+                Setpoint item=room_max_pokojicek label="Pokojíček do" minValue=5 maxValue=25 step=0.5
+                Setpoint item=room_min_pracovna  label="Pracovna od" minValue=5 maxValue=25 step=0.5
+                Setpoint item=room_max_pracovna  label="Pracovna do" minValue=5 maxValue=25 step=0.5
+            }
+            Frame label="Co je pod pásmem" {
+                Text item=heating_coldest_room
+                Text item=heating_coldest_gap
+                // Zatopit = pokoje pod pásmem jsou dva, nebo je pod pásmem ten bez
+                // vlastního topení, a nádrž je vybitá a kotel nehoří.
+                Text item=heating_house_alert valuecolor=[ON="red", OFF="green"]
+            }
+            Frame label="Panely" {
+                // Zatopit tady znamená, že pokoj je pod pásmem, ale je pod ním i
+                // dům — pak je odpověď kotel, ne tenhle panel.
+                Text item=panel_advice_pracovna
+                Text item=panel_advice_obyvak
+            }
+        }
+        Text item=boiler_advice icon="fire" valuecolor=["FIRE"="red", "ENOUGH"="green"] {
+            Frame label="Zítřek" {
+                Text item=boiler_advice_needed
+                Text item=boiler_advice_shortfall valuecolor=[>0="red", <=0="green"]
+                Text item=Atmos_Buffer_Charge label="Nádrž má [%d %%]"
+                Text item=weather_temp_min_tomorrow
+                Text item=weather_temp_max_tomorrow
+                Text item=weather_solar_sum_tomorrow
+            }
+        }
+    }
     Frame label="Pracovna" {
         Text item=pracovna_teplota_humidity label="Vlhkost [%.0f %%]" labelcolor=[>60="red"]
         Text item=pracovna_teplota_temp label="Teplota [%.1f °C]" labelcolor=[<18="blue"]

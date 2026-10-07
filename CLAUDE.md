@@ -65,8 +65,12 @@ All from the repo root. Deploys hit the live home system.
 ./scripts/sync-item-states.sh diff   # compare setpoints between two instances
 ./scripts/logs.sh controller         # or: controller-unit | openhab | openhab-events
 python3 scripts/fit-thermal-model.py       # history -> config/thermal-model.tsv
+python3 scripts/fit-buffer-drain.py        # what a day costs the tank -> boilerAdviceJobs
 python3 scripts/test_fit_thermal_model.py  # its tests; stdlib unittest, no dependencies
 ```
+
+The heating advice needs no command: it runs in HomeController and shows up in the
+*Doporučení topení* frame at the top of the sitemap, and as notifications.
 
 HomeController build and test, from `HomeController/`:
 
@@ -248,6 +252,120 @@ of in the house. `scripts/test_fit_thermal_model.py` checks it against a synthet
 room whose coefficients are known; it found two real bugs on the way in, a stale
 hold that dropped every sample once the circuit pump had been idle three days, and
 a persisted `NULL` being read as `OFF`.
+
+## Heating advice
+
+Three questions are answered every five minutes, and **none of the answers switches
+anything**. Each job writes what it thinks into an item, the alarm table turns the
+`*_alert` items into a push, and the panels stay switched by hand. That is the point
+of this stage: the advice can be read against what the house and the tank actually
+did before it is ever allowed to act. `scripts/status.sh` and the *Doporučení topení*
+frame at the top of the sitemap are where it is read.
+
+**Per-room comfort bands are item state; occupancy hours are not.** A band is a
+preference somebody changes because they were chilly, so it belongs on the sitemap. A
+school timetable changes twice a year and "weekdays only" needs a day selector that a
+`Setpoint` widget cannot express, so the hours live in `application.yaml`.
+`room_min_*` / `room_max_*` are item state set from the sitemap — 20-22 in the living room, 19-22 in the kids'
+room, 18-22 in the study. Below the minimum something should heat, above the maximum
+it should stop, between them there is nothing to say; the same shape MinMaxJob
+already uses for the brooder. Hallway, bathroom, entry hall and cellar are monitored
+and nothing more, and they stay out of every decision by having no band set rather
+than by being special-cased anywhere. A room whose band reads NULL gets no vote.
+
+**A room nobody is in does not ask for heat.** Occupancy is written as the hours a
+room is *empty*, because that is how the house is actually known — school, working
+hours, bedtime — and because it makes the safe default the right one: a room with no
+hours written down is always counted, so it asks for heat rather than quietly going
+without. The night, 21:00 to 06:00, applies to every room and is configured once;
+`offWindows` on a room are on top of it, and a `mode` of `weekday` carries the school
+day. As set: kids' room off 07:00–14:00 on weekdays, study off 15:00–22:00, living
+room nothing but the night.
+
+**The minimum-run rule is on the panels only, and that asymmetry is deliberate.**
+Switching a panel on ten minutes before its room empties buys nothing — the
+electricity is spent on the hour it is used. A *fire* that late is not wasted at all,
+because what it does not deliver tonight it leaves in the tank for tomorrow. So
+`minimumRunMinutes` (45) gates the panel advice and there is no equivalent on the
+boiler. `HouseDemandJob` publishes how many minutes of use each room has left and the
+panel job applies its own threshold to that, rather than each job computing hours of
+its own.
+
+**One cold room is local, several are the boiler's.** `HouseDemandJob` counts the
+rooms below their band and decides which kind of problem it is. Firing a system this
+size for one room that dipped wastes a burn — it takes hours to come up and is
+charged to 75-100 % in one go because cycling it is worse — and running panels in
+three rooms wastes money, because wood is the cheaper heat. **A cold room with no
+panel of its own escalates on its own, whatever the count**: the kids' room has a
+dehumidifier and no heating, so the boiler is the only thing that can answer for it.
+A room with its window open takes no part — it is cold for a reason, and not a reason
+to light a boiler.
+
+**The escalation is deliberately hard to trigger.** `heating_house_alert` comes up
+only when the tank is flat *and* nothing is burning, because heat in the tank is
+already on its way into the rooms and a fire lit ten minutes ago has not charged it
+yet. On top of that the alarm waits half an hour and repeats at two hours. A fire
+takes an hour to act on and hours to undo, so this is the one advisory that must not
+be eager.
+
+**`boiler_advice` answers tomorrow, not now.** What the forecast will cost the tank
+against what the tank holds. The alert is raised only between 16:00 and 22:00, because
+that is when lighting a boiler for tomorrow is still something a person can do. The
+sun credit starts at zero on purpose — a credit that is guessed asks for too little
+wood.
+
+**Most of the tank's daily demand is not weather, it is the schedule.** The tank feeds
+the heating circuit and nothing else — hot water comes off the boiler while it burns
+and off the electric boiler when it does not — so the drain looks like it ought to be
+pure outdoor temperature. It is not. The circuit runs the regulator's weekly programme
+whenever it is in AUTO, so `scripts/fit-buffer-drain.py` measures **33 % of the tank a
+day plus only 0.7 % per degree-day**: 2.6 days per full tank, which is the two-to-three
+days this house actually gets. The first version of the advisory had demand linear
+through zero and so predicted 13 % for a mild day that really costs about 35 — nearly
+all of the demand sat in an intercept the model did not have.
+
+**A naive fit of that measures an empty tank, not a day's demand.** A day that starts
+with 20 % in the tank cannot drain 40 % however cold it is, so those days pull the
+fitted demand down hard; across all days the apparent cost came out at 20 %/day against
+38 on the days that began full. The script uses only days that started above 50 %,
+which in practice means the day after a fire, and there are few of them.
+
+**The baseline is charged only on a day that needs heating at all.** In summer the
+circuit is off and the tank drains nothing, so a flat baseline would ask for wood in
+July. That leaves a cliff at the base temperature, which is blunt but is the shape the
+regulator's own summer changeover already has.
+
+**Both coefficients were fitted over a mild autumn and nothing colder** — daily means
+of 8.5 to 14.2 °C. The slope is the weak half, and `fit-buffer-drain.py` marks every
+row it extrapolates. Under-predicting asks for too little wood, which is the expensive
+direction, so re-run it after the first proper cold spell and compare the extrapolated
+rows against what the tank did.
+
+**Wood first is encoded, not assumed.** A panel is never advised for a room the
+boiler is already heating: not while `Atmos_C1_Pump` runs, and not while the tank
+holds more than `tankCoversAbovePercent`. When the house as a whole is cold the
+advice becomes `BOILER` and the panel alert stays down, so one message about the
+house replaces one per room. A panel already running is never told to stop for that
+reason — it is doing no harm, and nagging costs more trust than it saves.
+
+**`wheater_status` is not a general cheap-electricity signal.** There are two
+tariffs: a general one that is low about twenty hours a day, and a narrower one for
+the water boiler. `wheater_status` is the water boiler's circuit, through its plug's
+zigbee availability, so it says nothing about the other. With the general tariff low
+twenty hours out of twenty-four there is almost nothing to shift the panels into, so
+no advisory tries to — the saving here is using wood instead of electricity, not
+using electricity at a better hour.
+
+**Anything unreadable holds.** Every one of these jobs answers `UNKNOWN` rather than
+guessing when a sensor, a band or the forecast cannot be read, and `UNKNOWN` raises
+no alert. That would be a silent failure — an advisory that has stopped working looks
+exactly like a house that is fine — so the `advice-blind` alarm fires after three
+hours of it.
+
+**If the advisories are ever given the switch**, the timer jobs for
+`Infrared_heating_panel_switch` and `obyvak_topeni_switch` have to come off first.
+Both are in `app.timerJobs` with their status items currently OFF; two things driving
+one switch on different rules would fight every five minutes.
 
 ## Rules in `application.yaml`
 

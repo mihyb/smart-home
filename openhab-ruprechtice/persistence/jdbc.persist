@@ -54,6 +54,21 @@ Items {
     // in general -- see the CLAUDE.md note.
     bojler_switch, wheater_status : strategy = everyChange
 
+    // What the advisory said, so that it can be read back against what the house and
+    // the tank actually did. It only notifies for now, and this is what makes
+    // reviewing it possible at all.
+    heating_cold_rooms, heating_house_alert, boiler_advice, boiler_advice_shortfall : strategy = everyChange
+    panel_advice_pracovna, panel_advice_obyvak : strategy = everyChange
+
+    // The boiler side: what the house was heated by, and how the tank emptied.
+    Atmos_Outdoor, Atmos_Outdoor_Average : strategy = everyChange, every5Minutes
+    Atmos_Boiler_Water, Atmos_FlueGas, Atmos_Water_Tank, atmos_buffer*, Atmos_Buffer_Charge : strategy = everyChange, every5Minutes
+    Atmos_Exhaust_Fan, Atmos_Boiler_Pump, Atmos_C1_Mode, Atmos_Water_Mode, Atmos_C1_Target : strategy = everyChange
+    // The exclusion filter for the fit: a room warming while this pump runs
+    // says nothing about its panel or about how the house loses heat.
+    Atmos_C1_Pump : strategy = everyChange
+    Atmos_C1_Flow : strategy = everyChange, every5Minutes
+
     // The current hour of the forecast, which is the only sun and wind history
     // this house has -- there is no pyranometer and no anemometer. The horizons
     // (weather_temp_h1 and up) are not stored: they are inputs to a decision, not

@@ -22,7 +22,7 @@ DST="${DST:-192.168.1.132}"
 FILE="${FILE:-${ROOT}/config/item-states.tsv}"
 
 # Items whose state is user-configuration rather than device-reported.
-PATTERN="${PATTERN:-^timer_job_|^chick_0|^boiler_auto_(control|running|idle)|_min_temp$|_max_temp$}"
+PATTERN="${PATTERN:-^timer_job_|^chick_0|^boiler_auto_(control|running|idle)|^room_(min|max)_|^heating_advice_control$|_min_temp$|_max_temp$}"
 
 fetch() {  # host -> name<TAB>state, only non-NULL, only matching PATTERN
   curl -s --max-time 30 "http://$1:8080/rest/items" \
