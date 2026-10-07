@@ -1,0 +1,62 @@
+// Persistence for jdbc (SQLite). The history a thermal model can actually be
+// fitted from.
+//
+// Why a third store when rrd4j is already running: rrd4j is a round-robin
+// database. It answers every query on its own fixed grid, averaging older
+// samples into coarser archives as they age, so "how fast did the office cool on
+// the night of the 14th" comes back smoothed and interpolated rather than as what
+// the sensor said. Good enough for the sitemap charts it was added for, not good
+// enough to regress a time constant out of. SQLite keeps every row exactly as it
+// arrived and hands it back through the same REST API
+// (/rest/persistence/items/<item>?serviceId=jdbc), which is what
+// scripts/fit-thermal-model.py reads.
+//
+// rrd4j is untouched and stays in charge of restoreOnStartup. There is
+// deliberately no restoreOnStartup here: two services restoring the same item
+// would put two sources on one state at startup, the same reason
+// mapdb.persist lists only the four items rrd4j cannot restore.
+//
+// No "default =" line inside Strategies -- this openHAB rejects it and silently
+// disables the whole file.
+//
+// Requires persistence = ...,jdbc-sqlite in services/addons.cfg. The addon id
+// carries the driver: plain "jdbc" resolves no driver and the service comes up
+// unable to connect.
+
+Strategies {
+    every5Minutes : "0 */5 * * * ?"
+    everyHour     : "0 0 * * * ?"
+}
+
+Items {
+    // Room temperatures. everyChange is the real data -- the zigbee sensors
+    // report when they move -- and the 5 minute grid only guarantees a point in
+    // a room that has gone quiet, so a flat stretch can be told apart from a
+    // sensor that stopped reporting.
+    temp_sensors* : strategy = everyChange, every5Minutes
+
+    // What the two electric panels were doing. A switch needs no grid: the
+    // transitions are the whole story and SQL turns them into exact minutes on.
+    // The panels regulate on their own internal sensor, so the setpoint and that
+    // sensor are stored too -- without them "switch ON" does not distinguish
+    // heating from idling at a setpoint the room had already passed.
+    Infrared_heating_panel_switch, Infrared_heating_panel_temp_set, Infrared_heating_panel_temp_current : strategy = everyChange
+    obyvak_topeni_switch, obyvak_topeni_temp_set, obyvak_topeni_temp_current : strategy = everyChange
+
+    // Open windows are the biggest unmodelled heat loss there is, and only these
+    // two rooms can see one. Periods with a window open are dropped from the fit.
+    pracovna_okno_OnOff_Switch, pokoj_okno_pokoj_okno_switch : strategy = everyChange
+
+    // The hot water boiler and the HDO circuit it hangs off. wheater_status is that
+    // circuit's signal and nothing wider: this house has two tariffs, a general one
+    // that is low about twenty hours a day and a narrower one for the water boiler,
+    // and this is the narrow one. It is not a record of when electricity was cheap
+    // in general -- see the CLAUDE.md note.
+    bojler_switch, wheater_status : strategy = everyChange
+
+    // The current hour of the forecast, which is the only sun and wind history
+    // this house has -- there is no pyranometer and no anemometer. The horizons
+    // (weather_temp_h1 and up) are not stored: they are inputs to a decision, not
+    // a record of anything that happened.
+    weather_temp_h0, weather_solar_h0, weather_wind_h0 : strategy = everyChange, everyHour
+}

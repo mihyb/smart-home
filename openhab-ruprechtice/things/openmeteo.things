@@ -1,0 +1,96 @@
+// Weather forecast from Open-Meteo.
+//
+// Hand-written, unlike things/http.things, which scripts/jsondb-to-things.py
+// regenerates from the server's JSONDB.
+//
+// Open-Meteo rather than the OpenWeatherMap binding because it needs no account
+// and no API key: nothing here has to be gitignored, and a rebuilt machine needs
+// no secret from the password manager to get its forecast back.
+//
+// THE ARRAY ALIGNMENT IS THE WHOLE TRICK. A JSONPATH index is fixed, so the
+// arrays have to start at the current hour or [1] stops meaning "+1 h" as the day
+// goes on. past_hours=0 together with forecast_hours=13 does exactly that --
+// verified against the live API: at 08:31 local the first hourly entry was 08:00.
+// Left out, Open-Meteo returns whole days starting at midnight and every index is
+// silently wrong by however long the day has been running. If the item values
+// ever look like they belong to another part of the day, check these two
+// parameters before anything else.
+//
+// One request per refresh covers every channel. They all share the base URL and
+// the binding fetches a URL once per cycle, applying each channel's own JSONPATH
+// to the same response, so 20 channels are not 20 requests.
+//
+// Units come from the request, not from the items: wind_speed_unit=ms because
+// Open-Meteo answers in km/h by default; hourly temperatures are °C and
+// shortwave_radiation is W/m². The daily radiation sum is the exception -- it
+// comes as MJ/m², not Wh/m², which is why the item says so.
+//
+// The coordinates are the village, not the house. The forecast grid is kilometres
+// wide, so precision beyond this buys nothing and this repository is public.
+//
+// forecast_days=2 is what makes the *_tomorrow channels exist; it does not
+// widen the hourly window, which forecast_hours owns.
+
+Thing http:url:openmeteo "Open-Meteo forecast" [
+    baseURL="https://api.open-meteo.com/v1/forecast?latitude=50.60&longitude=16.29&hourly=temperature_2m,shortwave_radiation,wind_speed_10m&daily=temperature_2m_min,temperature_2m_max,shortwave_radiation_sum&past_hours=0&forecast_hours=13&forecast_days=2&wind_speed_unit=ms&timezone=Europe/Prague",
+    bufferSize=8192,
+    contentType="application/json",
+    ignoreSSLErrors=false,
+    // Open-Meteo publishes a new run hourly; a quarter hour keeps h0 in step
+    // with the clock without hammering a free service (96 requests a day).
+    refresh=900,
+    stateMethod="GET",
+    timeout=15000
+] {
+    Channels:
+        // Hourly outdoor temperature, h0 = the hour we are in now.
+        Type number : temp_h0  "Teplota nyní"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[0])" ]
+        Type number : temp_h1  "Teplota +1 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[1])" ]
+        Type number : temp_h2  "Teplota +2 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[2])" ]
+        Type number : temp_h3  "Teplota +3 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[3])" ]
+        Type number : temp_h4  "Teplota +4 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[4])" ]
+        Type number : temp_h5  "Teplota +5 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[5])" ]
+        Type number : temp_h6  "Teplota +6 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[6])" ]
+        Type number : temp_h7  "Teplota +7 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[7])" ]
+        Type number : temp_h8  "Teplota +8 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[8])" ]
+        Type number : temp_h9  "Teplota +9 h"  [ stateTransformation="JSONPATH($.hourly.temperature_2m[9])" ]
+        Type number : temp_h10 "Teplota +10 h" [ stateTransformation="JSONPATH($.hourly.temperature_2m[10])" ]
+        Type number : temp_h11 "Teplota +11 h" [ stateTransformation="JSONPATH($.hourly.temperature_2m[11])" ]
+        Type number : temp_h12 "Teplota +12 h" [ stateTransformation="JSONPATH($.hourly.temperature_2m[12])" ]
+
+        // Solar radiation, the only sun signal in the house -- there is no
+        // pyranometer, so this forecast is also the history the thermal fit
+        // regresses solar gain against. Six hours ahead is as far as it is worth
+        // pre-heating for.
+        Type number : solar_h0 "Slunce nyní"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[0])" ]
+        Type number : solar_h1 "Slunce +1 h"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[1])" ]
+        Type number : solar_h2 "Slunce +2 h"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[2])" ]
+        Type number : solar_h3 "Slunce +3 h"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[3])" ]
+        Type number : solar_h4 "Slunce +4 h"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[4])" ]
+        Type number : solar_h5 "Slunce +5 h"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[5])" ]
+        Type number : solar_h6 "Slunce +6 h"  [ stateTransformation="JSONPATH($.hourly.shortwave_radiation[6])" ]
+
+        // Wind drives infiltration, which is why a windy 5 °C empties the house
+        // faster than a still one. Only the current hour: it is a regressor for
+        // the fit, not something to pre-heat against.
+        Type number : wind_h0 "Vítr nyní" [ stateTransformation="JSONPATH($.hourly.wind_speed_10m[0])" ]
+
+        // Daily figures. [0] is today, [1] tomorrow.
+        Type number : temp_min_today     "Minimum dnes"    [ stateTransformation="JSONPATH($.daily.temperature_2m_min[0])" ]
+        Type number : temp_max_today     "Maximum dnes"    [ stateTransformation="JSONPATH($.daily.temperature_2m_max[0])" ]
+        Type number : temp_min_tomorrow  "Minimum zítra"   [ stateTransformation="JSONPATH($.daily.temperature_2m_min[1])" ]
+        Type number : temp_max_tomorrow  "Maximum zítra"   [ stateTransformation="JSONPATH($.daily.temperature_2m_max[1])" ]
+        Type number : solar_sum_today    "Slunce dnes"     [ stateTransformation="JSONPATH($.daily.shortwave_radiation_sum[0])" ]
+        Type number : solar_sum_tomorrow "Slunce zítra"    [ stateTransformation="JSONPATH($.daily.shortwave_radiation_sum[1])" ]
+
+        // How fresh the forecast is. A stale one looks exactly like a current
+        // one -- the same numbers stand in the items -- so anything deciding from
+        // it has to be able to see the age, the way the fence rows do.
+        //
+        // The ids are fixed, hyphens and all: the binding matches a
+        // request-date-time channel by id and nothing else, so last_success with an
+        // underscore logs "Cannot find channel implementation" and the item stays
+        // NULL -- which looks exactly like a forecast that never arrived.
+        Type request-date-time : last-success "Naposledy načteno"
+        Type request-date-time : last-failure "Naposledy chyba"
+}

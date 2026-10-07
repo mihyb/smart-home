@@ -15,7 +15,7 @@ and the code that consumes it belongs in a single commit.
 | `atmos-connector/` | **Submodule** — the custom `atmoswg1000` binding for the Atmos boiler. Standalone reusable component, own repo and release cycle |
 | `fencee-connector/` | **Submodule** — the custom `fenceecloud` binding for the electric fence (GW100 gateway, two PDX70 energizers). Same shape as `atmos-connector`: own repo, own release cycle, consumed as a built JAR |
 | `scripts/` | Build, deploy, cutover, status and log helpers |
-| `config/` | `item-states.tsv` — captured setpoints, see *Item state* below |
+| `config/` | `item-states.tsv` — captured setpoints, see *Item state* below. `thermal-model.tsv` — fitted per-room coefficients, see *Weather forecast and history* |
 
 The two bindings are submodules while the other two directories are subtrees,
 and that is deliberate. openHAB config and HomeController are co-developed — an item rename
@@ -64,6 +64,8 @@ All from the repo root. Deploys hit the live home system.
 ./scripts/cutover-controller.sh      # the .124 -> .132 move; dry-run by default
 ./scripts/sync-item-states.sh diff   # compare setpoints between two instances
 ./scripts/logs.sh controller         # or: controller-unit | openhab | openhab-events
+python3 scripts/fit-thermal-model.py       # history -> config/thermal-model.tsv
+python3 scripts/test_fit_thermal_model.py  # its tests; stdlib unittest, no dependencies
 ```
 
 HomeController build and test, from `HomeController/`:
@@ -166,6 +168,12 @@ plain temperature threshold could not do this job on its own: set low enough to
 catch the overheat it also read residual heat as a burn, and the water circuit
 kept draining a tank with nothing refilling it.
 
+**A window contact reads ON when the window is open.** The two of them publish
+zigbee2mqtt's `alarm_1` with `on="true"`, so ON is the alarm — open. That is why
+the dehumidifier timer jobs require the contact to read `off` before they run, and
+why the thermal fit drops every step where it reads ON. The sitemap colours those
+two rows `ON="green"`, which reads the other way round.
+
 **A `Number:Temperature` item is not a number to HomeController.** The REST API
 renders a QuantityType with its unit, so `Atmos_Boiler_Water` arrives as
 `86.5 °C` and `getDoubleOrNull()` returns null for every reading it will ever
@@ -176,6 +184,70 @@ so it is only safe where the item's unit is fixed and known.
 **Items read `NULL` when their thing is offline.** `getDouble()` throws on that;
 `getDoubleOrNull()` exists for rules that read sensors. MinMaxJob and TimerJob
 skip the cycle rather than die.
+
+## Weather forecast and history
+
+Two things the house had no way of knowing: what the weather is about to do, and
+what it did. Both are groundwork for heating that decides rather than follows a
+clock, and neither is worth anything unless it is *stored*.
+
+**The forecast is Open-Meteo over the HTTP binding** — `things/openmeteo.things`
+and `items/weather.items`. No account and no API key, so nothing about it is
+gitignored and a rebuilt machine gets its forecast back with the rest of the
+config. `weather_temp_h0` … `_h12` are hourly outdoor temperatures with h0 the
+hour we are in, `weather_solar_h0` … `_h6` the shortwave radiation, which is the
+only sun signal in the house — there is no pyranometer, so that forecast is also
+the solar history the fit regresses against.
+
+**`past_hours=0&forecast_hours=13` is what makes the indexes mean anything.** A
+JSONPATH index is fixed, so the arrays have to start at the current hour. Left
+out, Open-Meteo returns whole days starting at midnight and `[1]` stops meaning
+"+1 h" as soon as the day is underway — every item still holds a plausible
+temperature, just one from the wrong part of the day. Verified against the live
+API: at 08:31 local the first hourly entry was 08:00. The daily radiation sums are
+the one place the unit is not what it looks like: `MJ/m²`, not `Wh/m²`.
+
+**Three persistence services now, each with one job.** rrd4j keeps
+`restoreOnStartup` and the sitemap charts, mapdb the four String setpoints rrd4j
+cannot restore, and jdbc (SQLite, `persistence/jdbc.persist`) the history a model
+can be fitted from. That last one is not duplication: rrd4j is a round-robin
+database and averages samples into coarser archives as they age, so a cooldown
+read back from it is a smoothed curve rather than what the sensor said, and the
+time constant fitted from it comes out wrong. There is deliberately no
+`restoreOnStartup` in `jdbc.persist` — two services restoring one item would put
+two sources on the same state at startup.
+
+**The addon id is `jdbc-sqlite`, not `jdbc`.** Each database has its own feature in
+the distribution and plain `jdbc` resolves no driver. The addon ships its own
+`services/jdbc.cfg` with `override="false"`, so the copy in this repo wins.
+`./scripts/status.sh openhab` reports how many points the last hour actually
+stored, because a persistence service that failed to come up is otherwise silent
+— openHAB just stores nothing, and the gap surfaces weeks later when there is
+nothing to fit.
+
+**`Atmos_C1_Pump` exists for the fit.** Every room is heated by the boiler's
+circuit as well as by its own electric panel, so a room warming while that pump
+runs says nothing about either the panel or the heat loss. The fit drops every
+sample taken while it is ON. Without that the coefficients come out of a mixture
+of two heat sources and look reasonable while being wrong.
+
+**The model is fitted offline and committed, never learned at runtime.**
+`scripts/fit-thermal-model.py` reads history through openHAB's REST persistence
+API — no sudo, and no torn read of a database openHAB is writing — and writes
+`config/thermal-model.tsv`: per room a time constant with the panel off and one
+with it on, what the sun is worth, the internal gains, what the panel adds, and
+how far above outdoor the panel alone can hold the room. That last number is the
+one to read first: a room that holds 7 K above outdoor is comfortable at 14 °C
+outside and hopeless at −5, and starting it earlier changes nothing about that.
+Two time constants and not one because a house has two — the air responds in an
+hour, the structure in days, and a single fit over both predicts a preheat that
+would have to start the previous evening. The script refuses a fit rather than
+producing a number from too few samples or a non-physical loss coefficient, and
+writes nothing at all if no room fitted, so a bad fit shows up in a diff instead
+of in the house. `scripts/test_fit_thermal_model.py` checks it against a synthetic
+room whose coefficients are known; it found two real bugs on the way in, a stale
+hold that dropped every sample once the circuit pump had been idle three days, and
+a persisted `NULL` being read as `OFF`.
 
 ## Rules in `application.yaml`
 

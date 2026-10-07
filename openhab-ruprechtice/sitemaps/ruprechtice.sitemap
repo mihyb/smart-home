@@ -2,8 +2,35 @@ sitemap ruprechtice label="Ruprechtice" {
     // Venkovní teplota z kotle ATMOS — není specifická pro kotelnu a řídí se
     // podle ní řada rozhodnutí, proto je hned nahoře.
     Frame {
+        // Rozklikává se do předpovědi. Řádek zůstává měřená teplota z kotle --
+        // předpověď je odhad, čidlo je fakt, a na první stránce má být fakt.
         Text item=Atmos_Outdoor label="Venku [%.1f °C]" icon="temperature"
-             valuecolor=[<0="blue", <10="cyan", >25="orange"]
+             valuecolor=[<0="blue", <10="cyan", >25="orange"] {
+            Frame label="Předpověď" {
+                Text item=weather_temp_h1  valuecolor=[<0="blue", <10="cyan", >25="orange"]
+                Text item=weather_temp_h3  valuecolor=[<0="blue", <10="cyan", >25="orange"]
+                Text item=weather_temp_h6  valuecolor=[<0="blue", <10="cyan", >25="orange"]
+                Text item=weather_temp_h12 valuecolor=[<0="blue", <10="cyan", >25="orange"]
+                Text item=weather_solar_h0
+                Text item=weather_wind_h0
+            }
+            Frame label="Dnes a zítra" {
+                // Minimum a maximum z regulátoru je to, v čem dům opravdu stál;
+                // zítřejší čísla jsou předpověď, podle které se topí dopředu.
+                Text item=Atmos_Outdoor_Min
+                Text item=Atmos_Outdoor_Max
+                Text item=weather_temp_min_tomorrow valuecolor=[<0="blue", <10="cyan"]
+                Text item=weather_temp_max_tomorrow valuecolor=[>25="orange"]
+                Text item=weather_solar_sum_tomorrow
+            }
+            Frame label="Data" {
+                // Stará předpověď vypadá jako čerstvá -- v položkách prostě stojí
+                // poslední čísla. Proto je tu vidět, kdy naposledy přišla.
+                Text item=weather_updated
+                // Průměr, ze kterého regulátor jede ekvitermní křivku.
+                Text item=Atmos_Outdoor_Average
+            }
+        }
         // Zhoršený = některé sledované zařízení je offline. Skupina je AND, takže
         // stačí jeden výpadek. Detail říká který.
         Text item=system_health label="Stav systému [MAP(health.map):%s]" icon="network"

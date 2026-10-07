@@ -31,6 +31,19 @@ Number Atmos_Buffer_Charge "Nabití [%d %%]" <batterylevel>
 Number Atmos_Buffer_Zones "Nahřátá čidla [%d ze 4]"
 String Atmos_Serial "Atmos_Serial" { channel="atmoswg1000:controller:home:controller1:status#serial-number" }
 Number:Temperature Atmos_Outdoor "Atmos_Outdoor" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature", autoupdate="false" }
+// The controller's own outdoor figures. The channels were on the Thing from the
+// start with no item, so the gateway was already being asked for them and the
+// answers thrown away.
+//
+// Atmos_Outdoor_Average is the damped value the regulator runs its equithermal
+// curve from, not an average anybody chose -- it lags the raw reading, which is
+// the point of it and the reason the curve does not chase a cloud. The daily
+// minimum and maximum are what the forecast gets compared against: weather_*
+// says what Open-Meteo expected, these say what the house actually stood in.
+Number:Temperature Atmos_Outdoor_Average "Venku průměr [%.1f °C]" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature-average" }
+Number:Temperature Atmos_Outdoor_Min "Venku minimum dnes [%.1f °C]" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature-min" }
+Number:Temperature Atmos_Outdoor_Max "Venku maximum dnes [%.1f °C]" { channel="atmoswg1000:controller:home:controller1:outdoor#temperature-max" }
+
 String Atmos_Water_Mode "Atmos_Water_Mode" { channel="atmoswg1000:controller:home:controller1:water#mode" }
 Number:Temperature Atmos_Water_Comfort "Atmos_Water_Comfort" { channel="atmoswg1000:controller:home:controller1:water#comfort-setpoint" }
 String Atmos_C1_Mode "Atmos_C1_Mode" { channel="atmoswg1000:controller:home:controller1:circuit1#mode" }
@@ -55,6 +68,21 @@ String boiler_auto_idle_water "Voda když kotel nehoří [%s]"
 String boiler_auto_last_heating
 String boiler_auto_last_water
 Number:Temperature Atmos_C1_Target "Atmos_C1_Target" { channel="atmoswg1000:controller:home:controller1:circuit1#target-temperature" }
+// Whether the radiators are actually delivering, and how hot. Both channels were
+// on the Thing with no item.
+//
+// This is what makes a thermal fit possible at all: every room is heated by this
+// circuit as well as by its own electric panel, so a room warming up while the
+// pump runs says nothing about the panel or about how the house loses heat.
+// scripts/fit-thermal-model.py drops every sample taken while Atmos_C1_Pump is
+// ON. Without it the coefficients come out of a mixture of two heat sources and
+// look plausible while being wrong.
+//
+// Flow temperature is stored rather than used: radiator output follows it, so a
+// later fit can model boiler-heated periods instead of discarding them.
+Switch Atmos_C1_Pump "Čerpadlo okruhu [%s]" { channel="atmoswg1000:controller:home:controller1:circuit1#pump" }
+Number:Temperature Atmos_C1_Flow "Teplota do okruhu [%.1f °C]" { channel="atmoswg1000:controller:home:controller1:circuit1#flow-temperature" }
+
 DateTime Atmos_Clock "Atmos_Clock" { channel="atmoswg1000:controller:home:controller1:status#clock" }
 // autoupdate vypnuto: tlačítko Obnovit posílá téhle položce REFRESH a optimistický
 // autoupdate by ho zapsal jako stav — v sitemapu by pak místo IP svítilo "REFRESH".

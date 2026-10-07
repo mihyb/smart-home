@@ -1,0 +1,60 @@
+// Weather forecast items, fed by things/openmeteo.things.
+//
+// The naming is a contract, not decoration: weather_temp_h<N> is the outdoor
+// temperature N hours from now, h0 being the hour we are in. HomeController
+// addresses them by index, so the series has to stay unbroken from h0 to h12 --
+// deleting one leaves a hole that reads NULL, which every job treats as "no
+// value, skip the cycle".
+//
+// Plain Number, not Number:Temperature, on purpose. The HTTP binding delivers a
+// bare number with no unit, and openHAB would then attach one by inference; per
+// the unit traps in the repository CLAUDE.md a wrong unit here is silent. The
+// unit is fixed by the request in things/openmeteo.things (°C, W/m², m/s, and
+// MJ/m² for the daily sums) and is written into the label, so the number is read
+// with getDoubleOrNull() and nothing has to be converted or stripped.
+
+// Hourly outdoor temperature, h0 = now.
+Number weather_temp_h0  "Teplota nyní [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h0" }
+Number weather_temp_h1  "Teplota +1 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h1" }
+Number weather_temp_h2  "Teplota +2 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h2" }
+Number weather_temp_h3  "Teplota +3 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h3" }
+Number weather_temp_h4  "Teplota +4 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h4" }
+Number weather_temp_h5  "Teplota +5 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h5" }
+Number weather_temp_h6  "Teplota +6 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h6" }
+Number weather_temp_h7  "Teplota +7 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h7" }
+Number weather_temp_h8  "Teplota +8 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h8" }
+Number weather_temp_h9  "Teplota +9 h [%.1f °C]"  <temperature> { channel="http:url:openmeteo:temp_h9" }
+Number weather_temp_h10 "Teplota +10 h [%.1f °C]" <temperature> { channel="http:url:openmeteo:temp_h10" }
+Number weather_temp_h11 "Teplota +11 h [%.1f °C]" <temperature> { channel="http:url:openmeteo:temp_h11" }
+Number weather_temp_h12 "Teplota +12 h [%.1f °C]" <temperature> { channel="http:url:openmeteo:temp_h12" }
+
+// Solar radiation. There is no sun sensor in the house, so this forecast is both
+// the input to the control and the only solar history the thermal fit can
+// regress against -- which is why weather_solar_h0 is persisted.
+Number weather_solar_h0 "Slunce nyní [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h0" }
+Number weather_solar_h1 "Slunce +1 h [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h1" }
+Number weather_solar_h2 "Slunce +2 h [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h2" }
+Number weather_solar_h3 "Slunce +3 h [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h3" }
+Number weather_solar_h4 "Slunce +4 h [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h4" }
+Number weather_solar_h5 "Slunce +5 h [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h5" }
+Number weather_solar_h6 "Slunce +6 h [%.0f W/m²]" <sun> { channel="http:url:openmeteo:solar_h6" }
+
+// Wind at 10 m. Infiltration scales with it, so a windy 5 °C drains the house
+// faster than a still one and the fit wants it as a separate term.
+Number weather_wind_h0 "Vítr [%.1f m/s]" <wind> { channel="http:url:openmeteo:wind_h0" }
+
+// Daily figures. Tomorrow's minimum and sun are what say how much wood tonight
+// is worth; today's are here to compare a forecast against what happened.
+Number weather_temp_min_today     "Minimum dnes [%.1f °C]"     <temperature> { channel="http:url:openmeteo:temp_min_today" }
+Number weather_temp_max_today     "Maximum dnes [%.1f °C]"     <temperature> { channel="http:url:openmeteo:temp_max_today" }
+Number weather_temp_min_tomorrow  "Minimum zítra [%.1f °C]"    <temperature> { channel="http:url:openmeteo:temp_min_tomorrow" }
+Number weather_temp_max_tomorrow  "Maximum zítra [%.1f °C]"    <temperature> { channel="http:url:openmeteo:temp_max_tomorrow" }
+Number weather_solar_sum_today    "Slunce dnes [%.1f MJ/m²]"   <sun> { channel="http:url:openmeteo:solar_sum_today" }
+Number weather_solar_sum_tomorrow "Slunce zítra [%.1f MJ/m²]"  <sun> { channel="http:url:openmeteo:solar_sum_tomorrow" }
+
+// A forecast that stopped arriving looks exactly like a current one: the last
+// numbers just stand in the items. Same problem as a stale fence voltage, and
+// the same answer -- show when it last came in, and let whatever decides from it
+// check the age first.
+DateTime weather_updated "Načteno [%1$td.%1$tm. %1$tH:%1$tM]" <time> { channel="http:url:openmeteo:last-success" }
+DateTime weather_failed  "Chyba [%1$td.%1$tm. %1$tH:%1$tM]"   <time> { channel="http:url:openmeteo:last-failure" }
